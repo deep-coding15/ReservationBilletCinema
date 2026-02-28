@@ -1,0 +1,12 @@
+name: reservation_billet_cinema_server
+description: Backend Serverpod pour l'application de réservation de billets de cinéma.
+version: 1.0.0
+
+environment:
+  sdk: ^3.11.0
+
+dependencies:
+  serverpod: ^2.2.0
+
+dev_dependencies:
+  serverpod_cli: ^2.2.0

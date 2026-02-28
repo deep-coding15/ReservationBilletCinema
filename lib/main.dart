@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:reservation_billet_cinema/features/movies/presentation/pages/movies_page.dart';
+import 'package:reservation_billet_cinema/core/router/app_router.dart';
+import 'package:reservation_billet_cinema/core/theme/app_theme.dart';
 
 void main() {
   runApp(
-      const ProviderScope(
-          child: MyApp()),
+    const ProviderScope(
+      child: MyApp(),
+    ),
   );
 }
 
@@ -14,9 +16,11 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp.router(
+      title: 'Reservation Billet Cinema',
       debugShowCheckedModeBanner: false,
-      home: MoviesPage(),
+      theme: AppTheme.light,
+      routerConfig: goRouter,
     );
   }
 }
