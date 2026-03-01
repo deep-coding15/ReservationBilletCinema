@@ -1,6 +1,6 @@
 -- ============================================================
 -- Schéma de la base de données - Reservation Billet Cinema
--- PostgreSQL (à exécuter sur Neon, Supabase ou PostgreSQL local)
+-- PostgreSQL (local ou serveur à vous)
 -- ============================================================
 
 -- Table utilisateurs (spectateurs)

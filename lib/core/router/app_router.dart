@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:reservation_billet_cinema/features/home/presentation/pages/home_page.dart';
 import 'package:reservation_billet_cinema/features/auth/presentation/pages/login_page.dart';
