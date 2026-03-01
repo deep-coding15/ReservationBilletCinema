@@ -20,11 +20,11 @@ insightsServer:
   publicPort: 8081
   publicScheme: http
 
-# Configuration for the web server.
+# Configuration for the web server (port 9082 si 8082 bloqué sous Windows).
 webServer:
-  port: 8082
+  port: 9082
   publicHost: localhost
-  publicPort: 8082
+  publicPort: 9082
   publicScheme: http
 
 # Base PostgreSQL locale (ou serveur que vous hébergez).
