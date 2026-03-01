@@ -1,6 +1,6 @@
 # 🎬 Reservation Billet Cinema
 
-Application multi-plateforme (Android, iOS, Web) de réservation de billets de cinéma et d'événements — **Flutter + Serverpod + PostgreSQL**.
+Application **mobile multi-plateforme** (Android, iOS, Web) de réservation de billets de cinéma et d'événements — **Flutter + Serverpod + PostgreSQL**. Développement avec **Android Studio**.
 
 ---
 
@@ -69,8 +69,15 @@ Chaque feature Flutter suit **Clean Architecture** :
 ### Prérequis
 
 - Flutter 3.x + Dart 3.x
+- **Android Studio** (pour Android / émulateur)
 - PostgreSQL installé
 - Serverpod CLI : `dart pub global activate serverpod_cli`
+
+### Lancer l’app (multi-plateforme)
+
+- **Android** : ouvrir le projet dans Android Studio, lancer un émulateur (AVD) ou connecter un appareil, puis `flutter run` et choisir l’appareil Android.
+- **Web** : `flutter run` puis choisir **Chrome** (ou Edge) si Windows desktop n’est pas configuré (Visual Studio).
+- **iOS** : sur Mac avec Xcode, `flutter run` sur simulateur ou appareil.
 
 ### 1. Cloner et installer les dépendances
 

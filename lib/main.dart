@@ -17,7 +17,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
-      title: 'Reservation Billet Cinema',
+      title: 'CinePass',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.light,
       routerConfig: goRouter,

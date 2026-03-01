@@ -1,6 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <application
-        android:label="reservation_billet_cinema"
+        android:label="CinePass"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

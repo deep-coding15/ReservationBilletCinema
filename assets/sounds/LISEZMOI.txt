@@ -1,0 +1,16 @@
+Son à l'ouverture de l'app
+==========================
+
+Pour activer le son quand l'utilisateur ouvre l'app, ajoutez un fichier audio ici :
+
+  opening.mp3
+
+(Un court son de 1 à 2 secondes suffit.)
+
+Vous pouvez télécharger un son gratuit (licence CC0) sur :
+- freesound.org
+- mixkit.co/free-sound-effects
+
+Puis placez le fichier dans ce dossier : assets/sounds/opening.mp3
+
+Sans ce fichier, l'app démarre normalement avec le logo animé, mais sans son.
