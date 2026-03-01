@@ -82,7 +82,9 @@ flutter pub get
 
 ### 2. Configurer PostgreSQL (local ou votre serveur)
 
-Créer la base PostgreSQL et exécuter `server/database/schema.sql`. Configurer `server/config/development.yaml` et `server/config/passwords.yaml`. Voir `server/database/README.md` et `server/SETUP.md`. **À chaque changement de schéma, tout le monde lance les migrations** pour garder la même structure de base.
+Créer la base PostgreSQL et exécuter `server/database/schema.sql`. Configurer `server/config/development.yaml` et `server/config/passwords.yaml`. Voir `server/database/README.md` et `server/SETUP.md`.
+
+**Après chaque `git pull`** (pour récupérer les changements de la base) : `cd server` puis `dart run bin/main.dart --apply-migrations`.
 
 ### 3. Lancer l’app Flutter
 

@@ -58,12 +58,26 @@ psql -U postgres -d cinema_reservation -f server/database/schema.sql
 
 ---
 
-## 3. Récap rapide
+## 3. Après chaque `git pull` (important pour toute l’équipe)
+
+Quand quelqu’un a modifié le schéma de la base (nouvelles tables, colonnes, etc.) et a poussé sur le repo, **tout le monde** doit mettre à jour sa base locale après un `git pull` :
+
+```powershell
+cd server
+dart run bin/main.dart --apply-migrations
+```
+
+Ensuite tu peux lancer le serveur normalement (`dart run bin/main.dart`).  
+**Règle :** après un pull, lance les migrations pour récupérer les changements de la base.
+
+---
+
+## 4. Récap rapide
 
 | Quand ? | Commande |
 |--------|----------|
 | **Première fois** | Créer la base + `psql ... -f server/database/schema.sql` + configurer `passwords.yaml` |
-| **Quand le schéma a changé** (après un `git pull`) | `cd server` puis `dart run bin/main.dart --apply-migrations` |
+| **Après un `git pull`** (pour récupérer les changements de la base) | `cd server` puis `dart run bin/main.dart --apply-migrations` |
 | **Lancer le serveur au quotidien** | `cd server` puis `dart run bin/main.dart` |
 
 ---
