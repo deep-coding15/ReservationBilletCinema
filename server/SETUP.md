@@ -1,9 +1,13 @@
 # Mise en place du serveur Serverpod
 
-## 1. Base de données
+On utilise **PostgreSQL** (local ou sur un serveur à vous). Pas de Supabase ni Neon.
 
-- **Cloud (Neon/Supabase) :** exécuter `server/database/schema.sql` dans le SQL Editor, puis dans `config/development.yaml` mettre `database.host`, `database.port: 5432`, `database.name`, `database.user`, et `database.requireSsl: true`. Le mot de passe dans `config/passwords.yaml` → section `development.database`.
-- **Local :** créer la base `cinema_reservation`, exécuter `schema.sql`. Dans `config/development.yaml` mettre `database.port: 5432` (le template utilise 8090 pour Docker). Copier `config/passwords.yaml.example` en `config/passwords.yaml` et mettre le mot de passe PostgreSQL dans `development.database`.
+## 1. Base de données (PostgreSQL)
+
+- Créer la base : `createdb -U postgres cinema_reservation` (ou via pgAdmin / autre outil).
+- Appliquer le schéma : `psql -U postgres -d cinema_reservation -f server/database/schema.sql`.
+- Dans `config/development.yaml` : `database.host` (localhost ou IP du serveur), `port: 5432`, `name: cinema_reservation`, `user: postgres`, `requireSsl: false`.
+- Copier `config/passwords.yaml.example` en `config/passwords.yaml` et mettre le mot de passe PostgreSQL dans `development.database`.
 
 ## 2. Génération du code
 
@@ -23,11 +27,13 @@ cd server
 dart run bin/main.dart
 ```
 
-Ou avec migrations appliquées automatiquement :
+Ou avec migrations appliquées automatiquement (utile après un changement de schéma) :
 
 ```bash
 dart run bin/main.dart --apply-migrations
 ```
+
+**Règle équipe :** à chaque changement de structure (tables, colonnes) dans le dépôt, **tout le monde** lance les migrations (`--apply-migrations` ou réexécute le `schema.sql`) pour garder la même forme de base.
 
 ## 4. App Flutter
 

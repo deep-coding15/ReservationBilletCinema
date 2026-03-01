@@ -27,15 +27,15 @@ webServer:
   publicPort: 8082
   publicScheme: http
 
-# This is the database setup for your server.
+# Base PostgreSQL locale (ou serveur que vous hébergez).
+# Chacun configure host/user/name selon sa machine ou le serveur partagé.
 database:
   host: localhost
-  port: 8090
+  port: 5432
   name: cinema_reservation
   user: postgres
-  #requireSsl: true # defaults to false
-  #isUnixSocket: true # defaults to false
-  #maxConnectionCount: 10 # Defaults to 10, a negative or null value removes the limit
+  requireSsl: false
+  #maxConnectionCount: 10
 
 # This is the setup for Redis.
 redis:

@@ -80,9 +80,9 @@ cd ReservationBilletCinema
 flutter pub get
 ```
 
-### 2. Configurer PostgreSQL
+### 2. Configurer PostgreSQL (local ou votre serveur)
 
-Créer la base (ou Neon/Supabase) et exécuter `server/database/schema.sql`. Configurer `server/config/development.yaml` et `server/config/passwords.yaml`. Voir `server/SETUP.md`.
+Créer la base PostgreSQL et exécuter `server/database/schema.sql`. Configurer `server/config/development.yaml` et `server/config/passwords.yaml`. Voir `server/database/README.md` et `server/SETUP.md`. **À chaque changement de schéma, tout le monde lance les migrations** pour garder la même structure de base.
 
 ### 3. Lancer l’app Flutter
 
