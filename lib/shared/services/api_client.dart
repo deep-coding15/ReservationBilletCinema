@@ -1,5 +1,6 @@
-/// Service d'appel API (Serverpod client ou Dio).
-/// À connecter au package reservation_billet_cinema_client une fois le serveur généré.
+/// Service d'appel API.
+/// L'app utilise le client Serverpod via [serverpodClientProvider] (lib/core/network/serverpod_provider.dart).
+/// Exemple : ref.read(serverpodClientProvider).greeting.hello('Douae');
 class ApiClient {
-  // Exemple: final client = ReservationBilletCinemaClient(ApiConstants.baseUrl);
+  // Pour les appels serveur, utiliser ref.read(serverpodClientProvider) dans un ConsumerWidget / Provider.
 }
