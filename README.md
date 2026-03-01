@@ -82,8 +82,7 @@ flutter pub get
 
 ### 2. Configurer PostgreSQL
 
-Créer la base : `createdb cinema_reservation_db`  
-Modifier `server/config/development.yaml` avec vos identifiants (host, username, password).
+Créer la base (ou Neon/Supabase) et exécuter `server/database/schema.sql`. Configurer `server/config/development.yaml` et `server/config/passwords.yaml`. Voir `server/SETUP.md`.
 
 ### 3. Lancer l’app Flutter
 
@@ -91,20 +90,23 @@ Modifier `server/config/development.yaml` avec vos identifiants (host, username,
 flutter run
 ```
 
-### 4. Lancer le backend (optionnel pour le dev UI)
+### 4. Générer le code Serverpod (une fois)
 
 ```bash
 cd server
-dart pub get
+serverpod generate
+```
+
+(CLI : `dart pub global activate serverpod_cli`. Windows : ajouter au PATH : `%LOCALAPPDATA%\Pub\Cache\bin`.)
+
+### 5. Lancer le backend
+
+```bash
+cd server
 dart run bin/main.dart
 ```
 
-Pour un projet Serverpod complet généré par la CLI :
-
-```bash
-serverpod create cinema_reservation
-# Puis copier les dossiers server/ et client/ générés si besoin.
-```
+(Migrations : `dart run bin/main.dart --apply-migrations`.)
 
 ---
 

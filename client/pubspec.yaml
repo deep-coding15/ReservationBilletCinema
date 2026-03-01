@@ -1,9 +1,9 @@
-name: reservation_billet_cinema_client
-description: Client Dart/Flutter pour l'API Reservation Billet Cinema (généré par Serverpod).
-version: 1.0.0
+name: cinema_reservation_client
+description: Client Dart/Flutter pour l'API Reservation Billet Cinema.
 
 environment:
-  sdk: ^3.11.0
+  sdk: '^3.8.0'
 
 dependencies:
-  serverpod_client: ^2.2.0
+  serverpod_auth_idp_client: 3.3.1
+  serverpod_client: 3.3.1

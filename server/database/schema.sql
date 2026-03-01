@@ -1,8 +1,6 @@
 -- ============================================================
 -- Schéma de la base de données - Reservation Billet Cinema
--- PostgreSQL
--- À exécuter une fois : psql -U postgres -d cinema_reservation_db -f schema.sql
--- Ou créer la base puis : psql -U postgres -d cinema_reservation_db -f server/database/schema.sql
+-- PostgreSQL (à exécuter sur Neon, Supabase ou PostgreSQL local)
 -- ============================================================
 
 -- Table utilisateurs (spectateurs)
@@ -12,12 +10,12 @@ CREATE TABLE IF NOT EXISTS utilisateurs (
     email VARCHAR(255) NOT NULL UNIQUE,
     telephone VARCHAR(50),
     mot_de_passe_hash VARCHAR(255) NOT NULL,
-    preferences TEXT[],  -- ou JSONB selon besoin
+    preferences TEXT[],
     statut VARCHAR(50) DEFAULT 'actif',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Table administrateurs (optionnel : peut être un rôle dans utilisateurs)
+-- Table administrateurs
 CREATE TABLE IF NOT EXISTS administrateurs (
     id SERIAL PRIMARY KEY,
     utilisateur_id INTEGER NOT NULL REFERENCES utilisateurs(id) ON DELETE CASCADE,
@@ -36,7 +34,7 @@ CREATE TABLE IF NOT EXISTS cinemas (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Table salles (salles de cinéma)
+-- Table salles
 CREATE TABLE IF NOT EXISTS salles (
     id SERIAL PRIMARY KEY,
     cinema_id INTEGER NOT NULL REFERENCES cinemas(id) ON DELETE CASCADE,
@@ -46,13 +44,13 @@ CREATE TABLE IF NOT EXISTS salles (
     UNIQUE(cinema_id, code_salle)
 );
 
--- Table films (programmation)
+-- Table films
 CREATE TABLE IF NOT EXISTS films (
     id SERIAL PRIMARY KEY,
     titre VARCHAR(255) NOT NULL,
     synopsis TEXT,
     genre VARCHAR(100),
-    duree INTEGER NOT NULL,  -- en minutes
+    duree INTEGER NOT NULL,
     realisateur VARCHAR(255),
     casting TEXT[],
     affiche VARCHAR(500),
@@ -78,7 +76,7 @@ CREATE TABLE IF NOT EXISTS seances (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Table catégories de sièges (optionnel)
+-- Table catégories de sièges
 CREATE TABLE IF NOT EXISTS categorie_sieges (
     id SERIAL PRIMARY KEY,
     type VARCHAR(100) NOT NULL,
@@ -86,7 +84,7 @@ CREATE TABLE IF NOT EXISTS categorie_sieges (
     tarif DOUBLE PRECISION NOT NULL
 );
 
--- Table sièges (par salle)
+-- Table sièges
 CREATE TABLE IF NOT EXISTS sieges (
     id SERIAL PRIMARY KEY,
     salle_id INTEGER NOT NULL REFERENCES salles(id) ON DELETE CASCADE,
@@ -103,11 +101,11 @@ CREATE TABLE IF NOT EXISTS reservations (
     seance_id INTEGER NOT NULL REFERENCES seances(id) ON DELETE CASCADE,
     date_reservation TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     montant_total DOUBLE PRECISION NOT NULL,
-    statut VARCHAR(50) DEFAULT 'en_attente',  -- en_attente, confirmee, annulee
+    statut VARCHAR(50) DEFAULT 'en_attente',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Table réservation_sièges (liaison réservation / sièges)
+-- Table réservation_sièges
 CREATE TABLE IF NOT EXISTS reservation_sieges (
     id SERIAL PRIMARY KEY,
     reservation_id INTEGER NOT NULL REFERENCES reservations(id) ON DELETE CASCADE,
@@ -120,13 +118,13 @@ CREATE TABLE IF NOT EXISTS paiements (
     id SERIAL PRIMARY KEY,
     reservation_id INTEGER NOT NULL REFERENCES reservations(id) ON DELETE CASCADE,
     montant DOUBLE PRECISION NOT NULL,
-    methode VARCHAR(100) NOT NULL,  -- carte, paypal, etc.
+    methode VARCHAR(100) NOT NULL,
     statut VARCHAR(50) DEFAULT 'en_attente',
     info_paiement_sauvegardee BOOLEAN DEFAULT FALSE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Table billets (e-billets)
+-- Table billets
 CREATE TABLE IF NOT EXISTS billets (
     id SERIAL PRIMARY KEY,
     reservation_id INTEGER NOT NULL REFERENCES reservations(id) ON DELETE CASCADE,
@@ -137,7 +135,7 @@ CREATE TABLE IF NOT EXISTS billets (
     UNIQUE(reservation_id)
 );
 
--- Table favoris (cinémas favoris par utilisateur)
+-- Table favoris
 CREATE TABLE IF NOT EXISTS favoris (
     id SERIAL PRIMARY KEY,
     utilisateur_id INTEGER NOT NULL REFERENCES utilisateurs(id) ON DELETE CASCADE,
@@ -145,7 +143,7 @@ CREATE TABLE IF NOT EXISTS favoris (
     UNIQUE(utilisateur_id, cinema_id)
 );
 
--- Table options supplémentaires (snacks, etc.)
+-- Table options supplémentaires
 CREATE TABLE IF NOT EXISTS option_supplementaires (
     id SERIAL PRIMARY KEY,
     nom VARCHAR(255) NOT NULL,
@@ -153,7 +151,7 @@ CREATE TABLE IF NOT EXISTS option_supplementaires (
     categorie VARCHAR(100)
 );
 
--- Table réservation_options (liaison réservation / options)
+-- Table réservation_options
 CREATE TABLE IF NOT EXISTS reservation_options (
     id SERIAL PRIMARY KEY,
     reservation_id INTEGER NOT NULL REFERENCES reservations(id) ON DELETE CASCADE,
@@ -165,7 +163,7 @@ CREATE TABLE IF NOT EXISTS reservation_options (
 CREATE TABLE IF NOT EXISTS codes_promo (
     id SERIAL PRIMARY KEY,
     code VARCHAR(100) NOT NULL UNIQUE,
-    type VARCHAR(50),  -- pourcentage, montant_fixe
+    type VARCHAR(50),
     valeur DOUBLE PRECISION NOT NULL,
     date_debut DATE,
     date_fin DATE,
@@ -193,7 +191,7 @@ CREATE TABLE IF NOT EXISTS demandes_support (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Index utiles pour les recherches
+-- Index
 CREATE INDEX IF NOT EXISTS idx_films_date ON films(date_debut, date_fin);
 CREATE INDEX IF NOT EXISTS idx_seances_film ON seances(film_id);
 CREATE INDEX IF NOT EXISTS idx_seances_salle ON seances(salle_id);

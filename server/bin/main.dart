@@ -1,5 +1,7 @@
-import 'package:reservation_billet_cinema_server/server.dart';
+import 'package:cinema_reservation_server/server.dart';
 
+/// This is the starting point for your Serverpod server. Typically, there is
+/// no need to modify this file.
 void main(List<String> args) {
   run(args);
 }

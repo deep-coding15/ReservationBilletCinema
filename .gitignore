@@ -44,5 +44,4 @@ app.*.map.json
 /android/app/profile
 /android/app/release
 
-# Server config (ne pas commiter les vrais identifiants BDD)
-server/config/development.yaml
+# Les mots de passe serveur sont dans server/config/passwords.yaml (déjà dans server/.gitignore)

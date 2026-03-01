@@ -1,12 +1,18 @@
-name: reservation_billet_cinema_server
+name: cinema_reservation_server
 description: Backend Serverpod pour l'application de réservation de billets de cinéma.
-version: 1.0.0
 
 environment:
-  sdk: ^3.11.0
+  sdk: '^3.8.0'
 
 dependencies:
-  serverpod: ^2.2.0
+  serverpod: 3.3.1
+  serverpod_auth_idp_server: 3.3.1
 
 dev_dependencies:
-  serverpod_cli: ^2.2.0
+  lints: '>=3.0.0 <7.0.0'
+  serverpod_test: 3.3.1
+  test: ^1.25.5
+
+serverpod:
+  scripts:
+    start: dart bin/main.dart --apply-migrations

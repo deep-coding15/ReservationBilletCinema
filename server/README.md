@@ -1,42 +1,15 @@
-# Backend Serverpod - Reservation Billet Cinema
+# cinema_reservation_server
 
-Backend en Dart (Serverpod) pour l'application de réservation de billets de cinéma.
+This is the starting point for your Serverpod server.
 
-## Prérequis
+To run your server, you first need to start Postgres and Redis. It's easiest to do with Docker.
 
-- Dart 3.x
-- PostgreSQL installé et démarré
-- Serverpod CLI : `dart pub global activate serverpod_cli`
+    docker compose up --build --detach
 
-## Configuration
+Then you can start the Serverpod server.
 
-1. Créer la base PostgreSQL : `createdb cinema_reservation_db`
-2. Modifier `config/development.yaml` avec vos identifiants PostgreSQL.
+    dart bin/main.dart
 
-## Lancer le serveur
+When you are finished, you can shut down Serverpod with `Ctrl-C`, then stop Postgres and Redis.
 
-```bash
-cd server
-dart run bin/main.dart
-```
-
-Ou avec la CLI Serverpod (si le projet a été créé avec `serverpod create`) :
-
-```bash
-serverpod run
-```
-
-## Structure
-
-- `lib/src/models/` — Modèles (Utilisateur, Cinema, Film, Salle, Seance, Reservation, Billet)
-- `lib/src/endpoints/` — Endpoints API (à compléter : auth, films, seances, reservations, etc.)
-- `config/` — Configuration développement / production
-
-## Migrations
-
-Les migrations Serverpod mettent à jour le schéma PostgreSQL à partir des modèles.
-Après avoir modifié les modèles, exécuter (depuis le projet server) :
-
-```bash
-serverpod migrate
-```
+    docker compose stop

@@ -39,6 +39,8 @@ dependencies:
   dio: ^5.4.0
   freezed_annotation: ^2.4.1
   json_annotation: ^4.9.0
+  cinema_reservation_client:
+    path: client/
 
 dev_dependencies:
   flutter_test:
