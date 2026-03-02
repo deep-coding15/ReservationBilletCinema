@@ -17,7 +17,9 @@ import 'package:serverpod_auth_idp_server/serverpod_auth_idp_server.dart'
 import 'package:serverpod_auth_core_server/serverpod_auth_core_server.dart'
     as _i4;
 import 'greetings/greeting.dart' as _i5;
+import 'utilisateur.dart' as _i6;
 export 'greetings/greeting.dart';
+export 'utilisateur.dart';
 
 class Protocol extends _i1.SerializationManagerServer {
   Protocol._();
@@ -27,6 +29,88 @@ class Protocol extends _i1.SerializationManagerServer {
   static final Protocol _instance = Protocol._();
 
   static final List<_i2.TableDefinition> targetTableDefinitions = [
+    _i2.TableDefinition(
+      name: 'utilisateurs',
+      dartName: 'Utilisateur',
+      schema: 'public',
+      module: 'cinema_reservation',
+      columns: [
+        _i2.ColumnDefinition(
+          name: 'id',
+          columnType: _i2.ColumnType.bigint,
+          isNullable: false,
+          dartType: 'int?',
+          columnDefault: 'nextval(\'utilisateurs_id_seq\'::regclass)',
+        ),
+        _i2.ColumnDefinition(
+          name: 'nom',
+          columnType: _i2.ColumnType.text,
+          isNullable: false,
+          dartType: 'String',
+        ),
+        _i2.ColumnDefinition(
+          name: 'email',
+          columnType: _i2.ColumnType.text,
+          isNullable: false,
+          dartType: 'String',
+        ),
+        _i2.ColumnDefinition(
+          name: 'telephone',
+          columnType: _i2.ColumnType.text,
+          isNullable: true,
+          dartType: 'String?',
+        ),
+        _i2.ColumnDefinition(
+          name: 'dateNaissance',
+          columnType: _i2.ColumnType.timestampWithoutTimeZone,
+          isNullable: true,
+          dartType: 'DateTime?',
+        ),
+        _i2.ColumnDefinition(
+          name: 'preferences',
+          columnType: _i2.ColumnType.json,
+          isNullable: true,
+          dartType: 'List<String>?',
+        ),
+        _i2.ColumnDefinition(
+          name: 'statut',
+          columnType: _i2.ColumnType.text,
+          isNullable: false,
+          dartType: 'String',
+          columnDefault: '\'actif\'::text',
+        ),
+      ],
+      foreignKeys: [],
+      indexes: [
+        _i2.IndexDefinition(
+          indexName: 'utilisateurs_pkey',
+          tableSpace: null,
+          elements: [
+            _i2.IndexElementDefinition(
+              type: _i2.IndexElementDefinitionType.column,
+              definition: 'id',
+            ),
+          ],
+          type: 'btree',
+          isUnique: true,
+          isPrimary: true,
+        ),
+        _i2.IndexDefinition(
+          indexName: 'utilisateur_email_idx',
+          tableSpace: null,
+          elements: [
+            _i2.IndexElementDefinition(
+              type: _i2.IndexElementDefinitionType.column,
+              definition: 'email',
+            ),
+          ],
+          type: 'btree',
+          isUnique: true,
+          isPrimary: false,
+        ),
+      ],
+      managed: true,
+    ),
     ..._i3.Protocol.targetTableDefinitions,
     ..._i4.Protocol.targetTableDefinitions,
     ..._i2.Protocol.targetTableDefinitions,
@@ -62,8 +146,23 @@ class Protocol extends _i1.SerializationManagerServer {
     if (t == _i5.Greeting) {
       return _i5.Greeting.fromJson(data) as T;
     }
+    if (t == _i6.Utilisateur) {
+      return _i6.Utilisateur.fromJson(data) as T;
+    }
     if (t == _i1.getType<_i5.Greeting?>()) {
       return (data != null ? _i5.Greeting.fromJson(data) : null) as T;
+    }
+    if (t == _i1.getType<_i6.Utilisateur?>()) {
+      return (data != null ? _i6.Utilisateur.fromJson(data) : null) as T;
+    }
+    if (t == List<String>) {
+      return (data as List).map((e) => deserialize<String>(e)).toList() as T;
+    }
+    if (t == _i1.getType<List<String>?>()) {
+      return (data != null
+              ? (data as List).map((e) => deserialize<String>(e)).toList()
+              : null)
+          as T;
     }
     try {
       return _i3.Protocol().deserialize<T>(data, t);
@@ -80,6 +179,7 @@ class Protocol extends _i1.SerializationManagerServer {
   static String? getClassNameForType(Type type) {
     return switch (type) {
       _i5.Greeting => 'Greeting',
+      _i6.Utilisateur => 'Utilisateur',
       _ => null,
     };
   }
@@ -99,6 +199,8 @@ class Protocol extends _i1.SerializationManagerServer {
     switch (data) {
       case _i5.Greeting():
         return 'Greeting';
+      case _i6.Utilisateur():
+        return 'Utilisateur';
     }
     className = _i2.Protocol().getClassNameForObject(data);
     if (className != null) {
@@ -123,6 +225,9 @@ class Protocol extends _i1.SerializationManagerServer {
     }
     if (dataClassName == 'Greeting') {
       return deserialize<_i5.Greeting>(data['data']);
+    }
+    if (dataClassName == 'Utilisateur') {
+      return deserialize<_i6.Utilisateur>(data['data']);
     }
     if (dataClassName.startsWith('serverpod.')) {
       data['className'] = dataClassName.substring(10);
@@ -158,6 +263,10 @@ class Protocol extends _i1.SerializationManagerServer {
       if (table != null) {
         return table;
       }
+    }
+    switch (t) {
+      case _i6.Utilisateur:
+        return _i6.Utilisateur.t;
     }
     return null;
   }

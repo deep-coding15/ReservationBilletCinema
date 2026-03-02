@@ -241,6 +241,30 @@ class EndpointJwtRefresh extends _i4.EndpointRefreshJwtTokens {
   );
 }
 
+/// {@category Endpoint}
+class EndpointAuth extends _i2.EndpointRef {
+  EndpointAuth(_i2.EndpointCaller caller) : super(caller);
+
+  @override
+  String get name => 'auth';
+
+  _i3.Future<void> saveProfile({
+    required String nom,
+    required String email,
+    String? telephone,
+    DateTime? dateNaissance,
+  }) => caller.callServerEndpoint<void>(
+    'auth',
+    'saveProfile',
+    {
+      'nom': nom,
+      'email': email,
+      'telephone': telephone,
+      'dateNaissance': dateNaissance,
+    },
+  );
+}
+
 /// This is an example endpoint that returns a greeting message through
 /// its [hello] method.
 /// {@category Endpoint}
@@ -301,6 +325,7 @@ class Client extends _i2.ServerpodClientShared {
        ) {
     emailIdp = EndpointEmailIdp(this);
     jwtRefresh = EndpointJwtRefresh(this);
+    auth = EndpointAuth(this);
     greeting = EndpointGreeting(this);
     modules = Modules(this);
   }
@@ -308,6 +333,8 @@ class Client extends _i2.ServerpodClientShared {
   late final EndpointEmailIdp emailIdp;
 
   late final EndpointJwtRefresh jwtRefresh;
+
+  late final EndpointAuth auth;
 
   late final EndpointGreeting greeting;
 
@@ -317,6 +344,7 @@ class Client extends _i2.ServerpodClientShared {
   Map<String, _i2.EndpointRef> get endpointRefLookup => {
     'emailIdp': emailIdp,
     'jwtRefresh': jwtRefresh,
+    'auth': auth,
     'greeting': greeting,
   };
 

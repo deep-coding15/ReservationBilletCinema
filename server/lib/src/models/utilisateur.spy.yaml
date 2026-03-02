@@ -1,0 +1,13 @@
+class: Utilisateur
+table: utilisateurs
+fields:
+  nom: String
+  email: String
+  telephone: String?
+  dateNaissance: DateTime?
+  preferences: List<String>?
+  statut: String, default='actif'
+indexes:
+  utilisateur_email_idx:
+    fields: email
+    unique: true
