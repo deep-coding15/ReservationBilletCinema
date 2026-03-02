@@ -1,20 +1,32 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:reservation_billet_cinema/features/auth/presentation/providers/auth_provider.dart';
 
-class ForgotPasswordPage extends StatefulWidget {
+class ForgotPasswordPage extends ConsumerStatefulWidget {
   const ForgotPasswordPage({super.key});
 
   @override
-  State<ForgotPasswordPage> createState() => _ForgotPasswordPageState();
+  ConsumerState<ForgotPasswordPage> createState() =>
+      _ForgotPasswordPageState();
 }
 
-class _ForgotPasswordPageState extends State<ForgotPasswordPage>
+class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage>
     with TickerProviderStateMixin {
-  final _formKey = GlobalKey<FormState>();
-  final _emailController = TextEditingController();
+  final _emailFormKey = GlobalKey<FormState>();
+  final _passwordFormKey = GlobalKey<FormState>();
 
-  bool _isLoading = false;
-  bool _emailSent = false;
+  final _emailController = TextEditingController();
+  final _codeController = TextEditingController();
+  final _newPasswordController = TextEditingController();
+  final _confirmPasswordController = TextEditingController();
+
+  bool _obscurePassword = true;
+  bool _obscureConfirm = true;
+
+  // 0 = email, 1 = code, 2 = nouveau mot de passe, 3 = succès
+  int _step = 0;
 
   late AnimationController _fadeController;
   late AnimationController _slideController;
@@ -25,24 +37,16 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage>
   void initState() {
     super.initState();
     _fadeController = AnimationController(
-      duration: const Duration(milliseconds: 800),
-      vsync: this,
-    );
+        duration: const Duration(milliseconds: 800), vsync: this);
     _slideController = AnimationController(
-      duration: const Duration(milliseconds: 700),
-      vsync: this,
-    );
-    _fadeAnimation = CurvedAnimation(
-      parent: _fadeController,
-      curve: Curves.easeOut,
-    );
+        duration: const Duration(milliseconds: 700), vsync: this);
+    _fadeAnimation =
+        CurvedAnimation(parent: _fadeController, curve: Curves.easeOut);
     _slideAnimation = Tween<Offset>(
       begin: const Offset(0, 0.08),
       end: Offset.zero,
     ).animate(CurvedAnimation(
-      parent: _slideController,
-      curve: Curves.easeOutCubic,
-    ));
+        parent: _slideController, curve: Curves.easeOutCubic));
     _fadeController.forward();
     _slideController.forward();
   }
@@ -52,74 +56,118 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage>
     _fadeController.dispose();
     _slideController.dispose();
     _emailController.dispose();
+    _codeController.dispose();
+    _newPasswordController.dispose();
+    _confirmPasswordController.dispose();
     super.dispose();
   }
 
-  Future<void> _submit() async {
-    if (!_formKey.currentState!.validate()) return;
+  // ── ÉTAPE 1 : Envoyer le code ────────────────────────────────────────────
+  Future<void> _submitEmail() async {
+    if (!_emailFormKey.currentState!.validate()) return;
 
-    setState(() => _isLoading = true);
+    final success = await ref
+        .read(authProvider.notifier)
+        .startPasswordReset(_emailController.text.trim());
 
-    // TODO: appeler client.emailIdp.startPasswordReset(email: _emailController.text)
-    await Future.delayed(const Duration(seconds: 2));
+    if (!mounted) return;
+    if (success) {
+      setState(() => _step = 1);
+      _showSnack(
+          'Code envoyé ! Vérifiez les logs du serveur en dev.', isError: false);
+    } else {
+      _showSnack(ref.read(authProvider).error ?? 'Une erreur est survenue');
+    }
+  }
 
-    setState(() {
-      _isLoading = false;
-      _emailSent = true;
-    });
+  // ── ÉTAPE 2 : Vérifier le code ───────────────────────────────────────────
+  Future<void> _submitCode() async {
+    if (_codeController.text.trim().isEmpty) {
+      _showSnack('Veuillez entrer le code reçu');
+      return;
+    }
+
+    final success = await ref
+        .read(authProvider.notifier)
+        .verifyPasswordResetCode(_codeController.text.trim());
+
+    if (!mounted) return;
+    if (success) {
+      setState(() => _step = 2);
+    } else {
+      _showSnack(ref.read(authProvider).error ?? 'Code invalide');
+    }
+  }
+
+  // ── ÉTAPE 3 : Nouveau mot de passe ───────────────────────────────────────
+  Future<void> _submitNewPassword() async {
+    if (!_passwordFormKey.currentState!.validate()) return;
+
+    final success = await ref
+        .read(authProvider.notifier)
+        .finishPasswordReset(_newPasswordController.text);
+
+    if (!mounted) return;
+    if (success) {
+      setState(() => _step = 3);
+    } else {
+      _showSnack(ref.read(authProvider).error ?? 'Une erreur est survenue');
+    }
+  }
+
+  void _showSnack(String msg, {bool isError = true}) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(msg),
+        backgroundColor:
+        isError ? Colors.red.shade700 : Colors.green.shade700,
+        behavior: SnackBarBehavior.floating,
+        shape:
+        RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
+    final authState = ref.watch(authProvider);
+
     return Scaffold(
       backgroundColor: const Color(0xFF0D0D1A),
       body: Stack(
         children: [
-          // Background gradient
           Container(
             decoration: const BoxDecoration(
               gradient: RadialGradient(
                 center: Alignment(0.7, -0.6),
                 radius: 1.2,
-                colors: [
-                  Color(0xFF2A0A0A),
-                  Color(0xFF0D0D1A),
-                ],
-              ),
-            ),
-          ),
-          // Decorative circles
-          Positioned(
-            top: -80,
-            right: -80,
-            child: Container(
-              width: 250,
-              height: 250,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                border: Border.all(
-                  color: const Color(0xFFE50914).withOpacity(0.1),
-                  width: 1,
-                ),
+                colors: [Color(0xFF2A0A0A), Color(0xFF0D0D1A)],
               ),
             ),
           ),
           Positioned(
-            bottom: -60,
-            left: -60,
+            top: -80, right: -80,
             child: Container(
-              width: 200,
-              height: 200,
+              width: 250, height: 250,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 border: Border.all(
-                  color: const Color(0xFFE50914).withOpacity(0.07),
-                  width: 1,
-                ),
+                    color: const Color(0xFFE50914).withOpacity(0.1), width: 1),
               ),
             ),
           ),
-          // Main content
+          Positioned(
+            bottom: -60, left: -60,
+            child: Container(
+              width: 200, height: 200,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(
+                    color: const Color(0xFFE50914).withOpacity(0.07),
+                    width: 1),
+              ),
+            ),
+          ),
           SafeArea(
             child: FadeTransition(
               opacity: _fadeAnimation,
@@ -133,7 +181,13 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage>
                       const SizedBox(height: 16),
                       // Back button
                       IconButton(
-                        onPressed: () => context.go('/auth/login'),
+                        onPressed: () {
+                          if (_step > 0 && _step < 3) {
+                            setState(() => _step--);
+                          } else {
+                            context.go('/auth/login');
+                          }
+                        },
                         icon: const Icon(Icons.arrow_back_ios_new,
                             color: Colors.white70, size: 20),
                         style: IconButton.styleFrom(
@@ -145,18 +199,15 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage>
                       const SizedBox(height: 32),
                       // Icon
                       Container(
-                        width: 56,
-                        height: 56,
+                        width: 56, height: 56,
                         decoration: BoxDecoration(
                           gradient: const LinearGradient(
-                            colors: [Color(0xFFE50914), Color(0xFFB20710)],
-                          ),
+                              colors: [Color(0xFFE50914), Color(0xFFB20710)]),
                           borderRadius: BorderRadius.circular(16),
                           boxShadow: [
                             BoxShadow(
                               color: const Color(0xFFE50914).withOpacity(0.4),
-                              blurRadius: 20,
-                              offset: const Offset(0, 6),
+                              blurRadius: 20, offset: const Offset(0, 6),
                             ),
                           ],
                         ),
@@ -164,36 +215,76 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage>
                             color: Colors.white, size: 28),
                       ),
                       const SizedBox(height: 20),
-                      const Text(
-                        'Mot de passe\noublié ?',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 30,
+                      // Titre selon l'étape
+                      Text(
+                        _step == 0
+                            ? 'Mot de passe\noublié ?'
+                            : _step == 1
+                            ? 'Vérifier\nle code'
+                            : _step == 2
+                            ? 'Nouveau\nmot de passe'
+                            : 'Réinitialisé !',
+                        style: const TextStyle(
+                          color: Colors.white, fontSize: 30,
                           fontWeight: FontWeight.w800,
-                          letterSpacing: -0.5,
-                          height: 1.2,
+                          letterSpacing: -0.5, height: 1.2,
                         ),
                       ),
                       const SizedBox(height: 10),
                       Text(
-                        _emailSent
-                            ? 'Un code de vérification a été envoyé à votre email.'
-                            : 'Entrez votre email pour recevoir un code de réinitialisation.',
+                        _step == 0
+                            ? 'Entrez votre email pour recevoir un code.'
+                            : _step == 1
+                            ? 'Entrez le code affiché dans les logs du serveur.'
+                            : _step == 2
+                            ? 'Choisissez un nouveau mot de passe sécurisé.'
+                            : 'Votre mot de passe a été réinitialisé.',
                         style: TextStyle(
-                          color: Colors.white.withOpacity(0.5),
-                          fontSize: 14,
-                          height: 1.5,
-                        ),
+                            color: Colors.white.withOpacity(0.5),
+                            fontSize: 14, height: 1.5),
                       ),
-                      const SizedBox(height: 40),
+                      const SizedBox(height: 32),
 
-                      // Success state
-                      if (_emailSent) ...[
-                        _buildSuccessCard(),
-                      ] else ...[
-                        // Form
+                      // Indicateur d'étapes
+                      if (_step < 3)
+                        Row(
+                          children: List.generate(3, (i) {
+                            return Expanded(
+                              child: Container(
+                                margin: EdgeInsets.only(right: i < 2 ? 8 : 0),
+                                height: 3,
+                                decoration: BoxDecoration(
+                                  color: i <= _step
+                                      ? const Color(0xFFE50914)
+                                      : Colors.white.withOpacity(0.15),
+                                  borderRadius: BorderRadius.circular(2),
+                                ),
+                              ),
+                            );
+                          }),
+                        ),
+                      const SizedBox(height: 32),
+
+                      // Erreur
+                      if (authState.error != null && _step < 3)
+                        Container(
+                          margin: const EdgeInsets.only(bottom: 16),
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color: Colors.red.withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(
+                                color: Colors.red.withOpacity(0.3)),
+                          ),
+                          child: Text(authState.error!,
+                              style: const TextStyle(
+                                  color: Colors.redAccent, fontSize: 13)),
+                        ),
+
+                      // ── STEP 0 : Email ──────────────────────────────────
+                      if (_step == 0)
                         Form(
-                          key: _formKey,
+                          key: _emailFormKey,
                           child: Column(
                             children: [
                               TextFormField(
@@ -214,72 +305,238 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage>
                                     'Adresse email', Icons.email_outlined),
                               ),
                               const SizedBox(height: 32),
+                              _buildButton(
+                                label: 'Envoyer le code',
+                                isLoading: authState.isLoading,
+                                onPressed: _submitEmail,
+                              ),
+                            ],
+                          ),
+                        ),
+
+                      // ── STEP 1 : Code ───────────────────────────────────
+                      if (_step == 1)
+                        Column(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.all(14),
+                              decoration: BoxDecoration(
+                                color: Colors.blue.withOpacity(0.1),
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(
+                                    color: Colors.blue.withOpacity(0.3)),
+                              ),
+                              child: Row(
+                                children: [
+                                  const Icon(Icons.info_outline,
+                                      color: Colors.blueAccent, size: 18),
+                                  const SizedBox(width: 10),
+                                  Expanded(
+                                    child: Text(
+                                      'Le code est visible dans les logs du terminal serveur.',
+                                      style: TextStyle(
+                                          color: Colors.white.withOpacity(0.7),
+                                          fontSize: 13),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const SizedBox(height: 24),
+                            TextFormField(
+                              controller: _codeController,
+                              keyboardType: TextInputType.number,
+                              textAlign: TextAlign.center,
+                              style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 24,
+                                  letterSpacing: 8,
+                                  fontWeight: FontWeight.bold),
+                              inputFormatters: [
+                                FilteringTextInputFormatter.digitsOnly,
+                                LengthLimitingTextInputFormatter(8),
+                              ],
+                              decoration:
+                              _inputDecoration('Code reçu', Icons.lock_outline)
+                                  .copyWith(
+                                hintText: '00000000',
+                                hintStyle: TextStyle(
+                                    color: Colors.white.withOpacity(0.2),
+                                    fontSize: 24,
+                                    letterSpacing: 8),
+                              ),
+                            ),
+                            const SizedBox(height: 32),
+                            _buildButton(
+                              label: 'Vérifier le code',
+                              isLoading: authState.isLoading,
+                              onPressed: _submitCode,
+                            ),
+                            const SizedBox(height: 16),
+                            TextButton(
+                              onPressed: authState.isLoading
+                                  ? null
+                                  : () {
+                                _codeController.clear();
+                                ref
+                                    .read(authProvider.notifier)
+                                    .startPasswordReset(
+                                    _emailController.text.trim());
+                                _showSnack('Nouveau code envoyé !',
+                                    isError: false);
+                              },
+                              child: Text('Renvoyer le code',
+                                  style: TextStyle(
+                                      color: Colors.white.withOpacity(0.5),
+                                      fontSize: 14)),
+                            ),
+                          ],
+                        ),
+
+                      // ── STEP 2 : Nouveau mot de passe ───────────────────
+                      if (_step == 2)
+                        Form(
+                          key: _passwordFormKey,
+                          child: Column(
+                            children: [
+                              TextFormField(
+                                controller: _newPasswordController,
+                                obscureText: _obscurePassword,
+                                style: const TextStyle(
+                                    color: Colors.white, fontSize: 15),
+                                validator: (v) {
+                                  if (v == null || v.isEmpty)
+                                    return 'Mot de passe requis';
+                                  if (v.length < 8)
+                                    return 'Minimum 8 caractères';
+                                  return null;
+                                },
+                                decoration: _inputDecoration(
+                                    'Nouveau mot de passe',
+                                    Icons.lock_outline_rounded)
+                                    .copyWith(
+                                  suffixIcon: IconButton(
+                                    icon: Icon(
+                                      _obscurePassword
+                                          ? Icons.visibility_off_outlined
+                                          : Icons.visibility_outlined,
+                                      color: Colors.white38, size: 20,
+                                    ),
+                                    onPressed: () => setState(() =>
+                                    _obscurePassword = !_obscurePassword),
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(height: 16),
+                              TextFormField(
+                                controller: _confirmPasswordController,
+                                obscureText: _obscureConfirm,
+                                style: const TextStyle(
+                                    color: Colors.white, fontSize: 15),
+                                validator: (v) {
+                                  if (v != _newPasswordController.text)
+                                    return 'Les mots de passe ne correspondent pas';
+                                  return null;
+                                },
+                                decoration: _inputDecoration(
+                                    'Confirmer le mot de passe',
+                                    Icons.lock_outline_rounded)
+                                    .copyWith(
+                                  suffixIcon: IconButton(
+                                    icon: Icon(
+                                      _obscureConfirm
+                                          ? Icons.visibility_off_outlined
+                                          : Icons.visibility_outlined,
+                                      color: Colors.white38, size: 20,
+                                    ),
+                                    onPressed: () => setState(() =>
+                                    _obscureConfirm = !_obscureConfirm),
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(height: 32),
+                              _buildButton(
+                                label: 'Réinitialiser le mot de passe',
+                                isLoading: authState.isLoading,
+                                onPressed: _submitNewPassword,
+                              ),
+                            ],
+                          ),
+                        ),
+
+                      // ── STEP 3 : Succès ─────────────────────────────────
+                      if (_step == 3)
+                        Container(
+                          padding: const EdgeInsets.all(24),
+                          decoration: BoxDecoration(
+                            color: Colors.green.withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(16),
+                            border: Border.all(
+                                color: Colors.green.withOpacity(0.3), width: 1),
+                          ),
+                          child: Column(
+                            children: [
+                              const Icon(Icons.check_circle_outline,
+                                  color: Colors.green, size: 56),
+                              const SizedBox(height: 16),
+                              const Text('Mot de passe réinitialisé !',
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w700)),
+                              const SizedBox(height: 8),
+                              Text(
+                                'Vous pouvez maintenant vous connecter avec votre nouveau mot de passe.',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                    color: Colors.white.withOpacity(0.5),
+                                    fontSize: 13, height: 1.5),
+                              ),
+                              const SizedBox(height: 24),
                               SizedBox(
                                 width: double.infinity,
-                                height: 56,
+                                height: 48,
                                 child: ElevatedButton(
-                                  onPressed: _isLoading ? null : _submit,
+                                  onPressed: () => context.go('/auth/login'),
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: const Color(0xFFE50914),
-                                    disabledBackgroundColor:
-                                    const Color(0xFFE50914)
-                                        .withOpacity(0.5),
                                     foregroundColor: Colors.white,
                                     elevation: 0,
                                     shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(16),
-                                    ),
+                                        borderRadius: BorderRadius.circular(12)),
                                   ),
-                                  child: _isLoading
-                                      ? const SizedBox(
-                                    width: 22,
-                                    height: 22,
-                                    child: CircularProgressIndicator(
-                                      color: Colors.white,
-                                      strokeWidth: 2.5,
-                                    ),
-                                  )
-                                      : const Text(
-                                    'Envoyer le code',
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w700,
-                                      letterSpacing: 0.3,
-                                    ),
-                                  ),
+                                  child: const Text('Se connecter',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.w600)),
                                 ),
                               ),
                             ],
                           ),
                         ),
-                      ],
 
                       const Spacer(),
-                      // Back to login
-                      Center(
-                        child: GestureDetector(
-                          onTap: () => context.go('/auth/login'),
-                          child: Padding(
-                            padding: const EdgeInsets.only(bottom: 32),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Icon(Icons.arrow_back,
-                                    color: Colors.white.withOpacity(0.4),
-                                    size: 16),
-                                const SizedBox(width: 6),
-                                Text(
-                                  'Retour à la connexion',
-                                  style: TextStyle(
-                                    color: Colors.white.withOpacity(0.4),
-                                    fontSize: 14,
-                                  ),
-                                ),
-                              ],
+                      if (_step != 3)
+                        Center(
+                          child: GestureDetector(
+                            onTap: () => context.go('/auth/login'),
+                            child: Padding(
+                              padding: const EdgeInsets.only(bottom: 32),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(Icons.arrow_back,
+                                      color: Colors.white.withOpacity(0.4),
+                                      size: 16),
+                                  const SizedBox(width: 6),
+                                  Text('Retour à la connexion',
+                                      style: TextStyle(
+                                          color: Colors.white.withOpacity(0.4),
+                                          fontSize: 14)),
+                                ],
+                              ),
                             ),
                           ),
                         ),
-                      ),
                     ],
                   ),
                 ),
@@ -291,61 +548,34 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage>
     );
   }
 
-  Widget _buildSuccessCard() {
-    return Container(
-      padding: const EdgeInsets.all(24),
-      decoration: BoxDecoration(
-        color: Colors.green.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: Colors.green.withOpacity(0.3),
-          width: 1,
+  Widget _buildButton({
+    required String label,
+    required bool isLoading,
+    required VoidCallback onPressed,
+  }) {
+    return SizedBox(
+      width: double.infinity,
+      height: 56,
+      child: ElevatedButton(
+        onPressed: isLoading ? null : onPressed,
+        style: ElevatedButton.styleFrom(
+          backgroundColor: const Color(0xFFE50914),
+          disabledBackgroundColor: const Color(0xFFE50914).withOpacity(0.5),
+          foregroundColor: Colors.white,
+          elevation: 0,
+          shape:
+          RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         ),
-      ),
-      child: Column(
-        children: [
-          const Icon(Icons.mark_email_read_outlined,
-              color: Colors.green, size: 48),
-          const SizedBox(height: 16),
-          const Text(
-            'Email envoyé !',
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 18,
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            'Vérifiez votre boîte mail et suivez les instructions pour réinitialiser votre mot de passe.',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              color: Colors.white.withOpacity(0.5),
-              fontSize: 13,
-              height: 1.5,
-            ),
-          ),
-          const SizedBox(height: 20),
-          SizedBox(
-            width: double.infinity,
-            height: 48,
-            child: ElevatedButton(
-              onPressed: () => context.go('/auth/login'),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFFE50914),
-                foregroundColor: Colors.white,
-                elevation: 0,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
-              child: const Text(
-                'Retour à la connexion',
-                style: TextStyle(fontWeight: FontWeight.w600),
-              ),
-            ),
-          ),
-        ],
+        child: isLoading
+            ? const SizedBox(
+            width: 22, height: 22,
+            child: CircularProgressIndicator(
+                color: Colors.white, strokeWidth: 2.5))
+            : Text(label,
+            style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w700,
+                letterSpacing: 0.3)),
       ),
     );
   }
@@ -365,8 +595,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage>
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(14),
-        borderSide:
-        const BorderSide(color: Color(0xFFE50914), width: 1.5),
+        borderSide: const BorderSide(color: Color(0xFFE50914), width: 1.5),
       ),
       errorBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(14),
@@ -374,8 +603,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage>
       ),
       focusedErrorBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(14),
-        borderSide:
-        const BorderSide(color: Colors.redAccent, width: 1.5),
+        borderSide: const BorderSide(color: Colors.redAccent, width: 1.5),
       ),
       errorStyle: const TextStyle(color: Colors.redAccent, fontSize: 12),
       contentPadding:
