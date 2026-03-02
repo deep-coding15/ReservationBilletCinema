@@ -13,7 +13,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   late AnimationController _entranceController;
   late Animation<double> _entranceAnimation;
   Offset _popcornFabPosition = const Offset(280, 320);
@@ -74,188 +73,90 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         }
       });
     }
-    return Scaffold(
-      key: _scaffoldKey,
-      backgroundColor: const Color(0xFF0d0d0d),
-      drawer: _buildDrawer(context),
-      body: Stack(
-        children: [
-          NestedScrollView(
-            headerSliverBuilder: (context, innerBoxIsScrolled) => [
-              _buildAppBar(context),
+    return Column(
+      children: [
+        Expanded(
+          child: Stack(
+            children: [
+              NestedScrollView(
+                headerSliverBuilder: (context, innerBoxIsScrolled) => [
+                  _buildAppBar(context),
+                ],
+                body: AnimatedBuilder(
+                  animation: _entranceAnimation,
+                  builder: (context, child) {
+                    return Opacity(
+                      opacity: _entranceAnimation.value,
+                      child: Transform.translate(
+                        offset: Offset(0, 30 * (1 - _entranceAnimation.value)),
+                        child: child,
+                      ),
+                    );
+                  },
+                  child: CustomScrollView(
+                    physics: const BouncingScrollPhysics(),
+                    slivers: [
+                      _buildHero(context),
+                      SliverToBoxAdapter(child: _buildQuickAccess(context)),
+                      _buildSectionTitle('À l\'affiche'),
+                      _buildMovieCarousel(_kFeaturedMovies),
+                      _buildSectionTitle('Bientôt'),
+                      _buildMovieCarousel(_kComingSoon),
+                      _buildSectionTitle('Événements à venir'),
+                      _buildEventCarousel(_kEvents),
+                      _buildSectionTitle('Populaires'),
+                      _buildMovieCarousel(_kPopular),
+                      const SliverToBoxAdapter(child: SizedBox(height: 32)),
+                    ],
+                  ),
+                ),
+              ),
+              _DraggablePopcornFab(
+                position: _popcornFabPosition,
+                onPositionChanged: (offset) {
+                  final w = screenSize.width;
+                  final h = screenSize.height;
+                  const padding = 56.0;
+                  setState(() {
+                    _popcornFabPosition = Offset(
+                      offset.dx.clamp(padding, w - padding - 56),
+                      offset.dy.clamp(padding, h - padding - 120),
+                    );
+                  });
+                },
+                onTap: () => Scaffold.of(context).openDrawer(),
+              ),
             ],
-            body: AnimatedBuilder(
-              animation: _entranceAnimation,
-              builder: (context, child) {
-                return Opacity(
-                  opacity: _entranceAnimation.value,
-                  child: Transform.translate(
-                    offset: Offset(0, 30 * (1 - _entranceAnimation.value)),
-                    child: child,
-                  ),
-                );
-              },
-              child: CustomScrollView(
-                physics: const BouncingScrollPhysics(),
-                slivers: [
-                  _buildHero(context),
-                  SliverToBoxAdapter(child: _buildQuickAccess(context)),
-                  _buildSectionTitle('À l\'affiche'),
-                  _buildMovieCarousel(_kFeaturedMovies),
-                  _buildSectionTitle('Bientôt'),
-                  _buildMovieCarousel(_kComingSoon),
-                  _buildSectionTitle('Événements à venir'),
-                  _buildEventCarousel(_kEvents),
-                  _buildSectionTitle('Populaires'),
-                  _buildMovieCarousel(_kPopular),
-                  const SliverToBoxAdapter(child: SizedBox(height: 32)),
-                ],
+          ),
+        ),
+        Container(
+          decoration: BoxDecoration(
+            color: const Color(0xFF141414),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.4),
+                blurRadius: 12,
+                offset: const Offset(0, -4),
               ),
-            ),
+            ],
           ),
-          _DraggablePopcornFab(
-            position: _popcornFabPosition,
-            onPositionChanged: (offset) {
-              final w = screenSize.width;
-              final h = screenSize.height;
-              const padding = 56.0;
-              setState(() {
-                _popcornFabPosition = Offset(
-                  offset.dx.clamp(padding, w - padding - 56),
-                  offset.dy.clamp(padding, h - padding - 120),
-                );
-              });
-            },
-            onTap: () => _scaffoldKey.currentState?.openDrawer(),
-          ),
-        ],
-      ),
-      bottomNavigationBar: Container(
-        decoration: BoxDecoration(
-          color: const Color(0xFF141414),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.4),
-              blurRadius: 12,
-              offset: const Offset(0, -4),
-            ),
-          ],
-        ),
-        child: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                _NavItem(icon: Icons.home_rounded, label: 'Accueil', selected: _currentNavIndex == 0, onTap: () => _onNavTap(0)),
-                _NavItem(icon: Icons.movie_rounded, label: 'Films', selected: _currentNavIndex == 1, onTap: () => _onNavTap(1)),
-                _NavItem(icon: Icons.event_rounded, label: 'Événements', selected: _currentNavIndex == 2, onTap: () => _onNavTap(2)),
-                _NavItem(icon: Icons.confirmation_number_rounded, label: 'Billets', selected: _currentNavIndex == 3, onTap: () => _onNavTap(3)),
-                _NavItem(icon: Icons.person_rounded, label: 'Profil', selected: _currentNavIndex == 4, onTap: () => _onNavTap(4)),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildDrawer(BuildContext context) {
-    return Drawer(
-      backgroundColor: const Color(0xFF1a1a1a),
-      child: SafeArea(
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
+          child: SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8),
               child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  Icon(Icons.movie_filter_rounded, color: AppColors.accent, size: 32),
-                  const SizedBox(width: 12),
-                  Text(
-                    kAppName,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
-                      letterSpacing: 0.8,
-                    ),
-                  ),
+                  _NavItem(icon: Icons.home_rounded, label: 'Accueil', selected: _currentNavIndex == 0, onTap: () => _onNavTap(0)),
+                  _NavItem(icon: Icons.movie_rounded, label: 'Films', selected: _currentNavIndex == 1, onTap: () => _onNavTap(1)),
+                  _NavItem(icon: Icons.event_rounded, label: 'Événements', selected: _currentNavIndex == 2, onTap: () => _onNavTap(2)),
+                  _NavItem(icon: Icons.confirmation_number_rounded, label: 'Billets', selected: _currentNavIndex == 3, onTap: () => _onNavTap(3)),
+                  _NavItem(icon: Icons.person_rounded, label: 'Profil', selected: _currentNavIndex == 4, onTap: () => _onNavTap(4)),
                 ],
               ),
             ),
-            const Divider(color: Colors.white24, height: 1),
-            _DrawerTile(
-              icon: Icons.home_rounded,
-              label: 'Accueil',
-              onTap: () {
-                Navigator.pop(context);
-                if (ModalRoute.of(context)?.settings.name != '/') context.go('/');
-              },
-            ),
-            _DrawerTile(
-              icon: Icons.movie_rounded,
-              label: 'Films à l\'affiche',
-              onTap: () {
-                Navigator.pop(context);
-                context.go('/films');
-              },
-            ),
-            _DrawerTile(
-              icon: Icons.event_rounded,
-              label: 'Événements',
-              onTap: () {
-                Navigator.pop(context);
-                context.go('/events');
-              },
-            ),
-            _DrawerTile(
-              icon: Icons.search_rounded,
-              label: 'Rechercher',
-              onTap: () {
-                Navigator.pop(context);
-                context.go('/films');
-              },
-            ),
-            _DrawerTile(
-              icon: Icons.confirmation_number_rounded,
-              label: 'Mes billets',
-              onTap: () {
-                Navigator.pop(context);
-                context.go('/billets');
-              },
-            ),
-            _DrawerTile(
-              icon: Icons.person_rounded,
-              label: 'Mon profil',
-              onTap: () {
-                Navigator.pop(context);
-                context.go('/profil');
-              },
-            ),
-            const Divider(color: Colors.white24, height: 1),
-            _DrawerTile(
-              icon: Icons.help_outline_rounded,
-              label: 'FAQ & Aide',
-              onTap: () {
-                Navigator.pop(context);
-                context.go('/faq');
-              },
-            ),
-            const Spacer(),
-            const Divider(color: Colors.white24, height: 1),
-            _DrawerTile(
-              icon: Icons.logout_rounded,
-              label: 'Déconnexion',
-              onTap: () {
-                Navigator.pop(context);
-                context.go('/auth/login');
-              },
-            ),
-            const SizedBox(height: 16),
-          ],
+          ),
         ),
-      ),
+      ],
     );
   }
 
@@ -476,30 +377,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           },
         ),
       ),
-    );
-  }
-}
-
-class _DrawerTile extends StatelessWidget {
-  const _DrawerTile({
-    required this.icon,
-    required this.label,
-    required this.onTap,
-  });
-
-  final IconData icon;
-  final String label;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return ListTile(
-      leading: Icon(icon, color: Colors.white70, size: 24),
-      title: Text(
-        label,
-        style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w500),
-      ),
-      onTap: onTap,
     );
   }
 }

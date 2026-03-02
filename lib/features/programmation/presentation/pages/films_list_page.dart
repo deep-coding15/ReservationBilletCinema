@@ -84,6 +84,10 @@ class _FilmsListPageState extends ConsumerState<FilmsListPage> {
     return Scaffold(
       backgroundColor: const Color(0xFF0d0d0d),
       appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.menu_rounded),
+          onPressed: () => Scaffold.of(context).openDrawer(),
+        ),
         title: const Text('Films à l\'affiche'),
         backgroundColor: AppColors.primary,
         foregroundColor: Colors.white,

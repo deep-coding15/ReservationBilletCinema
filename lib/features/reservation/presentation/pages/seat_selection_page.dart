@@ -86,7 +86,12 @@ class _SeatSelectionPageState extends ConsumerState<SeatSelectionPage> {
   Widget build(BuildContext context) {
     if (widget.seance == null) {
       return Scaffold(
+        backgroundColor: const Color(0xFF0d0d0d),
         appBar: AppBar(
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back_rounded),
+            onPressed: () => context.pop(),
+          ),
           title: const Text('Réservation'),
           backgroundColor: AppColors.primary,
           foregroundColor: Colors.white,
@@ -111,6 +116,10 @@ class _SeatSelectionPageState extends ConsumerState<SeatSelectionPage> {
     return Scaffold(
       backgroundColor: const Color(0xFF0d0d0d),
       appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_rounded),
+          onPressed: () => context.pop(),
+        ),
         title: const Text('Choisir les sièges'),
         backgroundColor: AppColors.primary,
         foregroundColor: Colors.white,

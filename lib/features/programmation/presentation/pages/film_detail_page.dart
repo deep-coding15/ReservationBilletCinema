@@ -54,7 +54,12 @@ class _FilmDetailPageState extends ConsumerState<FilmDetailPage> {
   Widget build(BuildContext context) {
     if (_loading) {
       return Scaffold(
+        backgroundColor: const Color(0xFF0d0d0d),
         appBar: AppBar(
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back_rounded),
+            onPressed: () => context.pop(),
+          ),
           title: const Text('Détail film'),
           backgroundColor: AppColors.primary,
           foregroundColor: Colors.white,
@@ -64,7 +69,12 @@ class _FilmDetailPageState extends ConsumerState<FilmDetailPage> {
     }
     if (_error != null || _film == null) {
       return Scaffold(
+        backgroundColor: const Color(0xFF0d0d0d),
         appBar: AppBar(
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back_rounded),
+            onPressed: () => context.pop(),
+          ),
           title: const Text('Détail film'),
           backgroundColor: AppColors.primary,
           foregroundColor: Colors.white,

@@ -13,12 +13,17 @@ class ReservationConfirmationPage extends StatelessWidget {
   Widget build(BuildContext context) {
     if (result == null) {
       return Scaffold(
+        backgroundColor: const Color(0xFF0d0d0d),
         appBar: AppBar(
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back_rounded),
+            onPressed: () => context.pop(),
+          ),
           title: const Text('Confirmation'),
           backgroundColor: AppColors.primary,
           foregroundColor: Colors.white,
         ),
-        body: const Center(child: Text('Réservation introuvable.')),
+        body: const Center(child: Text('Réservation introuvable.', style: TextStyle(color: Colors.white70))),
       );
     }
 
@@ -26,6 +31,10 @@ class ReservationConfirmationPage extends StatelessWidget {
     return Scaffold(
       backgroundColor: const Color(0xFF0d0d0d),
       appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_rounded),
+          onPressed: () => context.pop(),
+        ),
         title: const Text('Réservation confirmée'),
         backgroundColor: AppColors.primary,
         foregroundColor: Colors.white,
