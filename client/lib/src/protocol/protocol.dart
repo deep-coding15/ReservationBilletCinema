@@ -19,6 +19,10 @@ import 'package:serverpod_auth_core_client/serverpod_auth_core_client.dart'
 export 'greetings/greeting.dart';
 export 'client.dart';
 
+export 'films/film.dart';
+
+
+
 class Protocol extends _i1.SerializationManager {
   Protocol._();
 

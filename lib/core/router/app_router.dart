@@ -8,6 +8,23 @@ import 'package:reservation_billet_cinema/features/profil/presentation/pages/pro
 import 'package:reservation_billet_cinema/features/billets/presentation/pages/billets_page.dart';
 import 'package:reservation_billet_cinema/features/support/presentation/pages/faq_page.dart';
 import 'package:reservation_billet_cinema/features/events/presentation/pages/events_page.dart';
+import 'package:reservation_billet_cinema/features/admin/presentation/pages/admin_films_page.dart';
+import 'package:go_router/go_router.dart';
+import 'package:reservation_billet_cinema/features/splash/presentation/pages/splash_page.dart';
+import 'package:reservation_billet_cinema/features/home/presentation/pages/home_page.dart';
+import 'package:reservation_billet_cinema/features/auth/presentation/pages/login_page.dart';
+import 'package:reservation_billet_cinema/features/programmation/presentation/pages/films_list_page.dart';
+import 'package:reservation_billet_cinema/features/reservation/presentation/pages/seat_selection_page.dart';
+import 'package:reservation_billet_cinema/features/profil/presentation/pages/profil_page.dart';
+import 'package:reservation_billet_cinema/features/billets/presentation/pages/billets_page.dart';
+import 'package:reservation_billet_cinema/features/support/presentation/pages/faq_page.dart';
+import 'package:reservation_billet_cinema/features/events/presentation/pages/events_page.dart';
+import 'package:reservation_billet_cinema/features/admin/presentation/pages/dashboard_page.dart';
+import 'package:reservation_billet_cinema/features/admin/presentation/pages/admin_films_page.dart';
+import 'package:reservation_billet_cinema/features/admin/presentation/pages/admin_films_page.dart';
+import 'package:reservation_billet_cinema/features/admin/presentation/pages/admin_seances_page.dart';
+import 'package:reservation_billet_cinema/features/admin/presentation/pages/admin_salles_page.dart';
+import 'package:reservation_billet_cinema/features/admin/presentation/pages/admin_reservations_page.dart';
 
 /// Routes de l'application (GoRouter).
 final goRouter = GoRouter(
@@ -57,6 +74,31 @@ final goRouter = GoRouter(
       path: '/events',
       name: 'events',
       builder: (context, state) => const EventsPage(),
+    ),
+    GoRoute(
+      path: '/admin/dashboard',
+      name: 'admin-dashboard',
+      builder: (context, state) => const DashboardPage(),
+    ),
+    GoRoute(
+      path: '/admin/films',
+      name: 'admin-films',
+      builder: (context, state) => const AdminFilmsPage(),
+    ),
+    GoRoute(
+      path: '/admin/seances',
+      name: 'admin-seances',
+      builder: (context, state) => const AdminSeancesPage(),
+    ),
+    GoRoute(
+      path: '/admin/salles',
+      name: 'admin-salles',
+      builder: (context, state) => const AdminSallesPage(),
+    ),
+    GoRoute(
+      path: '/admin/reservations',
+      name: 'admin-reservations',
+      builder: (context, state) => const AdminReservationsPage(),
     ),
   ],
 );

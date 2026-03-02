@@ -5,7 +5,8 @@
 #
 # When running your server locally, the server ports are the same as the public
 # facing ports.
-
+allowedOrigins:
+  - http://localhost:3000
 # Configuration for the main API server.
 apiServer:
   port: 8080

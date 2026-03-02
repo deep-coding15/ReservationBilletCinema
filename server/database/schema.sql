@@ -1,6 +1,6 @@
 -- ============================================================
 -- Schéma de la base de données - Reservation Billet Cinema
--- PostgreSQL (local ou serveur à vous)
+-- Mis à jour pour compatibilité Serverpod
 -- ============================================================
 
 -- Table utilisateurs (spectateurs)
@@ -44,22 +44,11 @@ CREATE TABLE IF NOT EXISTS salles (
     UNIQUE(cinema_id, code_salle)
 );
 
--- Table films
+-- Table films (Adaptée pour Serverpod)
 CREATE TABLE IF NOT EXISTS films (
     id SERIAL PRIMARY KEY,
-    titre VARCHAR(255) NOT NULL,
-    synopsis TEXT,
-    genre VARCHAR(100),
-    duree INTEGER NOT NULL,
-    realisateur VARCHAR(255),
-    casting TEXT[],
-    affiche VARCHAR(500),
-    bande_annonce VARCHAR(500),
-    classification VARCHAR(50) DEFAULT 'Tous publics',
-    note_moyenne DOUBLE PRECISION DEFAULT 0,
-    date_debut DATE NOT NULL,
-    date_fin DATE NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+
+
 );
 
 -- Table séances
@@ -192,7 +181,7 @@ CREATE TABLE IF NOT EXISTS demandes_support (
 );
 
 -- Index
-CREATE INDEX IF NOT EXISTS idx_films_date ON films(date_debut, date_fin);
+CREATE INDEX IF NOT EXISTS "idx_films_date" ON films("dateDebut", "dateFin");
 CREATE INDEX IF NOT EXISTS idx_seances_film ON seances(film_id);
 CREATE INDEX IF NOT EXISTS idx_seances_salle ON seances(salle_id);
 CREATE INDEX IF NOT EXISTS idx_seances_date ON seances(date_heure);

@@ -2,7 +2,7 @@ import 'dart:async';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-
+import 'package:flutter/foundation.dart';
 /// Nom de l'application : court et accrocheur (cinéma + événements).
 const String kAppName = 'CinePass';
 
@@ -72,7 +72,12 @@ class _SplashPageState extends State<SplashPage>
       if (!mounted) return;
       _exitController.forward().then((_) {
         if (!mounted) return;
-        context.go('/');
+        if (kIsWeb) {
+          final path = Uri.base.path;
+          context.go(path.isEmpty || path == '/' ? '/' : path);
+        } else {
+          context.go('/');
+        }
       });
     });
   }
