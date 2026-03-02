@@ -3,6 +3,7 @@
 On utilise **PostgreSQL** (local ou sur un serveur à vous). Pas de Supabase ni Neon.
 
 - **Schéma des tables :** `server/database/schema.sql`
+- **Données de démo (optionnel) :** `server/database/seed_films.sql` — films, cinémas, salles, séances pour tester l’app.
 
 ---
 
@@ -93,3 +94,15 @@ psql -U postgres -d cinema_reservation -f server/database/schema.sql
 
 — **PostgreSQL uniquement, pas Supabase/Neon.**  
 — **Même schéma pour tous : chacun lance les migrations après un changement de structure.**
+
+---
+
+## 4. Données de démo (films avec affiches)
+
+Après le schéma, exécuter une fois le seed pour avoir des films, séances et sièges :
+
+```powershell
+psql -U postgres -d cinema_reservation -f server/database/seed_films.sql
+```
+
+Tu peux le relancer pour mettre à jour les affiches des films sans doublon.

@@ -9,5 +9,10 @@ emailIdp:
   - hasAccount:
 jwtRefresh:
   - refreshAccessToken:
+films:
+  - getFilms:
+  - getFilmById:
+  - getSeancesByFilm:
+  - getCinemas:
 greeting:
   - hello:

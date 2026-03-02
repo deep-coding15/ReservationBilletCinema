@@ -1,0 +1,17 @@
+# Modèle Film (table films) - catalogue cinéma
+class: Film
+
+fields:
+  id: int
+  titre: String
+  synopsis: String?
+  genre: String?
+  duree: int
+  realisateur: String?
+  casting: List<String>?
+  affiche: String?
+  bandeAnnonce: String?
+  classification: String?
+  noteMoyenne: double?
+  dateDebut: DateTime
+  dateFin: DateTime

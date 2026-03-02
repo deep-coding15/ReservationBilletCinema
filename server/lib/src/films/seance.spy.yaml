@@ -1,0 +1,15 @@
+# Modèle Seance (table seances) + infos cinema/salle pour affichage
+class: Seance
+
+fields:
+  id: int
+  filmId: int
+  salleId: int
+  dateHeure: DateTime
+  langue: String?
+  typeProjection: String?
+  placesDisponibles: int
+  prix: double
+  typeSeance: String?
+  cinemaNom: String?
+  salleCode: String?

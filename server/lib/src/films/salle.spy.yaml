@@ -1,0 +1,8 @@
+# Modèle Salle (table salles)
+class: Salle
+
+fields:
+  id: int
+  cinemaId: int
+  codeSalle: String
+  capacite: int

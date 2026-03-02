@@ -18,6 +18,11 @@ import 'package:serverpod_auth_core_client/serverpod_auth_core_client.dart'
     as _i4;
 import 'package:cinema_reservation_client/src/protocol/greetings/greeting.dart'
     as _i5;
+import 'package:cinema_reservation_client/src/protocol/films/film.dart' as _i7;
+import 'package:cinema_reservation_client/src/protocol/films/cinema.dart' as _i8;
+import 'package:cinema_reservation_client/src/protocol/films/seance.dart' as _i9;
+import 'package:cinema_reservation_client/src/protocol/reservations/siege.dart' as _i10;
+import 'package:cinema_reservation_client/src/protocol/reservations/reservation_result.dart' as _i11;
 import 'protocol.dart' as _i6;
 
 /// By extending [EmailIdpBaseEndpoint], the email identity provider endpoints
@@ -259,6 +264,79 @@ class EndpointGreeting extends _i2.EndpointRef {
       );
 }
 
+/// Endpoint Films & séances.
+class EndpointFilms extends _i2.EndpointRef {
+  EndpointFilms(_i2.EndpointCaller caller) : super(caller);
+
+  @override
+  String get name => 'films';
+
+  _i3.Future<List<_i7.Film>> getFilms({String? search, String? genre}) =>
+      caller.callServerEndpoint<List<_i7.Film>>(
+        'films',
+        'getFilms',
+        {'search': search, 'genre': genre},
+      );
+
+  _i3.Future<_i7.Film?> getFilmById(int id) =>
+      caller.callServerEndpoint<_i7.Film?>(
+        'films',
+        'getFilmById',
+        {'id': id},
+      );
+
+  _i3.Future<List<_i9.Seance>> getSeancesByFilm(int filmId) =>
+      caller.callServerEndpoint<List<_i9.Seance>>(
+        'films',
+        'getSeancesByFilm',
+        {'filmId': filmId},
+      );
+
+  _i3.Future<List<_i8.Cinema>> getCinemas({String? ville}) =>
+      caller.callServerEndpoint<List<_i8.Cinema>>(
+        'films',
+        'getCinemas',
+        {'ville': ville},
+      );
+}
+
+/// Endpoint réservations.
+class EndpointReservations extends _i2.EndpointRef {
+  EndpointReservations(_i2.EndpointCaller caller) : super(caller);
+
+  @override
+  String get name => 'reservations';
+
+  _i3.Future<List<_i10.Siege>> getSiegesBySalle(int salleId) =>
+      caller.callServerEndpoint<List<_i10.Siege>>(
+        'reservations',
+        'getSiegesBySalle',
+        {'salleId': salleId},
+      );
+
+  _i3.Future<List<int>> getReservedSiegeIdsForSeance(int seanceId) =>
+      caller.callServerEndpoint<List<int>>(
+        'reservations',
+        'getReservedSiegeIdsForSeance',
+        {'seanceId': seanceId},
+      );
+
+  _i3.Future<_i11.ReservationResult> createReservation({
+    required int seanceId,
+    required List<int> siegeIds,
+    int utilisateurId = 1,
+  }) =>
+      caller.callServerEndpoint<_i11.ReservationResult>(
+        'reservations',
+        'createReservation',
+        {
+          'seanceId': seanceId,
+          'siegeIds': siegeIds,
+          'utilisateurId': utilisateurId,
+        },
+      );
+}
+
 class Modules {
   Modules(Client client) {
     serverpod_auth_idp = _i1.Caller(client);
@@ -302,6 +380,8 @@ class Client extends _i2.ServerpodClientShared {
     emailIdp = EndpointEmailIdp(this);
     jwtRefresh = EndpointJwtRefresh(this);
     greeting = EndpointGreeting(this);
+    films = EndpointFilms(this);
+    reservations = EndpointReservations(this);
     modules = Modules(this);
   }
 
@@ -311,6 +391,10 @@ class Client extends _i2.ServerpodClientShared {
 
   late final EndpointGreeting greeting;
 
+  late final EndpointFilms films;
+
+  late final EndpointReservations reservations;
+
   late final Modules modules;
 
   @override
@@ -318,6 +402,8 @@ class Client extends _i2.ServerpodClientShared {
     'emailIdp': emailIdp,
     'jwtRefresh': jwtRefresh,
     'greeting': greeting,
+    'films': films,
+    'reservations': reservations,
   };
 
   @override

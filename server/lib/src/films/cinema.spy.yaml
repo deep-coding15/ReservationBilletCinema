@@ -1,0 +1,10 @@
+# Modèle Cinema (table cinemas)
+class: Cinema
+
+fields:
+  id: int
+  nom: String
+  adresse: String?
+  ville: String?
+  latitude: double?
+  longitude: double?
