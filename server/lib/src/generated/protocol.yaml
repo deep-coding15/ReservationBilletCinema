@@ -9,5 +9,10 @@ emailIdp:
   - hasAccount:
 jwtRefresh:
   - refreshAccessToken:
+adminFilms:
+  - getFilms:
+  - createFilm:
+  - updateFilm:
+  - deleteFilm:
 greeting:
   - hello:

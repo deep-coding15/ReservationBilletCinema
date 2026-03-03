@@ -1,0 +1,20 @@
+class: Film
+table: films
+managedMigration: false
+fields:
+  titre: String
+  synopsis: String?
+  genre: String?
+  duree: int
+  realisateur: String?
+  casting: List<String>?
+  affiche: String?
+  bande_annonce: String?
+  classification: String?
+  note_moyenne: double?
+  date_debut: DateTime
+  date_fin: DateTime
+  createdAt: DateTime?
+indexes:
+  idx_films_date:
+    fields: date_debut, date_fin
