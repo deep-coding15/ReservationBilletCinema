@@ -13,18 +13,19 @@
 import 'package:serverpod/serverpod.dart' as _i1;
 import '../auth/email_idp_endpoint.dart' as _i2;
 import '../auth/jwt_refresh_endpoint.dart' as _i3;
-import '../endpoints/admin_films_endpoint.dart' as _i4;
-import '../endpoints/admin_reservations_endpoint.dart' as _i5;
-import '../endpoints/admin_salles_endpoint.dart' as _i6;
-import '../endpoints/admin_seances_endpoint.dart' as _i7;
-import '../endpoints/admin_users_endpoint.dart' as _i8;
-import '../greetings/greeting_endpoint.dart' as _i9;
+import '../endpoints/admin_dashboard_endpoint.dart' as _i4;
+import '../endpoints/admin_films_endpoint.dart' as _i5;
+import '../endpoints/admin_reservations_endpoint.dart' as _i6;
+import '../endpoints/admin_salles_endpoint.dart' as _i7;
+import '../endpoints/admin_seances_endpoint.dart' as _i8;
+import '../endpoints/admin_users_endpoint.dart' as _i9;
+import '../greetings/greeting_endpoint.dart' as _i10;
 import 'package:cinema_reservation_server/src/generated/films/film.dart'
-    as _i10;
-import 'package:serverpod_auth_idp_server/serverpod_auth_idp_server.dart'
     as _i11;
-import 'package:serverpod_auth_core_server/serverpod_auth_core_server.dart'
+import 'package:serverpod_auth_idp_server/serverpod_auth_idp_server.dart'
     as _i12;
+import 'package:serverpod_auth_core_server/serverpod_auth_core_server.dart'
+    as _i13;
 
 class Endpoints extends _i1.EndpointDispatch {
   @override
@@ -42,37 +43,43 @@ class Endpoints extends _i1.EndpointDispatch {
           'jwtRefresh',
           null,
         ),
-      'adminFilms': _i4.AdminFilmsEndpoint()
+      'adminDashboard': _i4.AdminDashboardEndpoint()
+        ..initialize(
+          server,
+          'adminDashboard',
+          null,
+        ),
+      'adminFilms': _i5.AdminFilmsEndpoint()
         ..initialize(
           server,
           'adminFilms',
           null,
         ),
-      'adminReservations': _i5.AdminReservationsEndpoint()
+      'adminReservations': _i6.AdminReservationsEndpoint()
         ..initialize(
           server,
           'adminReservations',
           null,
         ),
-      'adminSalles': _i6.AdminSallesEndpoint()
+      'adminSalles': _i7.AdminSallesEndpoint()
         ..initialize(
           server,
           'adminSalles',
           null,
         ),
-      'adminSeances': _i7.AdminSeancesEndpoint()
+      'adminSeances': _i8.AdminSeancesEndpoint()
         ..initialize(
           server,
           'adminSeances',
           null,
         ),
-      'adminUsers': _i8.AdminUsersEndpoint()
+      'adminUsers': _i9.AdminUsersEndpoint()
         ..initialize(
           server,
           'adminUsers',
           null,
         ),
-      'greeting': _i9.GreetingEndpoint()
+      'greeting': _i10.GreetingEndpoint()
         ..initialize(
           server,
           'greeting',
@@ -283,6 +290,23 @@ class Endpoints extends _i1.EndpointDispatch {
         ),
       },
     );
+    connectors['adminDashboard'] = _i1.EndpointConnector(
+      name: 'adminDashboard',
+      endpoint: endpoints['adminDashboard']!,
+      methodConnectors: {
+        'getDashboardStats': _i1.MethodConnector(
+          name: 'getDashboardStats',
+          params: {},
+          call:
+              (
+                _i1.Session session,
+                Map<String, dynamic> params,
+              ) async =>
+                  (endpoints['adminDashboard'] as _i4.AdminDashboardEndpoint)
+                      .getDashboardStats(session),
+        ),
+      },
+    );
     connectors['adminFilms'] = _i1.EndpointConnector(
       name: 'adminFilms',
       endpoint: endpoints['adminFilms']!,
@@ -294,7 +318,7 @@ class Endpoints extends _i1.EndpointDispatch {
               (
                 _i1.Session session,
                 Map<String, dynamic> params,
-              ) async => (endpoints['adminFilms'] as _i4.AdminFilmsEndpoint)
+              ) async => (endpoints['adminFilms'] as _i5.AdminFilmsEndpoint)
                   .getFilms(session),
         ),
         'createFilm': _i1.MethodConnector(
@@ -302,7 +326,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'film': _i1.ParameterDescription(
               name: 'film',
-              type: _i1.getType<_i10.Film>(),
+              type: _i1.getType<_i11.Film>(),
               nullable: false,
             ),
           },
@@ -310,7 +334,7 @@ class Endpoints extends _i1.EndpointDispatch {
               (
                 _i1.Session session,
                 Map<String, dynamic> params,
-              ) async => (endpoints['adminFilms'] as _i4.AdminFilmsEndpoint)
+              ) async => (endpoints['adminFilms'] as _i5.AdminFilmsEndpoint)
                   .createFilm(
                     session,
                     params['film'],
@@ -321,7 +345,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'film': _i1.ParameterDescription(
               name: 'film',
-              type: _i1.getType<_i10.Film>(),
+              type: _i1.getType<_i11.Film>(),
               nullable: false,
             ),
           },
@@ -329,7 +353,7 @@ class Endpoints extends _i1.EndpointDispatch {
               (
                 _i1.Session session,
                 Map<String, dynamic> params,
-              ) async => (endpoints['adminFilms'] as _i4.AdminFilmsEndpoint)
+              ) async => (endpoints['adminFilms'] as _i5.AdminFilmsEndpoint)
                   .updateFilm(
                     session,
                     params['film'],
@@ -348,7 +372,7 @@ class Endpoints extends _i1.EndpointDispatch {
               (
                 _i1.Session session,
                 Map<String, dynamic> params,
-              ) async => (endpoints['adminFilms'] as _i4.AdminFilmsEndpoint)
+              ) async => (endpoints['adminFilms'] as _i5.AdminFilmsEndpoint)
                   .deleteFilm(
                     session,
                     params['id'],
@@ -369,7 +393,7 @@ class Endpoints extends _i1.EndpointDispatch {
                 Map<String, dynamic> params,
               ) async =>
                   (endpoints['adminReservations']
-                          as _i5.AdminReservationsEndpoint)
+                          as _i6.AdminReservationsEndpoint)
                       .getReservations(session),
         ),
         'annulerReservation': _i1.MethodConnector(
@@ -387,7 +411,7 @@ class Endpoints extends _i1.EndpointDispatch {
                 Map<String, dynamic> params,
               ) async =>
                   (endpoints['adminReservations']
-                          as _i5.AdminReservationsEndpoint)
+                          as _i6.AdminReservationsEndpoint)
                       .annulerReservation(
                         session,
                         params['id'],
@@ -408,7 +432,7 @@ class Endpoints extends _i1.EndpointDispatch {
                 Map<String, dynamic> params,
               ) async =>
                   (endpoints['adminReservations']
-                          as _i5.AdminReservationsEndpoint)
+                          as _i6.AdminReservationsEndpoint)
                       .effectuerRemboursement(
                         session,
                         params['id'],
@@ -427,7 +451,7 @@ class Endpoints extends _i1.EndpointDispatch {
               (
                 _i1.Session session,
                 Map<String, dynamic> params,
-              ) async => (endpoints['adminSalles'] as _i6.AdminSallesEndpoint)
+              ) async => (endpoints['adminSalles'] as _i7.AdminSallesEndpoint)
                   .getSalles(session),
         ),
         'getCinemas': _i1.MethodConnector(
@@ -437,7 +461,7 @@ class Endpoints extends _i1.EndpointDispatch {
               (
                 _i1.Session session,
                 Map<String, dynamic> params,
-              ) async => (endpoints['adminSalles'] as _i6.AdminSallesEndpoint)
+              ) async => (endpoints['adminSalles'] as _i7.AdminSallesEndpoint)
                   .getCinemas(session),
         ),
         'createSalle': _i1.MethodConnector(
@@ -468,7 +492,7 @@ class Endpoints extends _i1.EndpointDispatch {
               (
                 _i1.Session session,
                 Map<String, dynamic> params,
-              ) async => (endpoints['adminSalles'] as _i6.AdminSallesEndpoint)
+              ) async => (endpoints['adminSalles'] as _i7.AdminSallesEndpoint)
                   .createSalle(
                     session,
                     cinemaId: params['cinemaId'],
@@ -510,7 +534,7 @@ class Endpoints extends _i1.EndpointDispatch {
               (
                 _i1.Session session,
                 Map<String, dynamic> params,
-              ) async => (endpoints['adminSalles'] as _i6.AdminSallesEndpoint)
+              ) async => (endpoints['adminSalles'] as _i7.AdminSallesEndpoint)
                   .updateSalle(
                     session,
                     id: params['id'],
@@ -533,7 +557,7 @@ class Endpoints extends _i1.EndpointDispatch {
               (
                 _i1.Session session,
                 Map<String, dynamic> params,
-              ) async => (endpoints['adminSalles'] as _i6.AdminSallesEndpoint)
+              ) async => (endpoints['adminSalles'] as _i7.AdminSallesEndpoint)
                   .deleteSalle(
                     session,
                     params['id'],
@@ -552,7 +576,7 @@ class Endpoints extends _i1.EndpointDispatch {
               (
                 _i1.Session session,
                 Map<String, dynamic> params,
-              ) async => (endpoints['adminSeances'] as _i7.AdminSeancesEndpoint)
+              ) async => (endpoints['adminSeances'] as _i8.AdminSeancesEndpoint)
                   .getSeances(session),
         ),
         'getFilmsDisponibles': _i1.MethodConnector(
@@ -562,7 +586,7 @@ class Endpoints extends _i1.EndpointDispatch {
               (
                 _i1.Session session,
                 Map<String, dynamic> params,
-              ) async => (endpoints['adminSeances'] as _i7.AdminSeancesEndpoint)
+              ) async => (endpoints['adminSeances'] as _i8.AdminSeancesEndpoint)
                   .getFilmsDisponibles(session),
         ),
         'getSallesDisponibles': _i1.MethodConnector(
@@ -572,7 +596,7 @@ class Endpoints extends _i1.EndpointDispatch {
               (
                 _i1.Session session,
                 Map<String, dynamic> params,
-              ) async => (endpoints['adminSeances'] as _i7.AdminSeancesEndpoint)
+              ) async => (endpoints['adminSeances'] as _i8.AdminSeancesEndpoint)
                   .getSallesDisponibles(session),
         ),
         'createSeance': _i1.MethodConnector(
@@ -623,7 +647,7 @@ class Endpoints extends _i1.EndpointDispatch {
               (
                 _i1.Session session,
                 Map<String, dynamic> params,
-              ) async => (endpoints['adminSeances'] as _i7.AdminSeancesEndpoint)
+              ) async => (endpoints['adminSeances'] as _i8.AdminSeancesEndpoint)
                   .createSeance(
                     session,
                     filmId: params['filmId'],
@@ -689,7 +713,7 @@ class Endpoints extends _i1.EndpointDispatch {
               (
                 _i1.Session session,
                 Map<String, dynamic> params,
-              ) async => (endpoints['adminSeances'] as _i7.AdminSeancesEndpoint)
+              ) async => (endpoints['adminSeances'] as _i8.AdminSeancesEndpoint)
                   .updateSeance(
                     session,
                     id: params['id'],
@@ -716,7 +740,7 @@ class Endpoints extends _i1.EndpointDispatch {
               (
                 _i1.Session session,
                 Map<String, dynamic> params,
-              ) async => (endpoints['adminSeances'] as _i7.AdminSeancesEndpoint)
+              ) async => (endpoints['adminSeances'] as _i8.AdminSeancesEndpoint)
                   .deleteSeance(
                     session,
                     params['id'],
@@ -735,7 +759,7 @@ class Endpoints extends _i1.EndpointDispatch {
               (
                 _i1.Session session,
                 Map<String, dynamic> params,
-              ) async => (endpoints['adminUsers'] as _i8.AdminUsersEndpoint)
+              ) async => (endpoints['adminUsers'] as _i9.AdminUsersEndpoint)
                   .getUtilisateurs(session),
         ),
         'changerStatutUtilisateur': _i1.MethodConnector(
@@ -756,7 +780,7 @@ class Endpoints extends _i1.EndpointDispatch {
               (
                 _i1.Session session,
                 Map<String, dynamic> params,
-              ) async => (endpoints['adminUsers'] as _i8.AdminUsersEndpoint)
+              ) async => (endpoints['adminUsers'] as _i9.AdminUsersEndpoint)
                   .changerStatutUtilisateur(
                     session,
                     params['id'],
@@ -776,7 +800,7 @@ class Endpoints extends _i1.EndpointDispatch {
               (
                 _i1.Session session,
                 Map<String, dynamic> params,
-              ) async => (endpoints['adminUsers'] as _i8.AdminUsersEndpoint)
+              ) async => (endpoints['adminUsers'] as _i9.AdminUsersEndpoint)
                   .supprimerUtilisateur(
                     session,
                     params['id'],
@@ -795,7 +819,7 @@ class Endpoints extends _i1.EndpointDispatch {
               (
                 _i1.Session session,
                 Map<String, dynamic> params,
-              ) async => (endpoints['adminUsers'] as _i8.AdminUsersEndpoint)
+              ) async => (endpoints['adminUsers'] as _i9.AdminUsersEndpoint)
                   .getHistoriqueAchats(
                     session,
                     params['utilisateurId'],
@@ -820,16 +844,16 @@ class Endpoints extends _i1.EndpointDispatch {
               (
                 _i1.Session session,
                 Map<String, dynamic> params,
-              ) async => (endpoints['greeting'] as _i9.GreetingEndpoint).hello(
+              ) async => (endpoints['greeting'] as _i10.GreetingEndpoint).hello(
                 session,
                 params['name'],
               ),
         ),
       },
     );
-    modules['serverpod_auth_idp'] = _i11.Endpoints()
+    modules['serverpod_auth_idp'] = _i12.Endpoints()
       ..initializeEndpoints(server);
-    modules['serverpod_auth_core'] = _i12.Endpoints()
+    modules['serverpod_auth_core'] = _i13.Endpoints()
       ..initializeEndpoints(server);
   }
 }

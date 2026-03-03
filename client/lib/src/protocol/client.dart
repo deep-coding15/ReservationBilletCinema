@@ -243,6 +243,20 @@ class EndpointJwtRefresh extends _i4.EndpointRefreshJwtTokens {
 }
 
 /// {@category Endpoint}
+class EndpointAdminDashboard extends _i2.EndpointRef {
+  EndpointAdminDashboard(_i2.EndpointCaller caller) : super(caller);
+
+  @override
+  String get name => 'adminDashboard';
+
+  _i3.Future<String> getDashboardStats() => caller.callServerEndpoint<String>(
+    'adminDashboard',
+    'getDashboardStats',
+    {},
+  );
+}
+
+/// {@category Endpoint}
 class EndpointAdminFilms extends _i2.EndpointRef {
   EndpointAdminFilms(_i2.EndpointCaller caller) : super(caller);
 
@@ -554,6 +568,7 @@ class Client extends _i2.ServerpodClientShared {
        ) {
     emailIdp = EndpointEmailIdp(this);
     jwtRefresh = EndpointJwtRefresh(this);
+    adminDashboard = EndpointAdminDashboard(this);
     adminFilms = EndpointAdminFilms(this);
     adminReservations = EndpointAdminReservations(this);
     adminSalles = EndpointAdminSalles(this);
@@ -566,6 +581,8 @@ class Client extends _i2.ServerpodClientShared {
   late final EndpointEmailIdp emailIdp;
 
   late final EndpointJwtRefresh jwtRefresh;
+
+  late final EndpointAdminDashboard adminDashboard;
 
   late final EndpointAdminFilms adminFilms;
 
@@ -585,6 +602,7 @@ class Client extends _i2.ServerpodClientShared {
   Map<String, _i2.EndpointRef> get endpointRefLookup => {
     'emailIdp': emailIdp,
     'jwtRefresh': jwtRefresh,
+    'adminDashboard': adminDashboard,
     'adminFilms': adminFilms,
     'adminReservations': adminReservations,
     'adminSalles': adminSalles,
