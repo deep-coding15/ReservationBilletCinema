@@ -123,6 +123,67 @@ class _UserCard extends ConsumerWidget {
   final VoidCallback onAction;
   const _UserCard({required this.user, required this.onAction});
 
+  void _showHistoryDialog(BuildContext context, WidgetRef ref) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: const Color(0xFF1A1A2E),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        title: Text('Historique : ${user['nom']}', style: const TextStyle(color: Colors.white)),
+        content: SizedBox(
+          width: double.maxFinite,
+          child: FutureBuilder<List<String>>(
+            future: ref.read(serverpodClientProvider).adminUsers.getHistoriqueAchats(user['id']),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const SizedBox(height: 100, child: Center(child: CircularProgressIndicator(color: Color(0xFFE5193C))));
+              }
+              if (snapshot.hasError) {
+                return Text('Erreur: ${snapshot.error}', style: const TextStyle(color: Colors.red));
+              }
+              if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                return const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 20),
+                  child: Text('Aucun achat trouvé', style: TextStyle(color: Colors.white54), textAlign: TextAlign.center),
+                );
+              }
+
+              final history = snapshot.data!.map((s) => jsonDecode(s)).toList();
+              return ListView.separated(
+                shrinkWrap: true,
+                itemCount: history.length,
+                separatorBuilder: (_, __) => const Divider(color: Colors.white10),
+                itemBuilder: (c, i) {
+                  final item = history[i];
+                  final date = item['date'] != null ? DateTime.tryParse(item['date']) : null;
+                  final dateStr = date != null ? '${date.day.toString().padLeft(2,'0')}/${date.month.toString().padLeft(2,'0')}/${date.year}' : 'N/A';
+                  
+                  return ListTile(
+                    contentPadding: EdgeInsets.zero,
+                    title: Text(item['filmTitre'] ?? 'Film inconnu', style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w600)),
+                    subtitle: Text('$dateStr • ${item['montant']} MAD', style: const TextStyle(color: Colors.white54, fontSize: 13)),
+                    trailing: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                      decoration: BoxDecoration(
+                        color: (item['statut'] == 'confirmee' ? Colors.green : Colors.orange).withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      child: Text(item['statut'].toString().toUpperCase(), 
+                        style: TextStyle(color: item['statut'] == 'confirmee' ? Colors.green : Colors.orange, fontSize: 10, fontWeight: FontWeight.bold)),
+                    ),
+                  );
+                },
+              );
+            },
+          ),
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Fermer', style: TextStyle(color: Color(0xFFE5193C)))),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final isSuspendu = user['statut'] == 'suspendu';
@@ -176,14 +237,18 @@ class _UserCard extends ConsumerWidget {
             final client = ref.read(serverpodClientProvider);
             if (val == 'status') {
               await client.adminUsers.changerStatutUtilisateur(user['id'], isSuspendu ? 'actif' : 'suspendu');
+              onAction();
             } else if (val == 'delete') {
               await client.adminUsers.supprimerUtilisateur(user['id']);
+              onAction();
+            } else if (val == 'history') {
+              _showHistoryDialog(context, ref);
             }
-            onAction();
           },
           itemBuilder: (ctx) => [
-            PopupMenuItem(value: 'status', child: Text(isSuspendu ? 'Réactiver' : 'Suspendre', style: const TextStyle(color: Colors.white))),
-            const PopupMenuItem(value: 'delete', child: Text('Supprimer', style: TextStyle(color: Colors.red))),
+            PopupMenuItem(value: 'history', child: Row(children: const [Icon(Icons.history, size: 18, color: Colors.white70), SizedBox(width: 8), Text('Historique', style: TextStyle(color: Colors.white))])),
+            PopupMenuItem(value: 'status', child: Row(children: [Icon(isSuspendu ? Icons.check_circle_outline : Icons.block, size: 18, color: Colors.white70), const SizedBox(width: 8), Text(isSuspendu ? 'Réactiver' : 'Suspendre', style: const TextStyle(color: Colors.white))])),
+            const PopupMenuItem(value: 'delete', child: Row(children: [Icon(Icons.delete_outline, size: 18, color: Colors.redAccent), SizedBox(width: 8), Text('Supprimer', style: TextStyle(color: Colors.red))])),
           ],
         ),
       ),
