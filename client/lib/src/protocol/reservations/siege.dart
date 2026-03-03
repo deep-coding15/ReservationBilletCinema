@@ -37,69 +37,24 @@ abstract class Siege implements _i1.SerializableModel {
   }
 
   int id;
-
   int salleId;
-
   String numero;
-
   String? type;
 
-  /// Returns a shallow copy of this [Siege]
-  /// with some or all fields replaced by the given arguments.
-  @_i1.useResult
-  Siege copyWith({
-    int? id,
-    int? salleId,
-    String? numero,
-    String? type,
-  });
   @override
-  Map<String, dynamic> toJson() {
-    return {
-      '__className__': 'Siege',
-      'id': id,
-      'salleId': salleId,
-      'numero': numero,
-      if (type != null) 'type': type,
-    };
-  }
-
-  @override
-  String toString() {
-    return _i1.SerializationManager.encode(this);
-  }
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'salleId': salleId,
+        'numero': numero,
+        'type': type,
+      };
 }
-
-class _Undefined {}
 
 class _SiegeImpl extends Siege {
   _SiegeImpl({
-    required int id,
-    required int salleId,
-    required String numero,
-    String? type,
-  }) : super._(
-         id: id,
-         salleId: salleId,
-         numero: numero,
-         type: type,
-       );
-
-  /// Returns a shallow copy of this [Siege]
-  /// with some or all fields replaced by the given arguments.
-  @_i1.useResult
-  @override
-  Siege copyWith({
-    int? id,
-    int? salleId,
-    String? numero,
-    Object? type = _Undefined,
-  }) {
-    return Siege(
-      id: id ?? this.id,
-      salleId: salleId ?? this.salleId,
-      numero: numero ?? this.numero,
-      type: type is String? ? type : this.type,
-    );
-  }
+    required super.id,
+    required super.salleId,
+    required super.numero,
+    super.type,
+  });
 }

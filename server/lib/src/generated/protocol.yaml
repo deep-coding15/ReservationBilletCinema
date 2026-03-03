@@ -9,10 +9,17 @@ emailIdp:
   - hasAccount:
 jwtRefresh:
   - refreshAccessToken:
+auth:
+  - saveProfile:
+events:
+  - getEvents:
+  - getEventById:
+  - createEventReservation:
 films:
   - getFilms:
   - getFilmById:
   - getSeancesByFilm:
+  - getSeancesByCinema:
   - getCinemas:
 greeting:
   - hello:

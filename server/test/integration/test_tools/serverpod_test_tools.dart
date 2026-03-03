@@ -134,6 +134,10 @@ class TestEndpoints {
 
   late final _JwtRefreshEndpoint jwtRefresh;
 
+  late final _AuthEndpoint auth;
+
+  late final _EventsEndpoint events;
+
   late final _FilmsEndpoint films;
 
   late final _GreetingEndpoint greeting;
@@ -151,6 +155,14 @@ class _InternalTestEndpoints extends TestEndpoints
       serializationManager,
     );
     jwtRefresh = _JwtRefreshEndpoint(
+      endpoints,
+      serializationManager,
+    );
+    auth = _AuthEndpoint(
+      endpoints,
+      serializationManager,
+    );
+    events = _EventsEndpoint(
       endpoints,
       serializationManager,
     );
@@ -483,6 +495,172 @@ class _JwtRefreshEndpoint {
   }
 }
 
+class _AuthEndpoint {
+  _AuthEndpoint(
+    this._endpointDispatch,
+    this._serializationManager,
+  );
+
+  final _i2.EndpointDispatch _endpointDispatch;
+
+  final _i2.SerializationManager _serializationManager;
+
+  _i3.Future<void> saveProfile(
+    _i1.TestSessionBuilder sessionBuilder, {
+    required String nom,
+    required String email,
+    String? telephone,
+    DateTime? dateNaissance,
+  }) async {
+    return _i1.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
+            endpoint: 'auth',
+            method: 'saveProfile',
+          );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'auth',
+          methodName: 'saveProfile',
+          parameters: _i1.testObjectToJson({
+            'nom': nom,
+            'email': email,
+            'telephone': telephone,
+            'dateNaissance': dateNaissance,
+          }),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue =
+            await (_localCallContext.method.call(
+                  _localUniqueSession,
+                  _localCallContext.arguments,
+                )
+                as _i3.Future<void>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+}
+
+class _EventsEndpoint {
+  _EventsEndpoint(
+    this._endpointDispatch,
+    this._serializationManager,
+  );
+
+  final _i2.EndpointDispatch _endpointDispatch;
+
+  final _i2.SerializationManager _serializationManager;
+
+  _i3.Future<List<Map<String, dynamic>>> getEvents(
+    _i1.TestSessionBuilder sessionBuilder, {
+    String? ville,
+    DateTime? date,
+  }) async {
+    return _i1.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
+            endpoint: 'events',
+            method: 'getEvents',
+          );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'events',
+          methodName: 'getEvents',
+          parameters: _i1.testObjectToJson({
+            'ville': ville,
+            'date': date,
+          }),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue =
+            await (_localCallContext.method.call(
+                  _localUniqueSession,
+                  _localCallContext.arguments,
+                )
+                as _i3.Future<List<Map<String, dynamic>>>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+
+  _i3.Future<Map<String, dynamic>?> getEventById(
+    _i1.TestSessionBuilder sessionBuilder,
+    int id,
+  ) async {
+    return _i1.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
+            endpoint: 'events',
+            method: 'getEventById',
+          );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'events',
+          methodName: 'getEventById',
+          parameters: _i1.testObjectToJson({'id': id}),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue =
+            await (_localCallContext.method.call(
+                  _localUniqueSession,
+                  _localCallContext.arguments,
+                )
+                as _i3.Future<Map<String, dynamic>?>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+
+  _i3.Future<Map<String, dynamic>> createEventReservation(
+    _i1.TestSessionBuilder sessionBuilder, {
+    required int eventId,
+    required int nbBillets,
+    required double montantTotal,
+    required int utilisateurId,
+  }) async {
+    return _i1.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
+            endpoint: 'events',
+            method: 'createEventReservation',
+          );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'events',
+          methodName: 'createEventReservation',
+          parameters: _i1.testObjectToJson({
+            'eventId': eventId,
+            'nbBillets': nbBillets,
+            'montantTotal': montantTotal,
+            'utilisateurId': utilisateurId,
+          }),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue =
+            await (_localCallContext.method.call(
+                  _localUniqueSession,
+                  _localCallContext.arguments,
+                )
+                as _i3.Future<Map<String, dynamic>>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+}
+
 class _FilmsEndpoint {
   _FilmsEndpoint(
     this._endpointDispatch,
@@ -575,6 +753,41 @@ class _FilmsEndpoint {
           endpointPath: 'films',
           methodName: 'getSeancesByFilm',
           parameters: _i1.testObjectToJson({'filmId': filmId}),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue =
+            await (_localCallContext.method.call(
+                  _localUniqueSession,
+                  _localCallContext.arguments,
+                )
+                as _i3.Future<List<_i6.Seance>>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+
+  _i3.Future<List<_i6.Seance>> getSeancesByCinema(
+    _i1.TestSessionBuilder sessionBuilder,
+    int cinemaId, {
+    DateTime? date,
+  }) async {
+    return _i1.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
+            endpoint: 'films',
+            method: 'getSeancesByCinema',
+          );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'films',
+          methodName: 'getSeancesByCinema',
+          parameters: _i1.testObjectToJson({
+            'cinemaId': cinemaId,
+            'date': date,
+          }),
           serializationManager: _serializationManager,
         );
         var _localReturnValue =

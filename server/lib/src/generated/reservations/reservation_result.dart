@@ -32,60 +32,21 @@ abstract class ReservationResult
   }
 
   int reservationId;
-
   double montantTotal;
 
-  /// Returns a shallow copy of this [ReservationResult]
-  /// with some or all fields replaced by the given arguments.
-  @_i1.useResult
-  ReservationResult copyWith({
-    int? reservationId,
-    double? montantTotal,
-  });
   @override
-  Map<String, dynamic> toJson() {
-    return {
-      '__className__': 'ReservationResult',
-      'reservationId': reservationId,
-      'montantTotal': montantTotal,
-    };
-  }
+  Map<String, dynamic> toJson() => {
+        'reservationId': reservationId,
+        'montantTotal': montantTotal,
+      };
 
   @override
-  Map<String, dynamic> toJsonForProtocol() {
-    return {
-      '__className__': 'ReservationResult',
-      'reservationId': reservationId,
-      'montantTotal': montantTotal,
-    };
-  }
-
-  @override
-  String toString() {
-    return _i1.SerializationManager.encode(this);
-  }
+  Map<String, dynamic> toJsonForProtocol() => toJson();
 }
 
 class _ReservationResultImpl extends ReservationResult {
   _ReservationResultImpl({
-    required int reservationId,
-    required double montantTotal,
-  }) : super._(
-         reservationId: reservationId,
-         montantTotal: montantTotal,
-       );
-
-  /// Returns a shallow copy of this [ReservationResult]
-  /// with some or all fields replaced by the given arguments.
-  @_i1.useResult
-  @override
-  ReservationResult copyWith({
-    int? reservationId,
-    double? montantTotal,
-  }) {
-    return ReservationResult(
-      reservationId: reservationId ?? this.reservationId,
-      montantTotal: montantTotal ?? this.montantTotal,
-    );
-  }
+    required super.reservationId,
+    required super.montantTotal,
+  });
 }

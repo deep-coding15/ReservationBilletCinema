@@ -16,14 +16,18 @@ import 'package:serverpod_client/serverpod_client.dart' as _i2;
 import 'dart:async' as _i3;
 import 'package:serverpod_auth_core_client/serverpod_auth_core_client.dart'
     as _i4;
+import 'package:cinema_reservation_client/src/protocol/films/film.dart' as _i5;
+import 'package:cinema_reservation_client/src/protocol/films/seance.dart'
+    as _i6;
+import 'package:cinema_reservation_client/src/protocol/films/cinema.dart'
+    as _i7;
 import 'package:cinema_reservation_client/src/protocol/greetings/greeting.dart'
-    as _i5;
-import 'package:cinema_reservation_client/src/protocol/films/film.dart' as _i7;
-import 'package:cinema_reservation_client/src/protocol/films/cinema.dart' as _i8;
-import 'package:cinema_reservation_client/src/protocol/films/seance.dart' as _i9;
-import 'package:cinema_reservation_client/src/protocol/reservations/siege.dart' as _i10;
-import 'package:cinema_reservation_client/src/protocol/reservations/reservation_result.dart' as _i11;
-import 'protocol.dart' as _i6;
+    as _i8;
+import 'package:cinema_reservation_client/src/protocol/reservations/siege.dart'
+    as _i10;
+import 'package:cinema_reservation_client/src/protocol/reservations/reservation_result.dart'
+    as _i11;
+import 'protocol.dart' as _i9;
 
 /// By extending [EmailIdpBaseEndpoint], the email identity provider endpoints
 /// are made available on the server and enable the corresponding sign-in widget
@@ -246,6 +250,136 @@ class EndpointJwtRefresh extends _i4.EndpointRefreshJwtTokens {
   );
 }
 
+/// {@category Endpoint}
+class EndpointAuth extends _i2.EndpointRef {
+  EndpointAuth(_i2.EndpointCaller caller) : super(caller);
+
+  @override
+  String get name => 'auth';
+
+  _i3.Future<void> saveProfile({
+    required String nom,
+    required String email,
+    String? telephone,
+    DateTime? dateNaissance,
+  }) => caller.callServerEndpoint<void>(
+    'auth',
+    'saveProfile',
+    {
+      'nom': nom,
+      'email': email,
+      'telephone': telephone,
+      'dateNaissance': dateNaissance,
+    },
+  );
+}
+
+/// Endpoint événements : liste et détail. Retourne des Map pour le client.
+/// {@category Endpoint}
+class EndpointEvents extends _i2.EndpointRef {
+  EndpointEvents(_i2.EndpointCaller caller) : super(caller);
+
+  @override
+  String get name => 'events';
+
+  /// Liste des événements à venir (filtres optionnels ville, date).
+  _i3.Future<List<Map<String, dynamic>>> getEvents({
+    String? ville,
+    DateTime? date,
+  }) => caller.callServerEndpoint<List<Map<String, dynamic>>>(
+    'events',
+    'getEvents',
+    {
+      'ville': ville,
+      'date': date,
+    },
+  );
+
+  /// Détail d'un événement par id.
+  _i3.Future<Map<String, dynamic>?> getEventById(int id) =>
+      caller.callServerEndpoint<Map<String, dynamic>?>(
+        'events',
+        'getEventById',
+        {'id': id},
+      );
+
+  /// Crée une réservation pour un événement (même logique que cinéma).
+  _i3.Future<Map<String, dynamic>> createEventReservation({
+    required int eventId,
+    required int nbBillets,
+    required double montantTotal,
+    required int utilisateurId,
+  }) => caller.callServerEndpoint<Map<String, dynamic>>(
+    'events',
+    'createEventReservation',
+    {
+      'eventId': eventId,
+      'nbBillets': nbBillets,
+      'montantTotal': montantTotal,
+      'utilisateurId': utilisateurId,
+    },
+  );
+}
+
+/// Endpoint Films & séances : catalogue, recherche, listes, horaires, cinémas.
+/// {@category Endpoint}
+class EndpointFilms extends _i2.EndpointRef {
+  EndpointFilms(_i2.EndpointCaller caller) : super(caller);
+
+  @override
+  String get name => 'films';
+
+  /// Liste des films à l'affiche (date du jour entre date_debut et date_fin).
+  _i3.Future<List<_i5.Film>> getFilms({
+    String? search,
+    String? genre,
+  }) => caller.callServerEndpoint<List<_i5.Film>>(
+    'films',
+    'getFilms',
+    {
+      'search': search,
+      'genre': genre,
+    },
+  );
+
+  /// Détail d'un film par id.
+  _i3.Future<_i5.Film?> getFilmById(int id) =>
+      caller.callServerEndpoint<_i5.Film?>(
+        'films',
+        'getFilmById',
+        {'id': id},
+      );
+
+  /// Séances à venir pour un film (avec nom cinéma et code salle).
+  _i3.Future<List<_i6.Seance>> getSeancesByFilm(int filmId) =>
+      caller.callServerEndpoint<List<_i6.Seance>>(
+        'films',
+        'getSeancesByFilm',
+        {'filmId': filmId},
+      );
+
+  /// Séances à venir pour un cinéma (optionnel: filtrer par date).
+  _i3.Future<List<_i6.Seance>> getSeancesByCinema(
+    int cinemaId, {
+    DateTime? date,
+  }) => caller.callServerEndpoint<List<_i6.Seance>>(
+    'films',
+    'getSeancesByCinema',
+    {
+      'cinemaId': cinemaId,
+      'date': date,
+    },
+  );
+
+  /// Liste des cinémas.
+  _i3.Future<List<_i7.Cinema>> getCinemas({String? ville}) =>
+      caller.callServerEndpoint<List<_i7.Cinema>>(
+        'films',
+        'getCinemas',
+        {'ville': ville},
+      );
+}
+
 /// This is an example endpoint that returns a greeting message through
 /// its [hello] method.
 /// {@category Endpoint}
@@ -256,130 +390,11 @@ class EndpointGreeting extends _i2.EndpointRef {
   String get name => 'greeting';
 
   /// Returns a personalized greeting message: "Hello {name}".
-  _i3.Future<_i5.Greeting> hello(String name) =>
-      caller.callServerEndpoint<_i5.Greeting>(
+  _i3.Future<_i8.Greeting> hello(String name) =>
+      caller.callServerEndpoint<_i8.Greeting>(
         'greeting',
         'hello',
         {'name': name},
-      );
-}
-
-/// Endpoint Films & séances.
-class EndpointFilms extends _i2.EndpointRef {
-  EndpointFilms(_i2.EndpointCaller caller) : super(caller);
-
-  @override
-  String get name => 'films';
-
-  _i3.Future<List<_i7.Film>> getFilms({String? search, String? genre}) =>
-      caller.callServerEndpoint<List<_i7.Film>>(
-        'films',
-        'getFilms',
-        {'search': search, 'genre': genre},
-      );
-
-  _i3.Future<_i7.Film?> getFilmById(int id) =>
-      caller.callServerEndpoint<_i7.Film?>(
-        'films',
-        'getFilmById',
-        {'id': id},
-      );
-
-  _i3.Future<List<_i9.Seance>> getSeancesByFilm(int filmId) =>
-      caller.callServerEndpoint<List<_i9.Seance>>(
-        'films',
-        'getSeancesByFilm',
-        {'filmId': filmId},
-      );
-
-  _i3.Future<List<_i8.Cinema>> getCinemas({String? ville}) =>
-      caller.callServerEndpoint<List<_i8.Cinema>>(
-        'films',
-        'getCinemas',
-        {'ville': ville},
-      );
-
-  _i3.Future<List<_i9.Seance>> getSeancesByCinema(int cinemaId, {DateTime? date}) =>
-      caller.callServerEndpoint<List<_i9.Seance>>(
-        'films',
-        'getSeancesByCinema',
-        {'cinemaId': cinemaId, 'date': date},
-      );
-}
-
-/// Endpoint événements.
-class EndpointEvents extends _i2.EndpointRef {
-  EndpointEvents(_i2.EndpointCaller caller) : super(caller);
-
-  @override
-  String get name => 'events';
-
-  _i3.Future<List<dynamic>> getEvents({String? ville, DateTime? date}) =>
-      caller.callServerEndpoint<List<dynamic>>(
-        'events',
-        'getEvents',
-        {'ville': ville, 'date': date},
-      );
-
-  _i3.Future<dynamic> getEventById(int id) =>
-      caller.callServerEndpoint<dynamic>(
-        'events',
-        'getEventById',
-        {'id': id},
-      );
-
-  _i3.Future<Map<String, dynamic>> createEventReservation({
-    required int eventId,
-    required int nbBillets,
-    required double montantTotal,
-    int utilisateurId = 1,
-  }) =>
-      caller.callServerEndpoint<Map<String, dynamic>>(
-        'events',
-        'createEventReservation',
-        {
-          'eventId': eventId,
-          'nbBillets': nbBillets,
-          'montantTotal': montantTotal,
-          'utilisateurId': utilisateurId,
-        },
-      );
-}
-
-/// Endpoint réservations.
-class EndpointReservations extends _i2.EndpointRef {
-  EndpointReservations(_i2.EndpointCaller caller) : super(caller);
-
-  @override
-  String get name => 'reservations';
-
-  _i3.Future<List<_i10.Siege>> getSiegesBySalle(int salleId) =>
-      caller.callServerEndpoint<List<_i10.Siege>>(
-        'reservations',
-        'getSiegesBySalle',
-        {'salleId': salleId},
-      );
-
-  _i3.Future<List<int>> getReservedSiegeIdsForSeance(int seanceId) =>
-      caller.callServerEndpoint<List<int>>(
-        'reservations',
-        'getReservedSiegeIdsForSeance',
-        {'seanceId': seanceId},
-      );
-
-  _i3.Future<_i11.ReservationResult> createReservation({
-    required int seanceId,
-    required List<int> siegeIds,
-    int utilisateurId = 1,
-  }) =>
-      caller.callServerEndpoint<_i11.ReservationResult>(
-        'reservations',
-        'createReservation',
-        {
-          'seanceId': seanceId,
-          'siegeIds': siegeIds,
-          'utilisateurId': utilisateurId,
-        },
       );
 }
 
@@ -414,7 +429,7 @@ class Client extends _i2.ServerpodClientShared {
     bool? disconnectStreamsOnLostInternetConnection,
   }) : super(
          host,
-         _i6.Protocol(),
+         _i9.Protocol(),
          securityContext: securityContext,
          streamingConnectionTimeout: streamingConnectionTimeout,
          connectionTimeout: connectionTimeout,
@@ -425,9 +440,10 @@ class Client extends _i2.ServerpodClientShared {
        ) {
     emailIdp = EndpointEmailIdp(this);
     jwtRefresh = EndpointJwtRefresh(this);
-    greeting = EndpointGreeting(this);
-    films = EndpointFilms(this);
+    auth = EndpointAuth(this);
     events = EndpointEvents(this);
+    films = EndpointFilms(this);
+    greeting = EndpointGreeting(this);
     reservations = EndpointReservations(this);
     modules = Modules(this);
   }
@@ -436,11 +452,13 @@ class Client extends _i2.ServerpodClientShared {
 
   late final EndpointJwtRefresh jwtRefresh;
 
-  late final EndpointGreeting greeting;
+  late final EndpointAuth auth;
+
+  late final EndpointEvents events;
 
   late final EndpointFilms films;
 
-  late final EndpointEvents events;
+  late final EndpointGreeting greeting;
 
   late final EndpointReservations reservations;
 
@@ -450,9 +468,10 @@ class Client extends _i2.ServerpodClientShared {
   Map<String, _i2.EndpointRef> get endpointRefLookup => {
     'emailIdp': emailIdp,
     'jwtRefresh': jwtRefresh,
-    'greeting': greeting,
-    'films': films,
+    'auth': auth,
     'events': events,
+    'films': films,
+    'greeting': greeting,
     'reservations': reservations,
   };
 

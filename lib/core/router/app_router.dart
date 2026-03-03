@@ -6,6 +6,8 @@ import 'package:reservation_billet_cinema/core/layout/app_shell.dart';
 import 'package:reservation_billet_cinema/features/splash/presentation/pages/splash_page.dart';
 import 'package:reservation_billet_cinema/features/home/presentation/pages/home_page.dart';
 import 'package:reservation_billet_cinema/features/auth/presentation/pages/login_page.dart';
+import 'package:reservation_billet_cinema/features/auth/presentation/pages/register_page.dart';
+import 'package:reservation_billet_cinema/features/auth/presentation/pages/forgot_password_page.dart';
 import 'package:reservation_billet_cinema/features/programmation/presentation/pages/films_list_page.dart';
 import 'package:reservation_billet_cinema/features/programmation/presentation/pages/film_detail_page.dart';
 import 'package:reservation_billet_cinema/features/reservation/data/models/recap_data.dart';
@@ -21,7 +23,6 @@ import 'package:reservation_billet_cinema/features/events/presentation/pages/eve
 import 'package:reservation_billet_cinema/features/events/presentation/pages/event_reservation_quantity_page.dart';
 import 'package:reservation_billet_cinema/features/events/presentation/pages/event_recap_page.dart';
 import 'package:reservation_billet_cinema/features/events/data/models/evenement.dart';
-import 'package:reservation_billet_cinema/features/auth/presentation/pages/register_page.dart';
 
 /// Routes de l'application (GoRouter). Shell = sidebar (drawer) sur toutes les pages internes.
 final goRouter = GoRouter(
@@ -41,6 +42,11 @@ final goRouter = GoRouter(
       path: '/auth/register',
       name: 'register',
       builder: (context, state) => const RegisterPage(),
+    ),
+    GoRoute(
+      path: '/auth/forgot-password',
+      name: 'forgot-password',
+      builder: (context, state) => const ForgotPasswordPage(),
     ),
     ShellRoute(
       builder: (context, state, child) => AppShell(
