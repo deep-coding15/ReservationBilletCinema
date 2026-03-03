@@ -59,8 +59,8 @@ class AdminSeancesEndpoint extends Endpoint {
       final row = r.toList();
       return jsonEncode({
         'id': row[0],
-        'titre': row[1],
-        'genre': row[2],
+        'titre': row[1], // Correction ici : c'est le titre
+        'genre': row[2]  // Correction ici : c'est le genre
       });
     }).toList();
   }

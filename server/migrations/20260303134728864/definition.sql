@@ -30,6 +30,22 @@ language plpgsql
 volatile;
 
 --
+-- Class Cinema as table cinemas
+--
+CREATE TABLE "cinemas" (
+    "id" bigserial PRIMARY KEY,
+    "nom" text NOT NULL,
+    "adresse" text,
+    "ville" text,
+    "latitude" double precision,
+    "longitude" double precision,
+    "created_at" timestamp without time zone DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Indexes
+CREATE INDEX "idx_cinema_nom" ON "cinemas" USING btree ("nom");
+
+--
 -- Class Film as table films
 --
 CREATE TABLE "films" (
@@ -51,6 +67,20 @@ CREATE TABLE "films" (
 
 -- Indexes
 CREATE INDEX "idx_films_date" ON "films" USING btree ("date_debut", "date_fin");
+
+--
+-- Class Salle as table salles
+--
+CREATE TABLE "salles" (
+    "id" bigserial PRIMARY KEY,
+    "cinema_id" bigint NOT NULL,
+    "code_salle" text NOT NULL,
+    "capacite" bigint NOT NULL,
+    "equipements" json
+);
+
+-- Indexes
+CREATE INDEX "idx_salles_cinema" ON "salles" USING btree ("cinema_id");
 
 --
 -- Class Seance as table seances
@@ -704,9 +734,9 @@ ALTER TABLE ONLY "serverpod_auth_core_session"
 -- MIGRATION VERSION FOR cinema_reservation
 --
 INSERT INTO "serverpod_migrations" ("module", "version", "timestamp")
-    VALUES ('cinema_reservation', '20260303113245719', now())
+    VALUES ('cinema_reservation', '20260303134728864', now())
     ON CONFLICT ("module")
-    DO UPDATE SET "version" = '20260303113245719', "timestamp" = now();
+    DO UPDATE SET "version" = '20260303134728864', "timestamp" = now();
 
 --
 -- MIGRATION VERSION FOR serverpod

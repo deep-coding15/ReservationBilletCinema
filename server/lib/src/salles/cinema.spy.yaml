@@ -1,0 +1,13 @@
+class: Cinema
+table: cinemas
+managedMigration: true
+fields:
+  nom: String
+  adresse: String?
+  ville: String?
+  latitude: double?  # Une ligne pour latitude
+  longitude: double? # Une ligne pour longitude
+  created_at: DateTime?, default=now
+indexes:
+  idx_cinema_nom:
+    fields: nom

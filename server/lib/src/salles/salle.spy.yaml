@@ -1,0 +1,11 @@
+class: Salle
+table: salles
+managedMigration: true
+fields:
+  cinema_id: int
+  code_salle: String
+  capacite: int
+  equipements: List<String>?
+indexes:
+  idx_salles_cinema:
+    fields: cinema_id

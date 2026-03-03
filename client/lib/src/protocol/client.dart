@@ -278,6 +278,68 @@ class EndpointAdminFilms extends _i2.EndpointRef {
 }
 
 /// {@category Endpoint}
+class EndpointAdminSalles extends _i2.EndpointRef {
+  EndpointAdminSalles(_i2.EndpointCaller caller) : super(caller);
+
+  @override
+  String get name => 'adminSalles';
+
+  _i3.Future<List<String>> getSalles() =>
+      caller.callServerEndpoint<List<String>>(
+        'adminSalles',
+        'getSalles',
+        {},
+      );
+
+  _i3.Future<List<String>> getCinemas() =>
+      caller.callServerEndpoint<List<String>>(
+        'adminSalles',
+        'getCinemas',
+        {},
+      );
+
+  _i3.Future<bool> createSalle({
+    required int cinemaId,
+    required String codeSalle,
+    required int capacite,
+    List<String>? equipements,
+  }) => caller.callServerEndpoint<bool>(
+    'adminSalles',
+    'createSalle',
+    {
+      'cinemaId': cinemaId,
+      'codeSalle': codeSalle,
+      'capacite': capacite,
+      'equipements': equipements,
+    },
+  );
+
+  _i3.Future<bool> updateSalle({
+    required int id,
+    required int cinemaId,
+    required String codeSalle,
+    required int capacite,
+    List<String>? equipements,
+  }) => caller.callServerEndpoint<bool>(
+    'adminSalles',
+    'updateSalle',
+    {
+      'id': id,
+      'cinemaId': cinemaId,
+      'codeSalle': codeSalle,
+      'capacite': capacite,
+      'equipements': equipements,
+    },
+  );
+
+  _i3.Future<bool> deleteSalle(int id) => caller.callServerEndpoint<bool>(
+    'adminSalles',
+    'deleteSalle',
+    {'id': id},
+  );
+}
+
+/// {@category Endpoint}
 class EndpointAdminSeances extends _i2.EndpointRef {
   EndpointAdminSeances(_i2.EndpointCaller caller) : super(caller);
 
@@ -423,6 +485,7 @@ class Client extends _i2.ServerpodClientShared {
     emailIdp = EndpointEmailIdp(this);
     jwtRefresh = EndpointJwtRefresh(this);
     adminFilms = EndpointAdminFilms(this);
+    adminSalles = EndpointAdminSalles(this);
     adminSeances = EndpointAdminSeances(this);
     greeting = EndpointGreeting(this);
     modules = Modules(this);
@@ -433,6 +496,8 @@ class Client extends _i2.ServerpodClientShared {
   late final EndpointJwtRefresh jwtRefresh;
 
   late final EndpointAdminFilms adminFilms;
+
+  late final EndpointAdminSalles adminSalles;
 
   late final EndpointAdminSeances adminSeances;
 
@@ -445,6 +510,7 @@ class Client extends _i2.ServerpodClientShared {
     'emailIdp': emailIdp,
     'jwtRefresh': jwtRefresh,
     'adminFilms': adminFilms,
+    'adminSalles': adminSalles,
     'adminSeances': adminSeances,
     'greeting': greeting,
   };
