@@ -140,6 +140,8 @@ class TestEndpoints {
 
   late final _AdminSeancesEndpoint adminSeances;
 
+  late final _AdminSupportEndpoint adminSupport;
+
   late final _AdminUsersEndpoint adminUsers;
 
   late final _GreetingEndpoint greeting;
@@ -177,6 +179,10 @@ class _InternalTestEndpoints extends TestEndpoints
       serializationManager,
     );
     adminSeances = _AdminSeancesEndpoint(
+      endpoints,
+      serializationManager,
+    );
+    adminSupport = _AdminSupportEndpoint(
       endpoints,
       serializationManager,
     );
@@ -1181,6 +1187,82 @@ class _AdminSeancesEndpoint {
           endpointPath: 'adminSeances',
           methodName: 'deleteSeance',
           parameters: _i1.testObjectToJson({'id': id}),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue =
+            await (_localCallContext.method.call(
+                  _localUniqueSession,
+                  _localCallContext.arguments,
+                )
+                as _i3.Future<bool>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+}
+
+class _AdminSupportEndpoint {
+  _AdminSupportEndpoint(
+    this._endpointDispatch,
+    this._serializationManager,
+  );
+
+  final _i2.EndpointDispatch _endpointDispatch;
+
+  final _i2.SerializationManager _serializationManager;
+
+  _i3.Future<List<String>> getDemandesSupport(
+    _i1.TestSessionBuilder sessionBuilder,
+  ) async {
+    return _i1.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
+            endpoint: 'adminSupport',
+            method: 'getDemandesSupport',
+          );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'adminSupport',
+          methodName: 'getDemandesSupport',
+          parameters: _i1.testObjectToJson({}),
+          serializationManager: _serializationManager,
+        );
+        var _localReturnValue =
+            await (_localCallContext.method.call(
+                  _localUniqueSession,
+                  _localCallContext.arguments,
+                )
+                as _i3.Future<List<String>>);
+        return _localReturnValue;
+      } finally {
+        await _localUniqueSession.close();
+      }
+    });
+  }
+
+  _i3.Future<bool> repondreDemande(
+    _i1.TestSessionBuilder sessionBuilder,
+    int id,
+    String reponse,
+  ) async {
+    return _i1.callAwaitableFunctionAndHandleExceptions(() async {
+      var _localUniqueSession =
+          (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
+            endpoint: 'adminSupport',
+            method: 'repondreDemande',
+          );
+      try {
+        var _localCallContext = await _endpointDispatch.getMethodCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'adminSupport',
+          methodName: 'repondreDemande',
+          parameters: _i1.testObjectToJson({
+            'id': id,
+            'reponse': reponse,
+          }),
           serializationManager: _serializationManager,
         );
         var _localReturnValue =

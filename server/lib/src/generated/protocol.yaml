@@ -33,6 +33,9 @@ adminSeances:
   - createSeance:
   - updateSeance:
   - deleteSeance:
+adminSupport:
+  - getDemandesSupport:
+  - repondreDemande:
 adminUsers:
   - getUtilisateurs:
   - changerStatutUtilisateur:

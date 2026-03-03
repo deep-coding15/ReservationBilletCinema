@@ -468,6 +468,33 @@ class EndpointAdminSeances extends _i2.EndpointRef {
 }
 
 /// {@category Endpoint}
+class EndpointAdminSupport extends _i2.EndpointRef {
+  EndpointAdminSupport(_i2.EndpointCaller caller) : super(caller);
+
+  @override
+  String get name => 'adminSupport';
+
+  _i3.Future<List<String>> getDemandesSupport() =>
+      caller.callServerEndpoint<List<String>>(
+        'adminSupport',
+        'getDemandesSupport',
+        {},
+      );
+
+  _i3.Future<bool> repondreDemande(
+    int id,
+    String reponse,
+  ) => caller.callServerEndpoint<bool>(
+    'adminSupport',
+    'repondreDemande',
+    {
+      'id': id,
+      'reponse': reponse,
+    },
+  );
+}
+
+/// {@category Endpoint}
 class EndpointAdminUsers extends _i2.EndpointRef {
   EndpointAdminUsers(_i2.EndpointCaller caller) : super(caller);
 
@@ -573,6 +600,7 @@ class Client extends _i2.ServerpodClientShared {
     adminReservations = EndpointAdminReservations(this);
     adminSalles = EndpointAdminSalles(this);
     adminSeances = EndpointAdminSeances(this);
+    adminSupport = EndpointAdminSupport(this);
     adminUsers = EndpointAdminUsers(this);
     greeting = EndpointGreeting(this);
     modules = Modules(this);
@@ -592,6 +620,8 @@ class Client extends _i2.ServerpodClientShared {
 
   late final EndpointAdminSeances adminSeances;
 
+  late final EndpointAdminSupport adminSupport;
+
   late final EndpointAdminUsers adminUsers;
 
   late final EndpointGreeting greeting;
@@ -607,6 +637,7 @@ class Client extends _i2.ServerpodClientShared {
     'adminReservations': adminReservations,
     'adminSalles': adminSalles,
     'adminSeances': adminSeances,
+    'adminSupport': adminSupport,
     'adminUsers': adminUsers,
     'greeting': greeting,
   };

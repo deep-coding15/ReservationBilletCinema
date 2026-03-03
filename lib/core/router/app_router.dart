@@ -14,6 +14,7 @@ import 'package:reservation_billet_cinema/features/admin/presentation/pages/admi
 import 'package:reservation_billet_cinema/features/admin/presentation/pages/admin_salles_page.dart';
 import 'package:reservation_billet_cinema/features/admin/presentation/pages/admin_reservations_page.dart';
 import 'package:reservation_billet_cinema/features/admin/presentation/pages/admin_users_page.dart';
+import 'package:reservation_billet_cinema/features/admin/presentation/pages/admin_support_page.dart';
 
 /// Routes de l'application (GoRouter).
 final goRouter = GoRouter(
@@ -93,6 +94,11 @@ final goRouter = GoRouter(
       path: '/admin/users',
       name: 'admin-users',
       builder: (context, state) => const AdminUsersPage(),
+    ),
+    GoRoute(
+      path: '/admin/support',
+      name: 'admin-support',
+      builder: (context, state) => const AdminSupportPage(),
     ),
   ],
 );

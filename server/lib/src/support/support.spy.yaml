@@ -1,0 +1,13 @@
+class: DemandeSupport
+table: demandes_support
+managedMigration: true
+fields:
+  utilisateur_id: int
+  sujet: String
+  message: String
+  statut: String, default='ouvert' # 'ouvert', 'ferme'
+  reponse: String?
+  created_at: DateTime?, default=now
+indexes:
+  idx_support_user:
+    fields: utilisateur_id
