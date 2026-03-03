@@ -18,9 +18,11 @@ import 'package:serverpod_auth_core_server/serverpod_auth_core_server.dart'
     as _i4;
 import 'films/film.dart' as _i5;
 import 'greetings/greeting.dart' as _i6;
-import 'package:cinema_reservation_server/src/generated/films/film.dart' as _i7;
+import 'seances/seance.dart' as _i7;
+import 'package:cinema_reservation_server/src/generated/films/film.dart' as _i8;
 export 'films/film.dart';
 export 'greetings/greeting.dart';
+export 'seances/seance.dart';
 
 class Protocol extends _i1.SerializationManagerServer {
   Protocol._();
@@ -155,7 +157,136 @@ class Protocol extends _i1.SerializationManagerServer {
           isPrimary: false,
         ),
       ],
-      managed: false,
+      managed: true,
+    ),
+    _i2.TableDefinition(
+      name: 'seances',
+      dartName: 'Seance',
+      schema: 'public',
+      module: 'cinema_reservation',
+      columns: [
+        _i2.ColumnDefinition(
+          name: 'id',
+          columnType: _i2.ColumnType.bigint,
+          isNullable: false,
+          dartType: 'int?',
+          columnDefault: 'nextval(\'seances_id_seq\'::regclass)',
+        ),
+        _i2.ColumnDefinition(
+          name: 'film_id',
+          columnType: _i2.ColumnType.bigint,
+          isNullable: false,
+          dartType: 'int',
+        ),
+        _i2.ColumnDefinition(
+          name: 'salle_id',
+          columnType: _i2.ColumnType.bigint,
+          isNullable: false,
+          dartType: 'int',
+        ),
+        _i2.ColumnDefinition(
+          name: 'date_heure',
+          columnType: _i2.ColumnType.timestampWithoutTimeZone,
+          isNullable: false,
+          dartType: 'DateTime',
+        ),
+        _i2.ColumnDefinition(
+          name: 'langue',
+          columnType: _i2.ColumnType.text,
+          isNullable: false,
+          dartType: 'String',
+          columnDefault: '\'VF\'::text',
+        ),
+        _i2.ColumnDefinition(
+          name: 'type_projection',
+          columnType: _i2.ColumnType.text,
+          isNullable: false,
+          dartType: 'String',
+          columnDefault: '\'2D\'::text',
+        ),
+        _i2.ColumnDefinition(
+          name: 'places_disponibles',
+          columnType: _i2.ColumnType.bigint,
+          isNullable: false,
+          dartType: 'int',
+        ),
+        _i2.ColumnDefinition(
+          name: 'prix',
+          columnType: _i2.ColumnType.doublePrecision,
+          isNullable: false,
+          dartType: 'double',
+        ),
+        _i2.ColumnDefinition(
+          name: 'type_seance',
+          columnType: _i2.ColumnType.text,
+          isNullable: false,
+          dartType: 'String',
+          columnDefault: '\'standard\'::text',
+        ),
+        _i2.ColumnDefinition(
+          name: 'created_at',
+          columnType: _i2.ColumnType.timestampWithoutTimeZone,
+          isNullable: false,
+          dartType: 'DateTime',
+          columnDefault: 'CURRENT_TIMESTAMP',
+        ),
+      ],
+      foreignKeys: [],
+      indexes: [
+        _i2.IndexDefinition(
+          indexName: 'seances_pkey',
+          tableSpace: null,
+          elements: [
+            _i2.IndexElementDefinition(
+              type: _i2.IndexElementDefinitionType.column,
+              definition: 'id',
+            ),
+          ],
+          type: 'btree',
+          isUnique: true,
+          isPrimary: true,
+        ),
+        _i2.IndexDefinition(
+          indexName: 'idx_seances_film',
+          tableSpace: null,
+          elements: [
+            _i2.IndexElementDefinition(
+              type: _i2.IndexElementDefinitionType.column,
+              definition: 'film_id',
+            ),
+          ],
+          type: 'btree',
+          isUnique: false,
+          isPrimary: false,
+        ),
+        _i2.IndexDefinition(
+          indexName: 'idx_seances_salle',
+          tableSpace: null,
+          elements: [
+            _i2.IndexElementDefinition(
+              type: _i2.IndexElementDefinitionType.column,
+              definition: 'salle_id',
+            ),
+          ],
+          type: 'btree',
+          isUnique: false,
+          isPrimary: false,
+        ),
+        _i2.IndexDefinition(
+          indexName: 'idx_seances_date',
+          tableSpace: null,
+          elements: [
+            _i2.IndexElementDefinition(
+              type: _i2.IndexElementDefinitionType.column,
+              definition: 'date_heure',
+            ),
+          ],
+          type: 'btree',
+          isUnique: false,
+          isPrimary: false,
+        ),
+      ],
+      managed: true,
     ),
     ..._i3.Protocol.targetTableDefinitions,
     ..._i4.Protocol.targetTableDefinitions,
@@ -195,11 +326,17 @@ class Protocol extends _i1.SerializationManagerServer {
     if (t == _i6.Greeting) {
       return _i6.Greeting.fromJson(data) as T;
     }
+    if (t == _i7.Seance) {
+      return _i7.Seance.fromJson(data) as T;
+    }
     if (t == _i1.getType<_i5.Film?>()) {
       return (data != null ? _i5.Film.fromJson(data) : null) as T;
     }
     if (t == _i1.getType<_i6.Greeting?>()) {
       return (data != null ? _i6.Greeting.fromJson(data) : null) as T;
+    }
+    if (t == _i1.getType<_i7.Seance?>()) {
+      return (data != null ? _i7.Seance.fromJson(data) : null) as T;
     }
     if (t == List<String>) {
       return (data as List).map((e) => deserialize<String>(e)).toList() as T;
@@ -210,8 +347,11 @@ class Protocol extends _i1.SerializationManagerServer {
               : null)
           as T;
     }
-    if (t == List<_i7.Film>) {
-      return (data as List).map((e) => deserialize<_i7.Film>(e)).toList() as T;
+    if (t == List<_i8.Film>) {
+      return (data as List).map((e) => deserialize<_i8.Film>(e)).toList() as T;
+    }
+    if (t == List<String>) {
+      return (data as List).map((e) => deserialize<String>(e)).toList() as T;
     }
     try {
       return _i3.Protocol().deserialize<T>(data, t);
@@ -229,6 +369,7 @@ class Protocol extends _i1.SerializationManagerServer {
     return switch (type) {
       _i5.Film => 'Film',
       _i6.Greeting => 'Greeting',
+      _i7.Seance => 'Seance',
       _ => null,
     };
   }
@@ -250,6 +391,8 @@ class Protocol extends _i1.SerializationManagerServer {
         return 'Film';
       case _i6.Greeting():
         return 'Greeting';
+      case _i7.Seance():
+        return 'Seance';
     }
     className = _i2.Protocol().getClassNameForObject(data);
     if (className != null) {
@@ -277,6 +420,9 @@ class Protocol extends _i1.SerializationManagerServer {
     }
     if (dataClassName == 'Greeting') {
       return deserialize<_i6.Greeting>(data['data']);
+    }
+    if (dataClassName == 'Seance') {
+      return deserialize<_i7.Seance>(data['data']);
     }
     if (dataClassName.startsWith('serverpod.')) {
       data['className'] = dataClassName.substring(10);
@@ -316,6 +462,8 @@ class Protocol extends _i1.SerializationManagerServer {
     switch (t) {
       case _i5.Film:
         return _i5.Film.t;
+      case _i7.Seance:
+        return _i7.Seance.t;
     }
     return null;
   }

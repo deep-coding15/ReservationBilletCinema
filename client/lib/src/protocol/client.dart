@@ -277,6 +277,91 @@ class EndpointAdminFilms extends _i2.EndpointRef {
   );
 }
 
+/// {@category Endpoint}
+class EndpointAdminSeances extends _i2.EndpointRef {
+  EndpointAdminSeances(_i2.EndpointCaller caller) : super(caller);
+
+  @override
+  String get name => 'adminSeances';
+
+  _i3.Future<List<String>> getSeances() =>
+      caller.callServerEndpoint<List<String>>(
+        'adminSeances',
+        'getSeances',
+        {},
+      );
+
+  _i3.Future<List<String>> getFilmsDisponibles() =>
+      caller.callServerEndpoint<List<String>>(
+        'adminSeances',
+        'getFilmsDisponibles',
+        {},
+      );
+
+  _i3.Future<List<String>> getSallesDisponibles() =>
+      caller.callServerEndpoint<List<String>>(
+        'adminSeances',
+        'getSallesDisponibles',
+        {},
+      );
+
+  _i3.Future<String> createSeance({
+    required int filmId,
+    required int salleId,
+    required String dateHeure,
+    required String langue,
+    required String typeProjection,
+    required int placesDisponibles,
+    required double prix,
+    required String typeSeance,
+  }) => caller.callServerEndpoint<String>(
+    'adminSeances',
+    'createSeance',
+    {
+      'filmId': filmId,
+      'salleId': salleId,
+      'dateHeure': dateHeure,
+      'langue': langue,
+      'typeProjection': typeProjection,
+      'placesDisponibles': placesDisponibles,
+      'prix': prix,
+      'typeSeance': typeSeance,
+    },
+  );
+
+  _i3.Future<String> updateSeance({
+    required int id,
+    required int filmId,
+    required int salleId,
+    required String dateHeure,
+    required String langue,
+    required String typeProjection,
+    required int placesDisponibles,
+    required double prix,
+    required String typeSeance,
+  }) => caller.callServerEndpoint<String>(
+    'adminSeances',
+    'updateSeance',
+    {
+      'id': id,
+      'filmId': filmId,
+      'salleId': salleId,
+      'dateHeure': dateHeure,
+      'langue': langue,
+      'typeProjection': typeProjection,
+      'placesDisponibles': placesDisponibles,
+      'prix': prix,
+      'typeSeance': typeSeance,
+    },
+  );
+
+  _i3.Future<bool> deleteSeance(int id) => caller.callServerEndpoint<bool>(
+    'adminSeances',
+    'deleteSeance',
+    {'id': id},
+  );
+}
+
 /// This is an example endpoint that returns a greeting message through
 /// its [hello] method.
 /// {@category Endpoint}
@@ -338,6 +423,7 @@ class Client extends _i2.ServerpodClientShared {
     emailIdp = EndpointEmailIdp(this);
     jwtRefresh = EndpointJwtRefresh(this);
     adminFilms = EndpointAdminFilms(this);
+    adminSeances = EndpointAdminSeances(this);
     greeting = EndpointGreeting(this);
     modules = Modules(this);
   }
@@ -348,6 +434,8 @@ class Client extends _i2.ServerpodClientShared {
 
   late final EndpointAdminFilms adminFilms;
 
+  late final EndpointAdminSeances adminSeances;
+
   late final EndpointGreeting greeting;
 
   late final Modules modules;
@@ -357,6 +445,7 @@ class Client extends _i2.ServerpodClientShared {
     'emailIdp': emailIdp,
     'jwtRefresh': jwtRefresh,
     'adminFilms': adminFilms,
+    'adminSeances': adminSeances,
     'greeting': greeting,
   };
 

@@ -14,5 +14,12 @@ adminFilms:
   - createFilm:
   - updateFilm:
   - deleteFilm:
+adminSeances:
+  - getSeances:
+  - getFilmsDisponibles:
+  - getSallesDisponibles:
+  - createSeance:
+  - updateSeance:
+  - deleteSeance:
 greeting:
   - hello:

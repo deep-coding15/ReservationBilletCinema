@@ -14,12 +14,13 @@ import 'package:serverpod/serverpod.dart' as _i1;
 import '../auth/email_idp_endpoint.dart' as _i2;
 import '../auth/jwt_refresh_endpoint.dart' as _i3;
 import '../endpoints/admin_films_endpoint.dart' as _i4;
-import '../greetings/greeting_endpoint.dart' as _i5;
-import 'package:cinema_reservation_server/src/generated/films/film.dart' as _i6;
+import '../endpoints/admin_seances_endpoint.dart' as _i5;
+import '../greetings/greeting_endpoint.dart' as _i6;
+import 'package:cinema_reservation_server/src/generated/films/film.dart' as _i7;
 import 'package:serverpod_auth_idp_server/serverpod_auth_idp_server.dart'
-    as _i7;
-import 'package:serverpod_auth_core_server/serverpod_auth_core_server.dart'
     as _i8;
+import 'package:serverpod_auth_core_server/serverpod_auth_core_server.dart'
+    as _i9;
 
 class Endpoints extends _i1.EndpointDispatch {
   @override
@@ -43,7 +44,13 @@ class Endpoints extends _i1.EndpointDispatch {
           'adminFilms',
           null,
         ),
-      'greeting': _i5.GreetingEndpoint()
+      'adminSeances': _i5.AdminSeancesEndpoint()
+        ..initialize(
+          server,
+          'adminSeances',
+          null,
+        ),
+      'greeting': _i6.GreetingEndpoint()
         ..initialize(
           server,
           'greeting',
@@ -273,7 +280,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'film': _i1.ParameterDescription(
               name: 'film',
-              type: _i1.getType<_i6.Film>(),
+              type: _i1.getType<_i7.Film>(),
               nullable: false,
             ),
           },
@@ -292,7 +299,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'film': _i1.ParameterDescription(
               name: 'film',
-              type: _i1.getType<_i6.Film>(),
+              type: _i1.getType<_i7.Film>(),
               nullable: false,
             ),
           },
@@ -327,6 +334,189 @@ class Endpoints extends _i1.EndpointDispatch {
         ),
       },
     );
+    connectors['adminSeances'] = _i1.EndpointConnector(
+      name: 'adminSeances',
+      endpoint: endpoints['adminSeances']!,
+      methodConnectors: {
+        'getSeances': _i1.MethodConnector(
+          name: 'getSeances',
+          params: {},
+          call:
+              (
+                _i1.Session session,
+                Map<String, dynamic> params,
+              ) async => (endpoints['adminSeances'] as _i5.AdminSeancesEndpoint)
+                  .getSeances(session),
+        ),
+        'getFilmsDisponibles': _i1.MethodConnector(
+          name: 'getFilmsDisponibles',
+          params: {},
+          call:
+              (
+                _i1.Session session,
+                Map<String, dynamic> params,
+              ) async => (endpoints['adminSeances'] as _i5.AdminSeancesEndpoint)
+                  .getFilmsDisponibles(session),
+        ),
+        'getSallesDisponibles': _i1.MethodConnector(
+          name: 'getSallesDisponibles',
+          params: {},
+          call:
+              (
+                _i1.Session session,
+                Map<String, dynamic> params,
+              ) async => (endpoints['adminSeances'] as _i5.AdminSeancesEndpoint)
+                  .getSallesDisponibles(session),
+        ),
+        'createSeance': _i1.MethodConnector(
+          name: 'createSeance',
+          params: {
+            'filmId': _i1.ParameterDescription(
+              name: 'filmId',
+              type: _i1.getType<int>(),
+              nullable: false,
+            ),
+            'salleId': _i1.ParameterDescription(
+              name: 'salleId',
+              type: _i1.getType<int>(),
+              nullable: false,
+            ),
+            'dateHeure': _i1.ParameterDescription(
+              name: 'dateHeure',
+              type: _i1.getType<String>(),
+              nullable: false,
+            ),
+            'langue': _i1.ParameterDescription(
+              name: 'langue',
+              type: _i1.getType<String>(),
+              nullable: false,
+            ),
+            'typeProjection': _i1.ParameterDescription(
+              name: 'typeProjection',
+              type: _i1.getType<String>(),
+              nullable: false,
+            ),
+            'placesDisponibles': _i1.ParameterDescription(
+              name: 'placesDisponibles',
+              type: _i1.getType<int>(),
+              nullable: false,
+            ),
+            'prix': _i1.ParameterDescription(
+              name: 'prix',
+              type: _i1.getType<double>(),
+              nullable: false,
+            ),
+            'typeSeance': _i1.ParameterDescription(
+              name: 'typeSeance',
+              type: _i1.getType<String>(),
+              nullable: false,
+            ),
+          },
+          call:
+              (
+                _i1.Session session,
+                Map<String, dynamic> params,
+              ) async => (endpoints['adminSeances'] as _i5.AdminSeancesEndpoint)
+                  .createSeance(
+                    session,
+                    filmId: params['filmId'],
+                    salleId: params['salleId'],
+                    dateHeure: params['dateHeure'],
+                    langue: params['langue'],
+                    typeProjection: params['typeProjection'],
+                    placesDisponibles: params['placesDisponibles'],
+                    prix: params['prix'],
+                    typeSeance: params['typeSeance'],
+                  ),
+        ),
+        'updateSeance': _i1.MethodConnector(
+          name: 'updateSeance',
+          params: {
+            'id': _i1.ParameterDescription(
+              name: 'id',
+              type: _i1.getType<int>(),
+              nullable: false,
+            ),
+            'filmId': _i1.ParameterDescription(
+              name: 'filmId',
+              type: _i1.getType<int>(),
+              nullable: false,
+            ),
+            'salleId': _i1.ParameterDescription(
+              name: 'salleId',
+              type: _i1.getType<int>(),
+              nullable: false,
+            ),
+            'dateHeure': _i1.ParameterDescription(
+              name: 'dateHeure',
+              type: _i1.getType<String>(),
+              nullable: false,
+            ),
+            'langue': _i1.ParameterDescription(
+              name: 'langue',
+              type: _i1.getType<String>(),
+              nullable: false,
+            ),
+            'typeProjection': _i1.ParameterDescription(
+              name: 'typeProjection',
+              type: _i1.getType<String>(),
+              nullable: false,
+            ),
+            'placesDisponibles': _i1.ParameterDescription(
+              name: 'placesDisponibles',
+              type: _i1.getType<int>(),
+              nullable: false,
+            ),
+            'prix': _i1.ParameterDescription(
+              name: 'prix',
+              type: _i1.getType<double>(),
+              nullable: false,
+            ),
+            'typeSeance': _i1.ParameterDescription(
+              name: 'typeSeance',
+              type: _i1.getType<String>(),
+              nullable: false,
+            ),
+          },
+          call:
+              (
+                _i1.Session session,
+                Map<String, dynamic> params,
+              ) async => (endpoints['adminSeances'] as _i5.AdminSeancesEndpoint)
+                  .updateSeance(
+                    session,
+                    id: params['id'],
+                    filmId: params['filmId'],
+                    salleId: params['salleId'],
+                    dateHeure: params['dateHeure'],
+                    langue: params['langue'],
+                    typeProjection: params['typeProjection'],
+                    placesDisponibles: params['placesDisponibles'],
+                    prix: params['prix'],
+                    typeSeance: params['typeSeance'],
+                  ),
+        ),
+        'deleteSeance': _i1.MethodConnector(
+          name: 'deleteSeance',
+          params: {
+            'id': _i1.ParameterDescription(
+              name: 'id',
+              type: _i1.getType<int>(),
+              nullable: false,
+            ),
+          },
+          call:
+              (
+                _i1.Session session,
+                Map<String, dynamic> params,
+              ) async => (endpoints['adminSeances'] as _i5.AdminSeancesEndpoint)
+                  .deleteSeance(
+                    session,
+                    params['id'],
+                  ),
+        ),
+      },
+    );
     connectors['greeting'] = _i1.EndpointConnector(
       name: 'greeting',
       endpoint: endpoints['greeting']!,
@@ -344,16 +534,16 @@ class Endpoints extends _i1.EndpointDispatch {
               (
                 _i1.Session session,
                 Map<String, dynamic> params,
-              ) async => (endpoints['greeting'] as _i5.GreetingEndpoint).hello(
+              ) async => (endpoints['greeting'] as _i6.GreetingEndpoint).hello(
                 session,
                 params['name'],
               ),
         ),
       },
     );
-    modules['serverpod_auth_idp'] = _i7.Endpoints()
+    modules['serverpod_auth_idp'] = _i8.Endpoints()
       ..initializeEndpoints(server);
-    modules['serverpod_auth_core'] = _i8.Endpoints()
+    modules['serverpod_auth_core'] = _i9.Endpoints()
       ..initializeEndpoints(server);
   }
 }

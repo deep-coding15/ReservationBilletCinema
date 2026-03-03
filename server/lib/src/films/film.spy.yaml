@@ -1,6 +1,6 @@
 class: Film
 table: films
-managedMigration: false
+managedMigration: true
 fields:
   titre: String
   synopsis: String?
