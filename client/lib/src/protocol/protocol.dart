@@ -115,6 +115,15 @@ class Protocol extends _i1.SerializationManager {
     if (t == List<String>) {
       return (data as List).map((e) => deserialize<String>(e)).toList() as T;
     }
+    if (t == List<int>) {
+      return (data as List).map((e) => (e is int) ? e : int.parse(e.toString())).toList() as T;
+    }
+    if (t == _i1.getType<List<int>?>()) {
+      return (data != null
+              ? (data as List).map((e) => (e is int) ? e : int.parse(e.toString())).toList()
+              : null)
+          as T;
+    }
     if (t == _i1.getType<List<String>?>()) {
       return (data != null
               ? (data as List).map((e) => deserialize<String>(e)).toList()
@@ -131,6 +140,16 @@ class Protocol extends _i1.SerializationManager {
     if (t == List<_i11.Cinema>) {
       return (data as List).map((e) => deserialize<_i11.Cinema>(e)).toList()
           as T;
+    }
+    if (t == List<_i8.Siege>) {
+      return (data as List).map((e) => deserialize<_i8.Siege>(e)).toList()
+          as T;
+    }
+    if (t.toString() == 'List<dynamic>') {
+      return data as T;
+    }
+    if (t.toString() == 'dynamic') {
+      return data as T;
     }
     try {
       return _i12.Protocol().deserialize<T>(data, t);

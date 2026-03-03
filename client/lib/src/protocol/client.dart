@@ -298,6 +298,52 @@ class EndpointFilms extends _i2.EndpointRef {
         'getCinemas',
         {'ville': ville},
       );
+
+  _i3.Future<List<_i9.Seance>> getSeancesByCinema(int cinemaId, {DateTime? date}) =>
+      caller.callServerEndpoint<List<_i9.Seance>>(
+        'films',
+        'getSeancesByCinema',
+        {'cinemaId': cinemaId, 'date': date},
+      );
+}
+
+/// Endpoint événements.
+class EndpointEvents extends _i2.EndpointRef {
+  EndpointEvents(_i2.EndpointCaller caller) : super(caller);
+
+  @override
+  String get name => 'events';
+
+  _i3.Future<List<dynamic>> getEvents({String? ville, DateTime? date}) =>
+      caller.callServerEndpoint<List<dynamic>>(
+        'events',
+        'getEvents',
+        {'ville': ville, 'date': date},
+      );
+
+  _i3.Future<dynamic> getEventById(int id) =>
+      caller.callServerEndpoint<dynamic>(
+        'events',
+        'getEventById',
+        {'id': id},
+      );
+
+  _i3.Future<Map<String, dynamic>> createEventReservation({
+    required int eventId,
+    required int nbBillets,
+    required double montantTotal,
+    int utilisateurId = 1,
+  }) =>
+      caller.callServerEndpoint<Map<String, dynamic>>(
+        'events',
+        'createEventReservation',
+        {
+          'eventId': eventId,
+          'nbBillets': nbBillets,
+          'montantTotal': montantTotal,
+          'utilisateurId': utilisateurId,
+        },
+      );
 }
 
 /// Endpoint réservations.
@@ -381,6 +427,7 @@ class Client extends _i2.ServerpodClientShared {
     jwtRefresh = EndpointJwtRefresh(this);
     greeting = EndpointGreeting(this);
     films = EndpointFilms(this);
+    events = EndpointEvents(this);
     reservations = EndpointReservations(this);
     modules = Modules(this);
   }
@@ -393,6 +440,8 @@ class Client extends _i2.ServerpodClientShared {
 
   late final EndpointFilms films;
 
+  late final EndpointEvents events;
+
   late final EndpointReservations reservations;
 
   late final Modules modules;
@@ -403,6 +452,7 @@ class Client extends _i2.ServerpodClientShared {
     'jwtRefresh': jwtRefresh,
     'greeting': greeting,
     'films': films,
+    'events': events,
     'reservations': reservations,
   };
 

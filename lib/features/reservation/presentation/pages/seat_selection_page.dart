@@ -3,8 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:cinema_reservation_client/cinema_reservation_client.dart';
 import 'package:reservation_billet_cinema/core/theme/app_theme.dart';
+import 'package:reservation_billet_cinema/features/reservation/data/models/recap_data.dart';
 import 'package:reservation_billet_cinema/features/reservation/data/repositories/reservation_repository.dart';
-import 'package:reservation_billet_cinema/features/reservation/presentation/pages/reservation_confirmation_page.dart';
 
 /// Page sélection des sièges : plan de salle, choix, confirmation.
 class SeatSelectionPage extends ConsumerStatefulWidget {
@@ -22,7 +22,6 @@ class _SeatSelectionPageState extends ConsumerState<SeatSelectionPage> {
   final Set<int> _selectedIds = {};
   bool _loading = true;
   String? _error;
-  bool _submitting = false;
 
   @override
   void initState() {
@@ -41,6 +40,12 @@ class _SeatSelectionPageState extends ConsumerState<SeatSelectionPage> {
       final sieges = await repo.getSiegesBySalle(seance.salleId);
       final reserved = await repo.getReservedSiegeIdsForSeance(seance.id);
       if (mounted) {
+        // Trier les sièges par numéro (1, 2, 4...) pour respecter l'ordre disponible
+        sieges.sort((a, b) {
+          final na = int.tryParse(a.numero) ?? 9999;
+          final nb = int.tryParse(b.numero) ?? 9999;
+          return na.compareTo(nb);
+        });
         setState(() {
           _sieges = sieges;
           _reservedIds = reserved.toSet();
@@ -59,27 +64,13 @@ class _SeatSelectionPageState extends ConsumerState<SeatSelectionPage> {
     }
   }
 
-  Future<void> _confirmReservation() async {
+  void _goToRecap() {
     if (widget.seance == null || _selectedIds.isEmpty) return;
-    setState(() => _submitting = true);
-    final repo = ref.read(reservationRepositoryProvider);
-    try {
-      final result = await repo.createReservation(
-        seanceId: widget.seance!.id,
-        siegeIds: _selectedIds.toList(),
-      );
-      if (mounted) {
-        context.push('/reservation/confirmation', extra: result);
-      }
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Erreur: $e'), backgroundColor: Colors.red),
-        );
-      }
-    } finally {
-      if (mounted) setState(() => _submitting = false);
-    }
+    final data = ReservationRecapData(
+      seance: widget.seance!,
+      siegeIds: _selectedIds.toList(),
+    );
+    context.push('/reservation/recap', extra: data);
   }
 
   @override
@@ -206,23 +197,15 @@ class _SeatSelectionPageState extends ConsumerState<SeatSelectionPage> {
                         child: SizedBox(
                           width: double.infinity,
                           child: FilledButton(
-                            onPressed: _selectedIds.isEmpty || _submitting
-                                ? null
-                                : _confirmReservation,
+                            onPressed: _selectedIds.isEmpty ? null : _goToRecap,
                             style: FilledButton.styleFrom(
                               backgroundColor: AppColors.primary,
                               padding: const EdgeInsets.symmetric(vertical: 14),
                             ),
-                            child: _submitting
-                                ? const SizedBox(
-                                    height: 22,
-                                    width: 22,
-                                    child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
-                                  )
-                                : Text(
-                                    'Réserver ${_selectedIds.length} place(s) — ${(seance.prix * _selectedIds.length).toStringAsFixed(0)} DH',
-                                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-                                  ),
+                            child: Text(
+                              'Réserver ${_selectedIds.length} place(s) — ${(seance.prix * _selectedIds.length).toStringAsFixed(0)} DH',
+                              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                            ),
                           ),
                         ),
                       ),

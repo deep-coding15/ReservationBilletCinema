@@ -23,6 +23,10 @@ class FilmsRepository {
   Future<List<Cinema>> getCinemas({String? ville}) async {
     return _client.films.getCinemas(ville: ville);
   }
+
+  Future<List<Seance>> getSeancesByCinema(int cinemaId, {DateTime? date}) async {
+    return _client.films.getSeancesByCinema(cinemaId, date: date);
+  }
 }
 
 final filmsRepositoryProvider = Provider<FilmsRepository>((ref) {

@@ -15,6 +15,8 @@ import '../auth/email_idp_endpoint.dart' as _i2;
 import '../auth/jwt_refresh_endpoint.dart' as _i3;
 import '../greetings/greeting_endpoint.dart' as _i4;
 import '../films/films_endpoint.dart' as _i7;
+import '../reservations/reservations_endpoint.dart' as _i8;
+import '../events/events_endpoint.dart' as _i9;
 import 'package:serverpod_auth_idp_server/serverpod_auth_idp_server.dart'
     as _i5;
 import 'package:serverpod_auth_core_server/serverpod_auth_core_server.dart'
@@ -52,6 +54,12 @@ class Endpoints extends _i1.EndpointDispatch {
         ..initialize(
           server,
           'reservations',
+          null,
+        ),
+      'events': _i9.EventsEndpoint()
+        ..initialize(
+          server,
+          'events',
           null,
         ),
     };
@@ -349,6 +357,26 @@ class Endpoints extends _i1.EndpointDispatch {
                 ville: params['ville'] as String?,
               ),
         ),
+        'getSeancesByCinema': _i1.MethodConnector(
+          name: 'getSeancesByCinema',
+          params: {
+            'cinemaId': _i1.ParameterDescription(
+              name: 'cinemaId',
+              type: _i1.getType<int>(),
+              nullable: false,
+            ),
+          },
+          call:
+              (
+                _i1.Session session,
+                Map<String, dynamic> params,
+              ) async =>
+                  (endpoints['films'] as _i7.FilmsEndpoint).getSeancesByCinema(
+                    session,
+                    params['cinemaId'] as int,
+                    date: params['date'] as DateTime?,
+                  ),
+        ),
       },
     );
     connectors['reservations'] = _i1.EndpointConnector(
@@ -423,6 +451,63 @@ class Endpoints extends _i1.EndpointDispatch {
                         siegeIds: (params['siegeIds'] as List).cast<int>(),
                         utilisateurId: params['utilisateurId'] as int? ?? 1,
                       ),
+        ),
+      },
+    );
+    connectors['events'] = _i1.EndpointConnector(
+      name: 'events',
+      endpoint: endpoints['events']!,
+      methodConnectors: {
+        'getEvents': _i1.MethodConnector(
+          name: 'getEvents',
+          params: {},
+          call:
+              (
+                _i1.Session session,
+                Map<String, dynamic> params,
+              ) async => (endpoints['events'] as _i9.EventsEndpoint).getEvents(
+                session,
+                ville: params['ville'] as String?,
+                date: params['date'] as DateTime?,
+              ),
+        ),
+        'getEventById': _i1.MethodConnector(
+          name: 'getEventById',
+          params: {
+            'id': _i1.ParameterDescription(
+              name: 'id',
+              type: _i1.getType<int>(),
+              nullable: false,
+            ),
+          },
+          call:
+              (
+                _i1.Session session,
+                Map<String, dynamic> params,
+              ) async => (endpoints['events'] as _i9.EventsEndpoint).getEventById(
+                session,
+                params['id'] as int,
+              ),
+        ),
+        'createEventReservation': _i1.MethodConnector(
+          name: 'createEventReservation',
+          params: {
+            'eventId': _i1.ParameterDescription(name: 'eventId', type: _i1.getType<int>(), nullable: false),
+            'nbBillets': _i1.ParameterDescription(name: 'nbBillets', type: _i1.getType<int>(), nullable: false),
+            'montantTotal': _i1.ParameterDescription(name: 'montantTotal', type: _i1.getType<double>(), nullable: false),
+            'utilisateurId': _i1.ParameterDescription(name: 'utilisateurId', type: _i1.getType<int>(), nullable: false),
+          },
+          call:
+              (
+                _i1.Session session,
+                Map<String, dynamic> params,
+              ) async => (endpoints['events'] as _i9.EventsEndpoint).createEventReservation(
+                session,
+                eventId: params['eventId'] as int,
+                nbBillets: params['nbBillets'] as int,
+                montantTotal: (params['montantTotal'] as num).toDouble(),
+                utilisateurId: params['utilisateurId'] as int? ?? 1,
+              ),
         ),
       },
     );

@@ -7,10 +7,11 @@
 # facing ports.
 
 # Configuration for the main API server.
+# Port 8090 car 8080 est utilisé par Oracle TNS Listener sur Windows.
 apiServer:
-  port: 8080
+  port: 8090
   publicHost: localhost
-  publicPort: 8080
+  publicPort: 8090
   publicScheme: http
 
 # Configuration for the Insights server.

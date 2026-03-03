@@ -1,4 +1,4 @@
 /// URL du backend Serverpod (Web). En local, le navigateur et le serveur sont sur la même machine.
-const int serverPort = 8080;
+const int serverPort = 8090;
 
 String get baseUrl => 'http://localhost:$serverPort';

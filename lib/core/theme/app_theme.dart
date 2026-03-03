@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 
-/// Couleurs type cinéma (rouge / or / noir).
+/// Couleurs type cinéma (rouge / or / noir) + néon pour filtres.
 class AppColors {
   static const Color primary = Color(0xFFc41e3a);
   static const Color primaryDark = Color(0xFF8b1529);
   static const Color accent = Color(0xFFe8b923);
+  /// Couleur néon (rouge) pour filtres sélectionnés et éléments visibles.
+  static const Color neon = Color(0xFFe53935);
+  static const Color neonGlow = Color(0x40e53935);
   static const Color background = Color(0xFFf5f0eb);
   static const Color surface = Color(0xFFFFFFFF);
   static const Color onPrimary = Colors.white;

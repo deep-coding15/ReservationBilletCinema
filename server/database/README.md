@@ -106,3 +106,13 @@ psql -U postgres -d cinema_reservation -f server/database/seed_films.sql
 ```
 
 Tu peux le relancer pour mettre à jour les affiches des films sans doublon.
+
+### Vérifier que les affiches sont bien chargées
+
+Avec le serveur Serverpod démarré (`dart run bin/main.dart` dans `server/`) :
+
+```powershell
+dart run scripts/verify_seed.dart
+```
+
+Le script affiche la liste des films et indique si chacun a une affiche.

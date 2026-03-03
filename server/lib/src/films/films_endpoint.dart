@@ -64,6 +64,31 @@ class FilmsEndpoint extends Endpoint {
     return result.map((row) => _rowToSeance(row)).toList();
   }
 
+  /// Séances à venir pour un cinéma (optionnel: filtrer par date).
+  Future<List<Seance>> getSeancesByCinema(Session session, int cinemaId, {DateTime? date}) async {
+    var sql = r'''
+      SELECT s.id, s.film_id, s.salle_id, s.date_heure, s.langue,
+             s.type_projection, s.places_disponibles, s.prix, s.type_seance,
+             c.nom AS cinema_nom, sal.code_salle AS salle_code
+      FROM seances s
+      JOIN salles sal ON sal.id = s.salle_id
+      JOIN cinemas c ON c.id = sal.cinema_id
+      WHERE sal.cinema_id = @cinemaId AND s.date_heure >= CURRENT_TIMESTAMP
+    ''';
+    final params = <String, Object?>{'cinemaId': cinemaId};
+    if (date != null) {
+      sql += r' AND DATE(s.date_heure) = DATE(@date)';
+      params['date'] = date;
+    }
+    sql += ' ORDER BY s.date_heure';
+
+    final result = await session.db.unsafeQuery(
+      sql,
+      parameters: QueryParameters.named(params),
+    );
+    return result.map((row) => _rowToSeance(row)).toList();
+  }
+
   /// Liste des cinémas.
   Future<List<Cinema>> getCinemas(Session session, {String? ville}) async {
     var sql = r'SELECT id, nom, adresse, ville, latitude, longitude FROM cinemas WHERE 1=1';

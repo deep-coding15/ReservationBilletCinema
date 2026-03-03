@@ -72,9 +72,9 @@ class _SplashPageState extends State<SplashPage>
       if (!mounted) return;
       _exitController.forward().then((_) {
         if (!mounted) return;
-        // Après le splash, on va vers l'écran d'authentification (login)
-        // avant de laisser l'utilisateur accéder au reste de l'application.
-        context.go('/auth/login');
+        // Pour le moment on va directement sur l'accueil pour ne pas bloquer
+        // le travail sur les autres fonctionnalités (Films & séances, etc.).
+        context.go('/');
       });
     });
   }

@@ -91,3 +91,11 @@ VALUES
   (4, 'Où trouver mon billet avec QR code ?', 'Après confirmation, votre e-billet apparaît dans « Mes billets ». Présentez le QR code à l''entrée de la salle.', 'billets', 1),
   (5, 'Comment contacter le support ?', 'Via l''onglet FAQ & Aide : formulaire de contact ou numéro indiqué. Nous répondons sous 24 h ouvrées.', 'support', 1)
 ON CONFLICT (id) DO NOTHING;
+
+-- Événements (dans un cinéma ou autre lieu)
+INSERT INTO evenements (id, titre, description, categorie, lieu_type, cinema_id, lieu_nom, adresse, ville, date_heure, prix, places_disponibles, affiche)
+VALUES
+  (1, 'Concert Jazz & Blues', 'Soirée jazz avec orchestre live.', 'Concert', 'cinema', 1, NULL, NULL, 'Tétouan', CURRENT_TIMESTAMP + INTERVAL '5 days' + INTERVAL '20 hours', 80, 120, 'https://placehold.co/400x225/2d1b4e/eee?text=Jazz'),
+  (2, 'Stand-up Mohamed El Morabiti', 'One-man-show humour.', 'Stand-up', 'autre', NULL, 'Salle Ibn Battouta', 'Avenue Youssef Ben Tachfine', 'Tanger', CURRENT_TIMESTAMP + INTERVAL '7 days' + INTERVAL '21 hours', 120, 200, 'https://placehold.co/400x225/1a2e1a/eee?text=Stand-up'),
+  (3, 'Avant-première Dune 2', 'Projection exclusive en VOSTFR.', 'Avant-première', 'cinema', 2, NULL, NULL, 'Tanger', CURRENT_TIMESTAMP + INTERVAL '3 days' + INTERVAL '19 hours', 60, 200, 'https://placehold.co/400x225/1a0a0a/eee?text=Dune+2')
+ON CONFLICT (id) DO NOTHING;

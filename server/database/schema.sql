@@ -191,6 +191,41 @@ CREATE TABLE IF NOT EXISTS demandes_support (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+-- Table événements (dans un cinéma ou autre lieu)
+CREATE TABLE IF NOT EXISTS evenements (
+    id SERIAL PRIMARY KEY,
+    titre VARCHAR(255) NOT NULL,
+    description TEXT,
+    categorie VARCHAR(100),
+    lieu_type VARCHAR(50) DEFAULT 'cinema',
+    cinema_id INTEGER REFERENCES cinemas(id) ON DELETE SET NULL,
+    lieu_nom VARCHAR(255),
+    adresse VARCHAR(500),
+    ville VARCHAR(255),
+    date_heure TIMESTAMP NOT NULL,
+    prix DOUBLE PRECISION NOT NULL DEFAULT 0,
+    places_disponibles INTEGER NOT NULL DEFAULT 0,
+    affiche VARCHAR(500),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_evenements_ville ON evenements(ville);
+CREATE INDEX IF NOT EXISTS idx_evenements_date ON evenements(date_heure);
+
+-- Réservations événements (même logique que cinéma : type + options par billet côté app)
+CREATE TABLE IF NOT EXISTS reservations_evenements (
+    id SERIAL PRIMARY KEY,
+    utilisateur_id INTEGER NOT NULL REFERENCES utilisateurs(id) ON DELETE CASCADE,
+    evenement_id INTEGER NOT NULL REFERENCES evenements(id) ON DELETE CASCADE,
+    nb_billets INTEGER NOT NULL,
+    montant_total DOUBLE PRECISION NOT NULL,
+    statut VARCHAR(50) DEFAULT 'en_attente',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_reservations_evenements_user ON reservations_evenements(utilisateur_id);
+CREATE INDEX IF NOT EXISTS idx_reservations_evenements_event ON reservations_evenements(evenement_id);
+
 -- Index
 CREATE INDEX IF NOT EXISTS idx_films_date ON films(date_debut, date_fin);
 CREATE INDEX IF NOT EXISTS idx_seances_film ON seances(film_id);

@@ -5,11 +5,12 @@ import 'package:cinema_reservation_client/cinema_reservation_client.dart';
 import 'package:reservation_billet_cinema/core/theme/app_theme.dart';
 import 'package:reservation_billet_cinema/features/programmation/data/repositories/films_repository.dart';
 
-/// Page détail d'un film : synopsis, séances, bouton réserver.
+/// Page détail d'un film : cinéma, ville, date, genre, type, synopsis, séances, bouton réserver.
 class FilmDetailPage extends ConsumerStatefulWidget {
-  const FilmDetailPage({super.key, required this.filmId});
+  const FilmDetailPage({super.key, required this.filmId, this.cinema});
 
   final int filmId;
+  final Cinema? cinema;
 
   @override
   ConsumerState<FilmDetailPage> createState() => _FilmDetailPageState();
@@ -115,13 +116,14 @@ class _FilmDetailPageState extends ConsumerState<FilmDetailPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // Affiche principale (grande photo)
             if (film.affiche != null && film.affiche!.isNotEmpty)
               Center(
                 child: ClipRRect(
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(16),
                   child: Image.network(
                     film.affiche!,
-                    height: 220,
+                    height: 300,
                     width: double.infinity,
                     fit: BoxFit.cover,
                     errorBuilder: (_, Object e, Object? st) => _placeholderPoster(film.titre),
@@ -130,42 +132,148 @@ class _FilmDetailPageState extends ConsumerState<FilmDetailPage> {
               )
             else
               _placeholderPoster(film.titre),
+            if (film.bandeAnnonce != null && film.bandeAnnonce!.isNotEmpty) ...[
+              const SizedBox(height: 12),
+              InkWell(
+                onTap: () {},
+                borderRadius: BorderRadius.circular(12),
+                child: Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: AppColors.primary.withValues(alpha: 0.3),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: AppColors.neon.withValues(alpha: 0.5)),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(Icons.play_circle_filled_rounded, color: AppColors.neon, size: 40),
+                      const SizedBox(width: 12),
+                      const Expanded(
+                        child: Text(
+                          'Bande-annonce',
+                          style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w600),
+                        ),
+                      ),
+                      const Icon(Icons.open_in_new_rounded, color: Colors.white54, size: 20),
+                    ],
+                  ),
+                ),
+              ),
+            ],
             const SizedBox(height: 20),
+            if (widget.cinema != null) ...[
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                decoration: BoxDecoration(
+                  color: AppColors.neon.withValues(alpha: 0.15),
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(color: AppColors.neon.withValues(alpha: 0.5)),
+                ),
+                child: Row(
+                  children: [
+                    Icon(Icons.location_on_rounded, color: AppColors.neon, size: 20),
+                    const SizedBox(width: 8),
+                    Text(
+                      '${widget.cinema!.nom} • ${widget.cinema!.ville ?? ''}',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 16),
+            ],
             Text(
               film.titre,
               style: const TextStyle(
                 color: Colors.white,
-                fontSize: 22,
+                fontSize: 24,
                 fontWeight: FontWeight.bold,
               ),
             ),
             const SizedBox(height: 8),
-            if (film.genre != null)
-              Text(
-                film.genre!,
-                style: TextStyle(
-                  color: Colors.white.withValues(alpha: 0.8),
-                  fontSize: 14,
-                ),
-              ),
+            Wrap(
+              spacing: 8,
+              runSpacing: 4,
+              children: [
+                if (film.genre != null)
+                  Chip(
+                    label: Text(film.genre!, style: const TextStyle(fontSize: 12)),
+                    backgroundColor: AppColors.neon.withValues(alpha: 0.2),
+                    side: const BorderSide(color: AppColors.neon),
+                  ),
+                if (film.classification != null)
+                  Chip(
+                    label: Text(film.classification!, style: const TextStyle(fontSize: 11)),
+                    backgroundColor: Colors.white12,
+                    side: BorderSide(color: Colors.white.withValues(alpha: 0.3)),
+                  ),
+                Text('${film.duree} min', style: TextStyle(color: Colors.white.withValues(alpha: 0.8), fontSize: 13)),
+              ],
+            ),
             if (film.noteMoyenne != null) ...[
-              const SizedBox(height: 4),
+              const SizedBox(height: 8),
               Row(
                 children: [
-                  const Icon(Icons.star_rounded, color: AppColors.accent, size: 20),
+                  const Icon(Icons.star_rounded, color: AppColors.accent, size: 24),
                   const SizedBox(width: 6),
                   Text(
                     film.noteMoyenne!.toStringAsFixed(1),
                     style: const TextStyle(
                       color: Colors.white,
-                      fontSize: 16,
+                      fontSize: 18,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
                 ],
               ),
             ],
-            const SizedBox(height: 16),
+            // Réalisateur
+            if (film.realisateur != null && film.realisateur!.isNotEmpty) ...[
+              const SizedBox(height: 20),
+              const Text(
+                'Réalisateur',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                film.realisateur!,
+                style: TextStyle(
+                  color: Colors.white.withValues(alpha: 0.9),
+                  fontSize: 15,
+                ),
+              ),
+            ],
+            // Casting (acteurs)
+            if (film.casting != null && film.casting!.isNotEmpty) ...[
+              const SizedBox(height: 16),
+              const Text(
+                'Distribution',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Wrap(
+                spacing: 8,
+                runSpacing: 6,
+                children: film.casting!.map((a) => Chip(
+                  label: Text(a, style: const TextStyle(fontSize: 12)),
+                  backgroundColor: const Color(0xFF252525),
+                  side: BorderSide(color: Colors.white.withValues(alpha: 0.2)),
+                )).toList(),
+              ),
+            ],
+            const SizedBox(height: 20),
             if (film.synopsis != null && film.synopsis!.isNotEmpty) ...[
               const Text(
                 'Synopsis',
@@ -247,7 +355,7 @@ class _SeanceTile extends StatelessWidget {
           style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
         ),
         subtitle: Text(
-          '$dateStr • ${seance.prix.toStringAsFixed(0)} DH • ${seance.placesDisponibles} places',
+          '$dateStr • ${seance.prix.toStringAsFixed(0)} DH • ${seance.placesDisponibles} places${seance.typeProjection != null || seance.langue != null ? " • ${seance.typeProjection ?? seance.langue ?? ''}" : ''}',
           style: TextStyle(color: Colors.white.withValues(alpha: 0.7), fontSize: 13),
         ),
         trailing: FilledButton(

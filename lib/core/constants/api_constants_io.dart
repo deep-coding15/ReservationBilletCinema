@@ -1,11 +1,13 @@
 import 'dart:io';
 
 /// URL du backend Serverpod (Android / iOS / Desktop).
-/// Sur téléphone réel : remplace [serverHostForMobile] par l'IP de ton PC
-/// (ex: 192.168.1.50). Trouve-la avec ipconfig (Windows) ou ifconfig (Mac/Linux).
-const String serverHostForMobile = '192.168.1.100';
+///
+/// - Émulateur Android dans Android Studio : mets '10.0.2.2' (adresse du PC vu par l'émulateur).
+/// - Téléphone réel (même Wi‑Fi que le PC) : mets l'IP de ton PC (ipconfig → IPv4, ex: '192.168.1.45').
+/// - Voir TEST_ANDROID_STUDIO.md pour le détail.
+const String serverHostForMobile = '10.0.2.2';
 
-const int serverPort = 8080;
+const int serverPort = 8090;
 
 String get baseUrl {
   if (Platform.isAndroid || Platform.isIOS) {
