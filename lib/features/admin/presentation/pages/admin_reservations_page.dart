@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'dart:convert';
+import 'package:reservation_billet_cinema/core/network/serverpod_provider.dart';
 
 // ============================================================
-// MODÈLES LOCAUX (à remplacer par les classes Serverpod générées)
+// MODÈLE LOCAL (Pour l'affichage UI)
 // ============================================================
 
 class ReservationModel {
@@ -12,6 +14,8 @@ class ReservationModel {
   final DateTime? dateReservation;
   final double montantTotal;
   final String statut;
+  final String? filmTitre;
+  final String? salleCode;
 
   ReservationModel({
     this.id,
@@ -20,34 +24,23 @@ class ReservationModel {
     this.dateReservation,
     required this.montantTotal,
     required this.statut,
+    this.filmTitre,
+    this.salleCode,
   });
 
-  ReservationModel copyWith({String? statut}) {
+  factory ReservationModel.fromMap(Map<String, dynamic> map) {
     return ReservationModel(
-      id: id,
-      utilisateurId: utilisateurId,
-      seanceId: seanceId,
-      dateReservation: dateReservation,
-      montantTotal: montantTotal,
-      statut: statut ?? this.statut,
+      id: map['id'],
+      utilisateurId: map['utilisateurId'],
+      seanceId: map['seanceId'],
+      dateReservation: map['dateReservation'] != null ? DateTime.tryParse(map['dateReservation']) : null,
+      montantTotal: (map['montantTotal'] as num).toDouble(),
+      statut: map['statut'],
+      filmTitre: map['filmTitre'],
+      salleCode: map['salleCode'],
     );
   }
 }
-
-// ============================================================
-// DONNÉES MOCKÉES
-// ============================================================
-
-final _mockReservations = [
-  ReservationModel(id: 1, utilisateurId: 12, seanceId: 5, dateReservation: DateTime.now().subtract(const Duration(hours: 2)), montantTotal: 120.00, statut: 'confirmee'),
-  ReservationModel(id: 2, utilisateurId: 7, seanceId: 3, dateReservation: DateTime.now().subtract(const Duration(hours: 5)), montantTotal: 80.00, statut: 'en_attente'),
-  ReservationModel(id: 3, utilisateurId: 23, seanceId: 8, dateReservation: DateTime.now().subtract(const Duration(days: 1)), montantTotal: 200.00, statut: 'confirmee'),
-  ReservationModel(id: 4, utilisateurId: 5, seanceId: 2, dateReservation: DateTime.now().subtract(const Duration(days: 2)), montantTotal: 60.00, statut: 'annulee'),
-  ReservationModel(id: 5, utilisateurId: 18, seanceId: 7, dateReservation: DateTime.now().subtract(const Duration(days: 3)), montantTotal: 160.00, statut: 'remboursee'),
-  ReservationModel(id: 6, utilisateurId: 9, seanceId: 1, dateReservation: DateTime.now().subtract(const Duration(minutes: 30)), montantTotal: 40.00, statut: 'en_attente'),
-  ReservationModel(id: 7, utilisateurId: 31, seanceId: 6, dateReservation: DateTime.now().subtract(const Duration(hours: 8)), montantTotal: 240.00, statut: 'confirmee'),
-  ReservationModel(id: 8, utilisateurId: 14, seanceId: 4, dateReservation: DateTime.now().subtract(const Duration(days: 5)), montantTotal: 100.00, statut: 'annulee'),
-];
 
 // ============================================================
 // PROVIDERS RIVERPOD
@@ -55,12 +48,11 @@ final _mockReservations = [
 
 final reservationsRefreshProvider = StateProvider<int>((ref) => 0);
 
-final reservationsListProvider =
-FutureProvider<List<ReservationModel>>((ref) async {
+final reservationsListProvider = FutureProvider<List<ReservationModel>>((ref) async {
   ref.watch(reservationsRefreshProvider);
-  // TODO: remplacer par client.adminReservations.getReservations()
-  await Future.delayed(const Duration(milliseconds: 400));
-  return List<ReservationModel>.from(_mockReservations);
+  final client = ref.read(serverpodClientProvider);
+  final List<String> result = await client.adminReservations.getReservations();
+  return result.map((s) => ReservationModel.fromMap(jsonDecode(s))).toList();
 });
 
 // ============================================================
@@ -93,7 +85,8 @@ class _AdminReservationsPageState
     return reservations.where((r) {
       final matchSearch = _searchQuery.isEmpty ||
           r.id.toString().contains(_searchQuery) ||
-          r.utilisateurId.toString().contains(_searchQuery);
+          r.utilisateurId.toString().contains(_searchQuery) ||
+          (r.filmTitre?.toLowerCase().contains(_searchQuery.toLowerCase()) ?? false);
       final matchStatut =
           _statutFilter == 'tous' || r.statut == _statutFilter;
       final matchDate = _dateFilter == null ||
@@ -161,17 +154,21 @@ class _AdminReservationsPageState
           FilledButton(
             style: FilledButton.styleFrom(
                 backgroundColor: Colors.orange.shade700),
-            onPressed: () {
+            onPressed: () async {
               Navigator.pop(context);
               Navigator.pop(context);
-              // TODO: appeler client.adminReservations.annulerReservation(reservation.id!)
-              _refresh();
-              if (mounted) {
-                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                  content: Text('Réservation #${reservation.id} annulée'),
-                  backgroundColor: Colors.orange.shade700,
-                  behavior: SnackBarBehavior.floating,
-                ));
+              try {
+                await ref.read(serverpodClientProvider).adminReservations.annulerReservation(reservation.id!);
+                _refresh();
+                if (mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    content: Text('Réservation #${reservation.id} annulée'),
+                    backgroundColor: Colors.orange.shade700,
+                    behavior: SnackBarBehavior.floating,
+                  ));
+                }
+              } catch (e) {
+                if (mounted) _snack('Erreur : $e', Colors.red);
               }
             },
             child: const Text('Annuler la réservation'),
@@ -201,18 +198,22 @@ class _AdminReservationsPageState
           FilledButton(
             style:
             FilledButton.styleFrom(backgroundColor: Colors.green.shade700),
-            onPressed: () {
+            onPressed: () async {
               Navigator.pop(context);
               Navigator.pop(context);
-              // TODO: appeler client.adminReservations.effectuerRemboursement(reservation.id!)
-              _refresh();
-              if (mounted) {
-                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                  content: Text(
-                      'Remboursement effectué pour #${reservation.id}'),
-                  backgroundColor: Colors.green.shade700,
-                  behavior: SnackBarBehavior.floating,
-                ));
+              try {
+                await ref.read(serverpodClientProvider).adminReservations.effectuerRemboursement(reservation.id!);
+                _refresh();
+                if (mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    content: Text(
+                        'Remboursement effectué pour #${reservation.id}'),
+                    backgroundColor: Colors.green.shade700,
+                    behavior: SnackBarBehavior.floating,
+                  ));
+                }
+              } catch (e) {
+                if (mounted) _snack('Erreur : $e', Colors.red);
               }
             },
             child: const Text('Rembourser'),
@@ -221,6 +222,9 @@ class _AdminReservationsPageState
       ),
     );
   }
+
+  void _snack(String msg, Color color) => ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(msg), backgroundColor: color, behavior: SnackBarBehavior.floating));
 
   @override
   Widget build(BuildContext context) {
@@ -622,12 +626,12 @@ class _ReservationCard extends StatelessWidget {
                       children: [
                         Icon(Icons.person_outline, size: 13, color: Colors.white.withOpacity(0.4)),
                         const SizedBox(width: 4),
-                        Text('Utilisateur #${reservation.utilisateurId}',
+                        Text('User #${reservation.utilisateurId}',
                             style: TextStyle(color: Colors.white.withOpacity(0.5), fontSize: 12)),
                         const SizedBox(width: 12),
-                        Icon(Icons.event_seat_outlined, size: 13, color: Colors.white.withOpacity(0.4)),
+                        Icon(Icons.movie_outlined, size: 13, color: Colors.white.withOpacity(0.4)),
                         const SizedBox(width: 4),
-                        Text('Séance #${reservation.seanceId}',
+                        Text(reservation.filmTitre ?? 'S#${reservation.seanceId}',
                             style: TextStyle(color: Colors.white.withOpacity(0.5), fontSize: 12)),
                       ],
                     ),
@@ -792,7 +796,8 @@ class ReservationDetailDialog extends StatelessWidget {
                 child: Column(
                   children: [
                     _DetailRow(icon: Icons.person_outline, label: 'Utilisateur', value: '#${reservation.utilisateurId}'),
-                    _DetailRow(icon: Icons.event_seat_outlined, label: 'Séance', value: '#${reservation.seanceId}'),
+                    _DetailRow(icon: Icons.movie_filter_outlined, label: 'Film', value: reservation.filmTitre ?? 'N/A'),
+                    _DetailRow(icon: Icons.weekend_outlined, label: 'Salle', value: reservation.salleCode ?? 'N/A'),
                     _DetailRow(icon: Icons.calendar_today_outlined, label: 'Date réservation', value: _formatDate(reservation.dateReservation)),
                     _DetailRow(
                         icon: Icons.payments_outlined,
@@ -800,25 +805,6 @@ class ReservationDetailDialog extends StatelessWidget {
                         value: '${reservation.montantTotal.toStringAsFixed(2)} MAD',
                         valueColor: Colors.white),
                     const SizedBox(height: 8),
-                    Container(
-                      padding: const EdgeInsets.all(14),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFF0F0F1A),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Row(
-                        children: [
-                          const Icon(Icons.info_outline, size: 16, color: Colors.white38),
-                          const SizedBox(width: 8),
-                          Expanded(
-                            child: Text(
-                              'Utilisez les boutons ci-dessous pour gérer cette réservation.',
-                              style: TextStyle(color: Colors.white.withOpacity(0.4), fontSize: 12),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
                   ],
                 ),
               ),

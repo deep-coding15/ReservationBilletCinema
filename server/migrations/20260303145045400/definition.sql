@@ -69,6 +69,23 @@ CREATE TABLE "films" (
 CREATE INDEX "idx_films_date" ON "films" USING btree ("date_debut", "date_fin");
 
 --
+-- Class Reservation as table reservations
+--
+CREATE TABLE "reservations" (
+    "id" bigserial PRIMARY KEY,
+    "utilisateur_id" bigint NOT NULL,
+    "seance_id" bigint NOT NULL,
+    "date_reservation" timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    "montant_total" double precision NOT NULL,
+    "statut" text NOT NULL DEFAULT 'en_attente'::text,
+    "created_at" timestamp without time zone DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Indexes
+CREATE INDEX "idx_reservations_user" ON "reservations" USING btree ("utilisateur_id");
+CREATE INDEX "idx_reservations_seance" ON "reservations" USING btree ("seance_id");
+
+--
 -- Class Salle as table salles
 --
 CREATE TABLE "salles" (
@@ -734,9 +751,9 @@ ALTER TABLE ONLY "serverpod_auth_core_session"
 -- MIGRATION VERSION FOR cinema_reservation
 --
 INSERT INTO "serverpod_migrations" ("module", "version", "timestamp")
-    VALUES ('cinema_reservation', '20260303134728864', now())
+    VALUES ('cinema_reservation', '20260303145045400', now())
     ON CONFLICT ("module")
-    DO UPDATE SET "version" = '20260303134728864', "timestamp" = now();
+    DO UPDATE SET "version" = '20260303145045400', "timestamp" = now();
 
 --
 -- MIGRATION VERSION FOR serverpod

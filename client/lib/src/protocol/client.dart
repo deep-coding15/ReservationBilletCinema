@@ -278,6 +278,35 @@ class EndpointAdminFilms extends _i2.EndpointRef {
 }
 
 /// {@category Endpoint}
+class EndpointAdminReservations extends _i2.EndpointRef {
+  EndpointAdminReservations(_i2.EndpointCaller caller) : super(caller);
+
+  @override
+  String get name => 'adminReservations';
+
+  _i3.Future<List<String>> getReservations() =>
+      caller.callServerEndpoint<List<String>>(
+        'adminReservations',
+        'getReservations',
+        {},
+      );
+
+  _i3.Future<bool> annulerReservation(int id) =>
+      caller.callServerEndpoint<bool>(
+        'adminReservations',
+        'annulerReservation',
+        {'id': id},
+      );
+
+  _i3.Future<bool> effectuerRemboursement(int id) =>
+      caller.callServerEndpoint<bool>(
+        'adminReservations',
+        'effectuerRemboursement',
+        {'id': id},
+      );
+}
+
+/// {@category Endpoint}
 class EndpointAdminSalles extends _i2.EndpointRef {
   EndpointAdminSalles(_i2.EndpointCaller caller) : super(caller);
 
@@ -485,6 +514,7 @@ class Client extends _i2.ServerpodClientShared {
     emailIdp = EndpointEmailIdp(this);
     jwtRefresh = EndpointJwtRefresh(this);
     adminFilms = EndpointAdminFilms(this);
+    adminReservations = EndpointAdminReservations(this);
     adminSalles = EndpointAdminSalles(this);
     adminSeances = EndpointAdminSeances(this);
     greeting = EndpointGreeting(this);
@@ -496,6 +526,8 @@ class Client extends _i2.ServerpodClientShared {
   late final EndpointJwtRefresh jwtRefresh;
 
   late final EndpointAdminFilms adminFilms;
+
+  late final EndpointAdminReservations adminReservations;
 
   late final EndpointAdminSalles adminSalles;
 
@@ -510,6 +542,7 @@ class Client extends _i2.ServerpodClientShared {
     'emailIdp': emailIdp,
     'jwtRefresh': jwtRefresh,
     'adminFilms': adminFilms,
+    'adminReservations': adminReservations,
     'adminSalles': adminSalles,
     'adminSeances': adminSeances,
     'greeting': greeting,

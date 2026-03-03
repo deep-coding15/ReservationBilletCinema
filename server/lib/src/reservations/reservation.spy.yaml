@@ -1,0 +1,15 @@
+class: Reservation
+table: reservations
+managedMigration: true
+fields:
+  utilisateur_id: int
+  seance_id: int
+  date_reservation: DateTime?, default=now
+  montant_total: double
+  statut: String, default='en_attente'
+  created_at: DateTime?, default=now
+indexes:
+  idx_reservations_user:
+    fields: utilisateur_id
+  idx_reservations_seance:
+    fields: seance_id
