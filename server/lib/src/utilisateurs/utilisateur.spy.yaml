@@ -1,0 +1,15 @@
+class: Utilisateur
+table: utilisateurs
+managedMigration: true
+fields:
+  nom: String
+  email: String
+  telephone: String?
+  mot_de_passe_hash: String
+  preferences: List<String>?
+  statut: String, default='actif'
+  created_at: DateTime?, default=now
+indexes:
+  idx_utilisateur_email:
+    fields: email
+    unique: true

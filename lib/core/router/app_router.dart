@@ -8,23 +8,12 @@ import 'package:reservation_billet_cinema/features/profil/presentation/pages/pro
 import 'package:reservation_billet_cinema/features/billets/presentation/pages/billets_page.dart';
 import 'package:reservation_billet_cinema/features/support/presentation/pages/faq_page.dart';
 import 'package:reservation_billet_cinema/features/events/presentation/pages/events_page.dart';
-import 'package:reservation_billet_cinema/features/admin/presentation/pages/admin_films_page.dart';
-import 'package:go_router/go_router.dart';
-import 'package:reservation_billet_cinema/features/splash/presentation/pages/splash_page.dart';
-import 'package:reservation_billet_cinema/features/home/presentation/pages/home_page.dart';
-import 'package:reservation_billet_cinema/features/auth/presentation/pages/login_page.dart';
-import 'package:reservation_billet_cinema/features/programmation/presentation/pages/films_list_page.dart';
-import 'package:reservation_billet_cinema/features/reservation/presentation/pages/seat_selection_page.dart';
-import 'package:reservation_billet_cinema/features/profil/presentation/pages/profil_page.dart';
-import 'package:reservation_billet_cinema/features/billets/presentation/pages/billets_page.dart';
-import 'package:reservation_billet_cinema/features/support/presentation/pages/faq_page.dart';
-import 'package:reservation_billet_cinema/features/events/presentation/pages/events_page.dart';
 import 'package:reservation_billet_cinema/features/admin/presentation/pages/dashboard_page.dart';
-import 'package:reservation_billet_cinema/features/admin/presentation/pages/admin_films_page.dart';
 import 'package:reservation_billet_cinema/features/admin/presentation/pages/admin_films_page.dart';
 import 'package:reservation_billet_cinema/features/admin/presentation/pages/admin_seances_page.dart';
 import 'package:reservation_billet_cinema/features/admin/presentation/pages/admin_salles_page.dart';
 import 'package:reservation_billet_cinema/features/admin/presentation/pages/admin_reservations_page.dart';
+import 'package:reservation_billet_cinema/features/admin/presentation/pages/admin_users_page.dart';
 
 /// Routes de l'application (GoRouter).
 final goRouter = GoRouter(
@@ -99,6 +88,11 @@ final goRouter = GoRouter(
       path: '/admin/reservations',
       name: 'admin-reservations',
       builder: (context, state) => const AdminReservationsPage(),
+    ),
+    GoRoute(
+      path: '/admin/users',
+      name: 'admin-users',
+      builder: (context, state) => const AdminUsersPage(),
     ),
   ],
 );

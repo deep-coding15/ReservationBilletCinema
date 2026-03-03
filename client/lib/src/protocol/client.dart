@@ -453,6 +453,47 @@ class EndpointAdminSeances extends _i2.EndpointRef {
   );
 }
 
+/// {@category Endpoint}
+class EndpointAdminUsers extends _i2.EndpointRef {
+  EndpointAdminUsers(_i2.EndpointCaller caller) : super(caller);
+
+  @override
+  String get name => 'adminUsers';
+
+  _i3.Future<List<String>> getUtilisateurs() =>
+      caller.callServerEndpoint<List<String>>(
+        'adminUsers',
+        'getUtilisateurs',
+        {},
+      );
+
+  _i3.Future<bool> changerStatutUtilisateur(
+    int id,
+    String nouveauStatut,
+  ) => caller.callServerEndpoint<bool>(
+    'adminUsers',
+    'changerStatutUtilisateur',
+    {
+      'id': id,
+      'nouveauStatut': nouveauStatut,
+    },
+  );
+
+  _i3.Future<bool> supprimerUtilisateur(int id) =>
+      caller.callServerEndpoint<bool>(
+        'adminUsers',
+        'supprimerUtilisateur',
+        {'id': id},
+      );
+
+  _i3.Future<List<String>> getHistoriqueAchats(int utilisateurId) =>
+      caller.callServerEndpoint<List<String>>(
+        'adminUsers',
+        'getHistoriqueAchats',
+        {'utilisateurId': utilisateurId},
+      );
+}
+
 /// This is an example endpoint that returns a greeting message through
 /// its [hello] method.
 /// {@category Endpoint}
@@ -517,6 +558,7 @@ class Client extends _i2.ServerpodClientShared {
     adminReservations = EndpointAdminReservations(this);
     adminSalles = EndpointAdminSalles(this);
     adminSeances = EndpointAdminSeances(this);
+    adminUsers = EndpointAdminUsers(this);
     greeting = EndpointGreeting(this);
     modules = Modules(this);
   }
@@ -533,6 +575,8 @@ class Client extends _i2.ServerpodClientShared {
 
   late final EndpointAdminSeances adminSeances;
 
+  late final EndpointAdminUsers adminUsers;
+
   late final EndpointGreeting greeting;
 
   late final Modules modules;
@@ -545,6 +589,7 @@ class Client extends _i2.ServerpodClientShared {
     'adminReservations': adminReservations,
     'adminSalles': adminSalles,
     'adminSeances': adminSeances,
+    'adminUsers': adminUsers,
     'greeting': greeting,
   };
 

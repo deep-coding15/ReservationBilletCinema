@@ -22,14 +22,16 @@ import 'reservations/reservation.dart' as _i7;
 import 'salles/cinema.dart' as _i8;
 import 'salles/salle.dart' as _i9;
 import 'seances/seance.dart' as _i10;
+import 'utilisateurs/utilisateur.dart' as _i11;
 import 'package:cinema_reservation_server/src/generated/films/film.dart'
-    as _i11;
+    as _i12;
 export 'films/film.dart';
 export 'greetings/greeting.dart';
 export 'reservations/reservation.dart';
 export 'salles/cinema.dart';
 export 'salles/salle.dart';
 export 'seances/seance.dart';
+export 'utilisateurs/utilisateur.dart';
 
 class Protocol extends _i1.SerializationManagerServer {
   Protocol._();
@@ -543,6 +545,95 @@ class Protocol extends _i1.SerializationManagerServer {
       ],
       managed: true,
     ),
+    _i2.TableDefinition(
+      name: 'utilisateurs',
+      dartName: 'Utilisateur',
+      schema: 'public',
+      module: 'cinema_reservation',
+      columns: [
+        _i2.ColumnDefinition(
+          name: 'id',
+          columnType: _i2.ColumnType.bigint,
+          isNullable: false,
+          dartType: 'int?',
+          columnDefault: 'nextval(\'utilisateurs_id_seq\'::regclass)',
+        ),
+        _i2.ColumnDefinition(
+          name: 'nom',
+          columnType: _i2.ColumnType.text,
+          isNullable: false,
+          dartType: 'String',
+        ),
+        _i2.ColumnDefinition(
+          name: 'email',
+          columnType: _i2.ColumnType.text,
+          isNullable: false,
+          dartType: 'String',
+        ),
+        _i2.ColumnDefinition(
+          name: 'telephone',
+          columnType: _i2.ColumnType.text,
+          isNullable: true,
+          dartType: 'String?',
+        ),
+        _i2.ColumnDefinition(
+          name: 'mot_de_passe_hash',
+          columnType: _i2.ColumnType.text,
+          isNullable: false,
+          dartType: 'String',
+        ),
+        _i2.ColumnDefinition(
+          name: 'preferences',
+          columnType: _i2.ColumnType.json,
+          isNullable: true,
+          dartType: 'List<String>?',
+        ),
+        _i2.ColumnDefinition(
+          name: 'statut',
+          columnType: _i2.ColumnType.text,
+          isNullable: false,
+          dartType: 'String',
+          columnDefault: '\'actif\'::text',
+        ),
+        _i2.ColumnDefinition(
+          name: 'created_at',
+          columnType: _i2.ColumnType.timestampWithoutTimeZone,
+          isNullable: true,
+          dartType: 'DateTime?',
+          columnDefault: 'CURRENT_TIMESTAMP',
+        ),
+      ],
+      foreignKeys: [],
+      indexes: [
+        _i2.IndexDefinition(
+          indexName: 'utilisateurs_pkey',
+          tableSpace: null,
+          elements: [
+            _i2.IndexElementDefinition(
+              type: _i2.IndexElementDefinitionType.column,
+              definition: 'id',
+            ),
+          ],
+          type: 'btree',
+          isUnique: true,
+          isPrimary: true,
+        ),
+        _i2.IndexDefinition(
+          indexName: 'idx_utilisateur_email',
+          tableSpace: null,
+          elements: [
+            _i2.IndexElementDefinition(
+              type: _i2.IndexElementDefinitionType.column,
+              definition: 'email',
+            ),
+          ],
+          type: 'btree',
+          isUnique: true,
+          isPrimary: false,
+        ),
+      ],
+      managed: true,
+    ),
     ..._i3.Protocol.targetTableDefinitions,
     ..._i4.Protocol.targetTableDefinitions,
     ..._i2.Protocol.targetTableDefinitions,
@@ -593,6 +684,9 @@ class Protocol extends _i1.SerializationManagerServer {
     if (t == _i10.Seance) {
       return _i10.Seance.fromJson(data) as T;
     }
+    if (t == _i11.Utilisateur) {
+      return _i11.Utilisateur.fromJson(data) as T;
+    }
     if (t == _i1.getType<_i5.Film?>()) {
       return (data != null ? _i5.Film.fromJson(data) : null) as T;
     }
@@ -611,6 +705,9 @@ class Protocol extends _i1.SerializationManagerServer {
     if (t == _i1.getType<_i10.Seance?>()) {
       return (data != null ? _i10.Seance.fromJson(data) : null) as T;
     }
+    if (t == _i1.getType<_i11.Utilisateur?>()) {
+      return (data != null ? _i11.Utilisateur.fromJson(data) : null) as T;
+    }
     if (t == List<String>) {
       return (data as List).map((e) => deserialize<String>(e)).toList() as T;
     }
@@ -620,8 +717,8 @@ class Protocol extends _i1.SerializationManagerServer {
               : null)
           as T;
     }
-    if (t == List<_i11.Film>) {
-      return (data as List).map((e) => deserialize<_i11.Film>(e)).toList() as T;
+    if (t == List<_i12.Film>) {
+      return (data as List).map((e) => deserialize<_i12.Film>(e)).toList() as T;
     }
     if (t == List<String>) {
       return (data as List).map((e) => deserialize<String>(e)).toList() as T;
@@ -652,6 +749,7 @@ class Protocol extends _i1.SerializationManagerServer {
       _i8.Cinema => 'Cinema',
       _i9.Salle => 'Salle',
       _i10.Seance => 'Seance',
+      _i11.Utilisateur => 'Utilisateur',
       _ => null,
     };
   }
@@ -681,6 +779,8 @@ class Protocol extends _i1.SerializationManagerServer {
         return 'Salle';
       case _i10.Seance():
         return 'Seance';
+      case _i11.Utilisateur():
+        return 'Utilisateur';
     }
     className = _i2.Protocol().getClassNameForObject(data);
     if (className != null) {
@@ -720,6 +820,9 @@ class Protocol extends _i1.SerializationManagerServer {
     }
     if (dataClassName == 'Seance') {
       return deserialize<_i10.Seance>(data['data']);
+    }
+    if (dataClassName == 'Utilisateur') {
+      return deserialize<_i11.Utilisateur>(data['data']);
     }
     if (dataClassName.startsWith('serverpod.')) {
       data['className'] = dataClassName.substring(10);
@@ -767,6 +870,8 @@ class Protocol extends _i1.SerializationManagerServer {
         return _i9.Salle.t;
       case _i10.Seance:
         return _i10.Seance.t;
+      case _i11.Utilisateur:
+        return _i11.Utilisateur.t;
     }
     return null;
   }

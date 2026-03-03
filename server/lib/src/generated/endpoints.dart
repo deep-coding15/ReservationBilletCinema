@@ -17,12 +17,14 @@ import '../endpoints/admin_films_endpoint.dart' as _i4;
 import '../endpoints/admin_reservations_endpoint.dart' as _i5;
 import '../endpoints/admin_salles_endpoint.dart' as _i6;
 import '../endpoints/admin_seances_endpoint.dart' as _i7;
-import '../greetings/greeting_endpoint.dart' as _i8;
-import 'package:cinema_reservation_server/src/generated/films/film.dart' as _i9;
-import 'package:serverpod_auth_idp_server/serverpod_auth_idp_server.dart'
+import '../endpoints/admin_users_endpoint.dart' as _i8;
+import '../greetings/greeting_endpoint.dart' as _i9;
+import 'package:cinema_reservation_server/src/generated/films/film.dart'
     as _i10;
-import 'package:serverpod_auth_core_server/serverpod_auth_core_server.dart'
+import 'package:serverpod_auth_idp_server/serverpod_auth_idp_server.dart'
     as _i11;
+import 'package:serverpod_auth_core_server/serverpod_auth_core_server.dart'
+    as _i12;
 
 class Endpoints extends _i1.EndpointDispatch {
   @override
@@ -64,7 +66,13 @@ class Endpoints extends _i1.EndpointDispatch {
           'adminSeances',
           null,
         ),
-      'greeting': _i8.GreetingEndpoint()
+      'adminUsers': _i8.AdminUsersEndpoint()
+        ..initialize(
+          server,
+          'adminUsers',
+          null,
+        ),
+      'greeting': _i9.GreetingEndpoint()
         ..initialize(
           server,
           'greeting',
@@ -294,7 +302,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'film': _i1.ParameterDescription(
               name: 'film',
-              type: _i1.getType<_i9.Film>(),
+              type: _i1.getType<_i10.Film>(),
               nullable: false,
             ),
           },
@@ -313,7 +321,7 @@ class Endpoints extends _i1.EndpointDispatch {
           params: {
             'film': _i1.ParameterDescription(
               name: 'film',
-              type: _i1.getType<_i9.Film>(),
+              type: _i1.getType<_i10.Film>(),
               nullable: false,
             ),
           },
@@ -716,6 +724,85 @@ class Endpoints extends _i1.EndpointDispatch {
         ),
       },
     );
+    connectors['adminUsers'] = _i1.EndpointConnector(
+      name: 'adminUsers',
+      endpoint: endpoints['adminUsers']!,
+      methodConnectors: {
+        'getUtilisateurs': _i1.MethodConnector(
+          name: 'getUtilisateurs',
+          params: {},
+          call:
+              (
+                _i1.Session session,
+                Map<String, dynamic> params,
+              ) async => (endpoints['adminUsers'] as _i8.AdminUsersEndpoint)
+                  .getUtilisateurs(session),
+        ),
+        'changerStatutUtilisateur': _i1.MethodConnector(
+          name: 'changerStatutUtilisateur',
+          params: {
+            'id': _i1.ParameterDescription(
+              name: 'id',
+              type: _i1.getType<int>(),
+              nullable: false,
+            ),
+            'nouveauStatut': _i1.ParameterDescription(
+              name: 'nouveauStatut',
+              type: _i1.getType<String>(),
+              nullable: false,
+            ),
+          },
+          call:
+              (
+                _i1.Session session,
+                Map<String, dynamic> params,
+              ) async => (endpoints['adminUsers'] as _i8.AdminUsersEndpoint)
+                  .changerStatutUtilisateur(
+                    session,
+                    params['id'],
+                    params['nouveauStatut'],
+                  ),
+        ),
+        'supprimerUtilisateur': _i1.MethodConnector(
+          name: 'supprimerUtilisateur',
+          params: {
+            'id': _i1.ParameterDescription(
+              name: 'id',
+              type: _i1.getType<int>(),
+              nullable: false,
+            ),
+          },
+          call:
+              (
+                _i1.Session session,
+                Map<String, dynamic> params,
+              ) async => (endpoints['adminUsers'] as _i8.AdminUsersEndpoint)
+                  .supprimerUtilisateur(
+                    session,
+                    params['id'],
+                  ),
+        ),
+        'getHistoriqueAchats': _i1.MethodConnector(
+          name: 'getHistoriqueAchats',
+          params: {
+            'utilisateurId': _i1.ParameterDescription(
+              name: 'utilisateurId',
+              type: _i1.getType<int>(),
+              nullable: false,
+            ),
+          },
+          call:
+              (
+                _i1.Session session,
+                Map<String, dynamic> params,
+              ) async => (endpoints['adminUsers'] as _i8.AdminUsersEndpoint)
+                  .getHistoriqueAchats(
+                    session,
+                    params['utilisateurId'],
+                  ),
+        ),
+      },
+    );
     connectors['greeting'] = _i1.EndpointConnector(
       name: 'greeting',
       endpoint: endpoints['greeting']!,
@@ -733,16 +820,16 @@ class Endpoints extends _i1.EndpointDispatch {
               (
                 _i1.Session session,
                 Map<String, dynamic> params,
-              ) async => (endpoints['greeting'] as _i8.GreetingEndpoint).hello(
+              ) async => (endpoints['greeting'] as _i9.GreetingEndpoint).hello(
                 session,
                 params['name'],
               ),
         ),
       },
     );
-    modules['serverpod_auth_idp'] = _i10.Endpoints()
+    modules['serverpod_auth_idp'] = _i11.Endpoints()
       ..initializeEndpoints(server);
-    modules['serverpod_auth_core'] = _i11.Endpoints()
+    modules['serverpod_auth_core'] = _i12.Endpoints()
       ..initializeEndpoints(server);
   }
 }

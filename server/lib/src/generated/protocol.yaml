@@ -31,5 +31,10 @@ adminSeances:
   - createSeance:
   - updateSeance:
   - deleteSeance:
+adminUsers:
+  - getUtilisateurs:
+  - changerStatutUtilisateur:
+  - supprimerUtilisateur:
+  - getHistoriqueAchats:
 greeting:
   - hello:

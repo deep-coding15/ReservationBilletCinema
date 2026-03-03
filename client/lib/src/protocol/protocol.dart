@@ -17,17 +17,19 @@ import 'reservations/reservation.dart' as _i4;
 import 'salles/cinema.dart' as _i5;
 import 'salles/salle.dart' as _i6;
 import 'seances/seance.dart' as _i7;
-import 'package:cinema_reservation_client/src/protocol/films/film.dart' as _i8;
+import 'utilisateurs/utilisateur.dart' as _i8;
+import 'package:cinema_reservation_client/src/protocol/films/film.dart' as _i9;
 import 'package:serverpod_auth_idp_client/serverpod_auth_idp_client.dart'
-    as _i9;
-import 'package:serverpod_auth_core_client/serverpod_auth_core_client.dart'
     as _i10;
+import 'package:serverpod_auth_core_client/serverpod_auth_core_client.dart'
+    as _i11;
 export 'films/film.dart';
 export 'greetings/greeting.dart';
 export 'reservations/reservation.dart';
 export 'salles/cinema.dart';
 export 'salles/salle.dart';
 export 'seances/seance.dart';
+export 'utilisateurs/utilisateur.dart';
 export 'client.dart';
 
 class Protocol extends _i1.SerializationManager {
@@ -82,6 +84,9 @@ class Protocol extends _i1.SerializationManager {
     if (t == _i7.Seance) {
       return _i7.Seance.fromJson(data) as T;
     }
+    if (t == _i8.Utilisateur) {
+      return _i8.Utilisateur.fromJson(data) as T;
+    }
     if (t == _i1.getType<_i2.Film?>()) {
       return (data != null ? _i2.Film.fromJson(data) : null) as T;
     }
@@ -100,17 +105,8 @@ class Protocol extends _i1.SerializationManager {
     if (t == _i1.getType<_i7.Seance?>()) {
       return (data != null ? _i7.Seance.fromJson(data) : null) as T;
     }
-    if (t == List<String>) {
-      return (data as List).map((e) => deserialize<String>(e)).toList() as T;
-    }
-    if (t == _i1.getType<List<String>?>()) {
-      return (data != null
-              ? (data as List).map((e) => deserialize<String>(e)).toList()
-              : null)
-          as T;
-    }
-    if (t == List<_i8.Film>) {
-      return (data as List).map((e) => deserialize<_i8.Film>(e)).toList() as T;
+    if (t == _i1.getType<_i8.Utilisateur?>()) {
+      return (data != null ? _i8.Utilisateur.fromJson(data) : null) as T;
     }
     if (t == List<String>) {
       return (data as List).map((e) => deserialize<String>(e)).toList() as T;
@@ -121,11 +117,23 @@ class Protocol extends _i1.SerializationManager {
               : null)
           as T;
     }
-    try {
-      return _i9.Protocol().deserialize<T>(data, t);
-    } on _i1.DeserializationTypeNotFoundException catch (_) {}
+    if (t == List<_i9.Film>) {
+      return (data as List).map((e) => deserialize<_i9.Film>(e)).toList() as T;
+    }
+    if (t == List<String>) {
+      return (data as List).map((e) => deserialize<String>(e)).toList() as T;
+    }
+    if (t == _i1.getType<List<String>?>()) {
+      return (data != null
+              ? (data as List).map((e) => deserialize<String>(e)).toList()
+              : null)
+          as T;
+    }
     try {
       return _i10.Protocol().deserialize<T>(data, t);
+    } on _i1.DeserializationTypeNotFoundException catch (_) {}
+    try {
+      return _i11.Protocol().deserialize<T>(data, t);
     } on _i1.DeserializationTypeNotFoundException catch (_) {}
     return super.deserialize<T>(data, t);
   }
@@ -138,6 +146,7 @@ class Protocol extends _i1.SerializationManager {
       _i5.Cinema => 'Cinema',
       _i6.Salle => 'Salle',
       _i7.Seance => 'Seance',
+      _i8.Utilisateur => 'Utilisateur',
       _ => null,
     };
   }
@@ -167,12 +176,14 @@ class Protocol extends _i1.SerializationManager {
         return 'Salle';
       case _i7.Seance():
         return 'Seance';
+      case _i8.Utilisateur():
+        return 'Utilisateur';
     }
-    className = _i9.Protocol().getClassNameForObject(data);
+    className = _i10.Protocol().getClassNameForObject(data);
     if (className != null) {
       return 'serverpod_auth_idp.$className';
     }
-    className = _i10.Protocol().getClassNameForObject(data);
+    className = _i11.Protocol().getClassNameForObject(data);
     if (className != null) {
       return 'serverpod_auth_core.$className';
     }
@@ -203,13 +214,16 @@ class Protocol extends _i1.SerializationManager {
     if (dataClassName == 'Seance') {
       return deserialize<_i7.Seance>(data['data']);
     }
+    if (dataClassName == 'Utilisateur') {
+      return deserialize<_i8.Utilisateur>(data['data']);
+    }
     if (dataClassName.startsWith('serverpod_auth_idp.')) {
       data['className'] = dataClassName.substring(19);
-      return _i9.Protocol().deserializeByClassName(data);
+      return _i10.Protocol().deserializeByClassName(data);
     }
     if (dataClassName.startsWith('serverpod_auth_core.')) {
       data['className'] = dataClassName.substring(20);
-      return _i10.Protocol().deserializeByClassName(data);
+      return _i11.Protocol().deserializeByClassName(data);
     }
     return super.deserializeByClassName(data);
   }
@@ -224,10 +238,10 @@ class Protocol extends _i1.SerializationManager {
       return null;
     }
     try {
-      return _i9.Protocol().mapRecordToJson(record);
+      return _i10.Protocol().mapRecordToJson(record);
     } catch (_) {}
     try {
-      return _i10.Protocol().mapRecordToJson(record);
+      return _i11.Protocol().mapRecordToJson(record);
     } catch (_) {}
     throw Exception('Unsupported record type ${record.runtimeType}');
   }
