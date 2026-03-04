@@ -9,6 +9,7 @@ class AuthEndpoint extends Endpoint {
         String? telephone,
         DateTime? dateNaissance,
       }) async {
+    // Pas de vérification auth — appelé juste après finishRegistration
     final existing = await Utilisateur.db.findFirstRow(
       session,
       where: (u) => u.email.equals(email),
@@ -18,6 +19,7 @@ class AuthEndpoint extends Endpoint {
     await Utilisateur.db.insertRow(
       session,
       Utilisateur(
+        authUserId: '', // sera mis à jour lors du premier login
         nom: nom,
         email: email,
         telephone: telephone,

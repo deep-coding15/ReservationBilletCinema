@@ -1,6 +1,7 @@
 class: Utilisateur
 table: utilisateurs
 fields:
+  authUserId: String
   nom: String
   email: String
   telephone: String?
@@ -10,4 +11,7 @@ fields:
 indexes:
   utilisateur_email_idx:
     fields: email
+    unique: true
+  utilisateur_auth_idx:
+    fields: authUserId
     unique: true
