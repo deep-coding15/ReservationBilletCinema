@@ -46,7 +46,7 @@ abstract class ReservationResult
 
 class _ReservationResultImpl extends ReservationResult {
   _ReservationResultImpl({
-    required super.reservationId,
-    required super.montantTotal,
-  });
+    required int reservationId,
+    required double montantTotal,
+  }) : super._(reservationId: reservationId, montantTotal: montantTotal);
 }

@@ -31,6 +31,7 @@ class _HomePageState extends ConsumerState<HomePage> with TickerProviderStateMix
   List<Film> _films = [];
   List<Evenement> _events = [];
   bool _loading = true;
+  String? _loadError;
 
   @override
   void initState() {
@@ -70,6 +71,7 @@ class _HomePageState extends ConsumerState<HomePage> with TickerProviderStateMix
   }
 
   Future<void> _loadData() async {
+    _loadError = null;
     final filmsRepo = ref.read(filmsRepositoryProvider);
     final eventsRepo = ref.read(eventsRepositoryProvider);
     try {
@@ -80,11 +82,19 @@ class _HomePageState extends ConsumerState<HomePage> with TickerProviderStateMix
           _films = films;
           _events = events;
           _loading = false;
+          _loadError = null;
         });
         _startHeroAutoPlay();
       }
-    } catch (_) {
-      if (mounted) setState(() => _loading = false);
+    } catch (e, st) {
+      if (mounted) {
+        setState(() {
+          _loading = false;
+          _loadError = 'Impossible de charger les données. '
+              'Démarrez le serveur (port 8090) et appliquez les seeds (server/database/apply_seed.ps1).';
+        });
+      }
+      debugPrint('HomePage _loadData error: $e\n$st');
     }
   }
 
@@ -131,6 +141,7 @@ class _HomePageState extends ConsumerState<HomePage> with TickerProviderStateMix
                     physics: const BouncingScrollPhysics(),
                     slivers: [
                       _buildHero(context),
+                      if (_loadError != null) _buildErrorBanner(context),
                       SliverToBoxAdapter(child: _buildQuickAccess(context)),
                       _buildSectionTitle('Films à l\'affiche'),
                       _buildFilmCarousel(_films),
@@ -313,6 +324,34 @@ class _HomePageState extends ConsumerState<HomePage> with TickerProviderStateMix
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildErrorBanner(BuildContext context) {
+    final msg = _loadError!;
+    return SliverToBoxAdapter(
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+        child: Material(
+          color: AppColors.primary.withValues(alpha: 0.25),
+          borderRadius: BorderRadius.circular(12),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+            child: Row(
+              children: [
+                Icon(Icons.info_outline_rounded, color: AppColors.neon, size: 24),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    msg,
+                    style: TextStyle(color: Colors.white.withValues(alpha: 0.95), fontSize: 13),
+                  ),
+                ),
+              ],
+            ),
+          ),
         ),
       ),
     );

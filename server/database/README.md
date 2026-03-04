@@ -99,13 +99,21 @@ psql -U postgres -d cinema_reservation -f server/database/schema.sql
 
 ## 4. Données de démo (films avec affiches)
 
-Après le schéma, exécuter une fois le seed pour avoir des films, séances et sièges :
+Après le schéma, exécuter **une fois** le seed pour avoir des films (avec images TMDB), séances, événements et sièges :
 
 ```powershell
+cd server/database
+.\apply_seed.ps1
+```
+
+Ou à la main (depuis la racine du projet) :
+
+```powershell
+psql -U postgres -d cinema_reservation -f server/database/schema.sql
 psql -U postgres -d cinema_reservation -f server/database/seed_films.sql
 ```
 
-Tu peux le relancer pour mettre à jour les affiches des films sans doublon.
+Tu peux relancer le seed pour mettre à jour les affiches sans doublon. **Sans ces seeds, l’app affichera « Aucun film à l’affiche » et « Aucun événement à venir ».**
 
 ### Vérifier que les affiches sont bien chargées
 

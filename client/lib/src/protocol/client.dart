@@ -380,6 +380,44 @@ class EndpointFilms extends _i2.EndpointRef {
       );
 }
 
+/// Endpoint réservations : sièges, créneaux réservés, création réservation.
+/// {@category Endpoint}
+class EndpointReservations extends _i2.EndpointRef {
+  EndpointReservations(_i2.EndpointCaller caller) : super(caller);
+
+  @override
+  String get name => 'reservations';
+
+  _i3.Future<List<_i10.Siege>> getSiegesBySalle(int salleId) =>
+      caller.callServerEndpoint<List<_i10.Siege>>(
+        'reservations',
+        'getSiegesBySalle',
+        {'salleId': salleId},
+      );
+
+  _i3.Future<List<int>> getReservedSiegeIdsForSeance(int seanceId) =>
+      caller.callServerEndpoint<List<int>>(
+        'reservations',
+        'getReservedSiegeIdsForSeance',
+        {'seanceId': seanceId},
+      );
+
+  _i3.Future<_i11.ReservationResult> createReservation({
+    required int seanceId,
+    required List<int> siegeIds,
+    int utilisateurId = 1,
+  }) =>
+      caller.callServerEndpoint<_i11.ReservationResult>(
+        'reservations',
+        'createReservation',
+        {
+          'seanceId': seanceId,
+          'siegeIds': siegeIds,
+          'utilisateurId': utilisateurId,
+        },
+      );
+}
+
 /// This is an example endpoint that returns a greeting message through
 /// its [hello] method.
 /// {@category Endpoint}

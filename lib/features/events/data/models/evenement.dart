@@ -37,21 +37,35 @@ class Evenement {
     return 'Lieu à préciser';
   }
 
+  /// Désérialisation robuste : accepte dateHeure en String ISO ou DateTime,
+  /// et clés camelCase (lieuType, dateHeure, etc.) ou snake_case de secours.
   static Evenement fromJson(Map<String, dynamic> json) {
+    final id = json['id'] as int;
+    final titre = json['titre'] as String;
+    final dateHeure = _parseDateTime(json['dateHeure'] ?? json['date_heure']);
+    final prix = (json['prix'] as num?)?.toDouble() ?? 0.0;
+    final placesDisponibles = json['placesDisponibles'] as int? ?? json['places_disponibles'] as int? ?? 0;
     return Evenement(
-      id: json['id'] as int,
-      titre: json['titre'] as String,
+      id: id,
+      titre: titre,
       description: json['description'] as String?,
       categorie: json['categorie'] as String?,
-      lieuType: json['lieuType'] as String?,
-      cinemaId: json['cinemaId'] as int?,
-      lieuNom: json['lieuNom'] as String?,
+      lieuType: json['lieuType'] as String? ?? json['lieu_type'] as String?,
+      cinemaId: json['cinemaId'] as int? ?? json['cinema_id'] as int?,
+      lieuNom: json['lieuNom'] as String? ?? json['lieu_nom'] as String?,
       adresse: json['adresse'] as String?,
       ville: json['ville'] as String?,
-      dateHeure: DateTime.parse(json['dateHeure'] as String),
-      prix: (json['prix'] as num).toDouble(),
-      placesDisponibles: json['placesDisponibles'] as int,
+      dateHeure: dateHeure,
+      prix: prix,
+      placesDisponibles: placesDisponibles,
       affiche: json['affiche'] as String?,
     );
+  }
+
+  static DateTime _parseDateTime(dynamic v) {
+    if (v == null) throw ArgumentError('dateHeure manquant');
+    if (v is DateTime) return v;
+    if (v is String) return DateTime.parse(v);
+    throw ArgumentError('Format dateHeure invalide: $v');
   }
 }

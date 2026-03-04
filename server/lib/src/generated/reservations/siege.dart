@@ -55,9 +55,9 @@ abstract class Siege implements _i1.SerializableModel, _i1.ProtocolSerialization
 
 class _SiegeImpl extends Siege {
   _SiegeImpl({
-    required super.id,
-    required super.salleId,
-    required super.numero,
-    super.type,
-  });
+    required int id,
+    required int salleId,
+    required String numero,
+    String? type,
+  }) : super._(id: id, salleId: salleId, numero: numero, type: type);
 }

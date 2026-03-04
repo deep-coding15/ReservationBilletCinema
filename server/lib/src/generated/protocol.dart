@@ -273,7 +273,9 @@ class Protocol extends _i1.SerializationManagerServer {
       _i7.Salle => 'Salle',
       _i8.Seance => 'Seance',
       _i9.Greeting => 'Greeting',
-      _i10.Utilisateur => 'Utilisateur',
+      _i10.ReservationResult => 'ReservationResult',
+      _i11.Siege => 'Siege',
+      _i12.Utilisateur => 'Utilisateur',
       _ => null,
     };
   }
@@ -345,7 +347,7 @@ class Protocol extends _i1.SerializationManagerServer {
       return deserialize<_i9.Greeting>(data['data']);
     }
     if (dataClassName == 'Utilisateur') {
-      return deserialize<_i10.Utilisateur>(data['data']);
+      return deserialize<_i12.Utilisateur>(data['data']);
     }
     if (dataClassName.startsWith('serverpod.')) {
       data['className'] = dataClassName.substring(10);
