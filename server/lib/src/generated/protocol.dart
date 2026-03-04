@@ -16,8 +16,11 @@ import 'package:serverpod_auth_idp_server/serverpod_auth_idp_server.dart'
     as _i3;
 import 'package:serverpod_auth_core_server/serverpod_auth_core_server.dart'
     as _i4;
-import 'greetings/greeting.dart' as _i5;
-import 'utilisateur.dart' as _i6;
+import 'favori.dart' as _i5;
+import 'greetings/greeting.dart' as _i6;
+import 'utilisateur.dart' as _i7;
+import 'package:cinema_reservation_server/src/generated/favori.dart' as _i8;
+export 'favori.dart';
 export 'greetings/greeting.dart';
 export 'utilisateur.dart';
 
@@ -30,6 +33,67 @@ class Protocol extends _i1.SerializationManagerServer {
 
   static final List<_i2.TableDefinition> targetTableDefinitions = [
     _i2.TableDefinition(
+      name: 'favoris',
+      dartName: 'Favori',
+      schema: 'public',
+      module: 'cinema_reservation',
+      columns: [
+        _i2.ColumnDefinition(
+          name: 'id',
+          columnType: _i2.ColumnType.bigint,
+          isNullable: false,
+          dartType: 'int?',
+          columnDefault: 'nextval(\'favoris_id_seq\'::regclass)',
+        ),
+        _i2.ColumnDefinition(
+          name: 'utilisateurId',
+          columnType: _i2.ColumnType.bigint,
+          isNullable: false,
+          dartType: 'int',
+        ),
+        _i2.ColumnDefinition(
+          name: 'cinemaId',
+          columnType: _i2.ColumnType.bigint,
+          isNullable: false,
+          dartType: 'int',
+        ),
+      ],
+      foreignKeys: [],
+      indexes: [
+        _i2.IndexDefinition(
+          indexName: 'favoris_pkey',
+          tableSpace: null,
+          elements: [
+            _i2.IndexElementDefinition(
+              type: _i2.IndexElementDefinitionType.column,
+              definition: 'id',
+            ),
+          ],
+          type: 'btree',
+          isUnique: true,
+          isPrimary: true,
+        ),
+        _i2.IndexDefinition(
+          indexName: 'favori_unique_idx',
+          tableSpace: null,
+          elements: [
+            _i2.IndexElementDefinition(
+              type: _i2.IndexElementDefinitionType.column,
+              definition: 'utilisateurId',
+            ),
+            _i2.IndexElementDefinition(
+              type: _i2.IndexElementDefinitionType.column,
+              definition: 'cinemaId',
+            ),
+          ],
+          type: 'btree',
+          isUnique: true,
+          isPrimary: false,
+        ),
+      ],
+      managed: true,
+    ),
+    _i2.TableDefinition(
       name: 'utilisateurs',
       dartName: 'Utilisateur',
       schema: 'public',
@@ -41,6 +105,12 @@ class Protocol extends _i1.SerializationManagerServer {
           isNullable: false,
           dartType: 'int?',
           columnDefault: 'nextval(\'utilisateurs_id_seq\'::regclass)',
+        ),
+        _i2.ColumnDefinition(
+          name: 'authUserId',
+          columnType: _i2.ColumnType.text,
+          isNullable: false,
+          dartType: 'String',
         ),
         _i2.ColumnDefinition(
           name: 'nom',
@@ -108,6 +178,19 @@ class Protocol extends _i1.SerializationManagerServer {
           isUnique: true,
           isPrimary: false,
         ),
+        _i2.IndexDefinition(
+          indexName: 'utilisateur_auth_idx',
+          tableSpace: null,
+          elements: [
+            _i2.IndexElementDefinition(
+              type: _i2.IndexElementDefinitionType.column,
+              definition: 'authUserId',
+            ),
+          ],
+          type: 'btree',
+          isUnique: true,
+          isPrimary: false,
+        ),
       ],
       managed: true,
     ),
@@ -143,17 +226,23 @@ class Protocol extends _i1.SerializationManagerServer {
       }
     }
 
-    if (t == _i5.Greeting) {
-      return _i5.Greeting.fromJson(data) as T;
+    if (t == _i5.Favori) {
+      return _i5.Favori.fromJson(data) as T;
     }
-    if (t == _i6.Utilisateur) {
-      return _i6.Utilisateur.fromJson(data) as T;
+    if (t == _i6.Greeting) {
+      return _i6.Greeting.fromJson(data) as T;
     }
-    if (t == _i1.getType<_i5.Greeting?>()) {
-      return (data != null ? _i5.Greeting.fromJson(data) : null) as T;
+    if (t == _i7.Utilisateur) {
+      return _i7.Utilisateur.fromJson(data) as T;
     }
-    if (t == _i1.getType<_i6.Utilisateur?>()) {
-      return (data != null ? _i6.Utilisateur.fromJson(data) : null) as T;
+    if (t == _i1.getType<_i5.Favori?>()) {
+      return (data != null ? _i5.Favori.fromJson(data) : null) as T;
+    }
+    if (t == _i1.getType<_i6.Greeting?>()) {
+      return (data != null ? _i6.Greeting.fromJson(data) : null) as T;
+    }
+    if (t == _i1.getType<_i7.Utilisateur?>()) {
+      return (data != null ? _i7.Utilisateur.fromJson(data) : null) as T;
     }
     if (t == List<String>) {
       return (data as List).map((e) => deserialize<String>(e)).toList() as T;
@@ -163,6 +252,22 @@ class Protocol extends _i1.SerializationManagerServer {
               ? (data as List).map((e) => deserialize<String>(e)).toList()
               : null)
           as T;
+    }
+    if (t == List<String>) {
+      return (data as List).map((e) => deserialize<String>(e)).toList() as T;
+    }
+    if (t == _i1.getType<List<String>?>()) {
+      return (data != null
+              ? (data as List).map((e) => deserialize<String>(e)).toList()
+              : null)
+          as T;
+    }
+    if (t == List<_i8.Favori>) {
+      return (data as List).map((e) => deserialize<_i8.Favori>(e)).toList()
+          as T;
+    }
+    if (t == List<dynamic>) {
+      return (data as List).map((e) => deserialize<dynamic>(e)).toList() as T;
     }
     try {
       return _i3.Protocol().deserialize<T>(data, t);
@@ -178,8 +283,9 @@ class Protocol extends _i1.SerializationManagerServer {
 
   static String? getClassNameForType(Type type) {
     return switch (type) {
-      _i5.Greeting => 'Greeting',
-      _i6.Utilisateur => 'Utilisateur',
+      _i5.Favori => 'Favori',
+      _i6.Greeting => 'Greeting',
+      _i7.Utilisateur => 'Utilisateur',
       _ => null,
     };
   }
@@ -197,9 +303,11 @@ class Protocol extends _i1.SerializationManagerServer {
     }
 
     switch (data) {
-      case _i5.Greeting():
+      case _i5.Favori():
+        return 'Favori';
+      case _i6.Greeting():
         return 'Greeting';
-      case _i6.Utilisateur():
+      case _i7.Utilisateur():
         return 'Utilisateur';
     }
     className = _i2.Protocol().getClassNameForObject(data);
@@ -223,11 +331,14 @@ class Protocol extends _i1.SerializationManagerServer {
     if (dataClassName is! String) {
       return super.deserializeByClassName(data);
     }
+    if (dataClassName == 'Favori') {
+      return deserialize<_i5.Favori>(data['data']);
+    }
     if (dataClassName == 'Greeting') {
-      return deserialize<_i5.Greeting>(data['data']);
+      return deserialize<_i6.Greeting>(data['data']);
     }
     if (dataClassName == 'Utilisateur') {
-      return deserialize<_i6.Utilisateur>(data['data']);
+      return deserialize<_i7.Utilisateur>(data['data']);
     }
     if (dataClassName.startsWith('serverpod.')) {
       data['className'] = dataClassName.substring(10);
@@ -265,8 +376,10 @@ class Protocol extends _i1.SerializationManagerServer {
       }
     }
     switch (t) {
-      case _i6.Utilisateur:
-        return _i6.Utilisateur.t;
+      case _i5.Favori:
+        return _i5.Favori.t;
+      case _i7.Utilisateur:
+        return _i7.Utilisateur.t;
     }
     return null;
   }

@@ -17,6 +17,7 @@ abstract class Utilisateur
     implements _i1.TableRow<int?>, _i1.ProtocolSerialization {
   Utilisateur._({
     this.id,
+    required this.authUserId,
     required this.nom,
     required this.email,
     this.telephone,
@@ -27,6 +28,7 @@ abstract class Utilisateur
 
   factory Utilisateur({
     int? id,
+    required String authUserId,
     required String nom,
     required String email,
     String? telephone,
@@ -38,6 +40,7 @@ abstract class Utilisateur
   factory Utilisateur.fromJson(Map<String, dynamic> jsonSerialization) {
     return Utilisateur(
       id: jsonSerialization['id'] as int?,
+      authUserId: jsonSerialization['authUserId'] as String,
       nom: jsonSerialization['nom'] as String,
       email: jsonSerialization['email'] as String,
       telephone: jsonSerialization['telephone'] as String?,
@@ -62,6 +65,8 @@ abstract class Utilisateur
   @override
   int? id;
 
+  String authUserId;
+
   String nom;
 
   String email;
@@ -82,6 +87,7 @@ abstract class Utilisateur
   @_i1.useResult
   Utilisateur copyWith({
     int? id,
+    String? authUserId,
     String? nom,
     String? email,
     String? telephone,
@@ -94,6 +100,7 @@ abstract class Utilisateur
     return {
       '__className__': 'Utilisateur',
       if (id != null) 'id': id,
+      'authUserId': authUserId,
       'nom': nom,
       'email': email,
       if (telephone != null) 'telephone': telephone,
@@ -108,6 +115,7 @@ abstract class Utilisateur
     return {
       '__className__': 'Utilisateur',
       if (id != null) 'id': id,
+      'authUserId': authUserId,
       'nom': nom,
       'email': email,
       if (telephone != null) 'telephone': telephone,
@@ -152,6 +160,7 @@ class _Undefined {}
 class _UtilisateurImpl extends Utilisateur {
   _UtilisateurImpl({
     int? id,
+    required String authUserId,
     required String nom,
     required String email,
     String? telephone,
@@ -160,6 +169,7 @@ class _UtilisateurImpl extends Utilisateur {
     String? statut,
   }) : super._(
          id: id,
+         authUserId: authUserId,
          nom: nom,
          email: email,
          telephone: telephone,
@@ -174,6 +184,7 @@ class _UtilisateurImpl extends Utilisateur {
   @override
   Utilisateur copyWith({
     Object? id = _Undefined,
+    String? authUserId,
     String? nom,
     String? email,
     Object? telephone = _Undefined,
@@ -183,6 +194,7 @@ class _UtilisateurImpl extends Utilisateur {
   }) {
     return Utilisateur(
       id: id is int? ? id : this.id,
+      authUserId: authUserId ?? this.authUserId,
       nom: nom ?? this.nom,
       email: email ?? this.email,
       telephone: telephone is String? ? telephone : this.telephone,
@@ -199,6 +211,11 @@ class _UtilisateurImpl extends Utilisateur {
 
 class UtilisateurUpdateTable extends _i1.UpdateTable<UtilisateurTable> {
   UtilisateurUpdateTable(super.table);
+
+  _i1.ColumnValue<String, String> authUserId(String value) => _i1.ColumnValue(
+    table.authUserId,
+    value,
+  );
 
   _i1.ColumnValue<String, String> nom(String value) => _i1.ColumnValue(
     table.nom,
@@ -237,6 +254,10 @@ class UtilisateurUpdateTable extends _i1.UpdateTable<UtilisateurTable> {
 class UtilisateurTable extends _i1.Table<int?> {
   UtilisateurTable({super.tableRelation}) : super(tableName: 'utilisateurs') {
     updateTable = UtilisateurUpdateTable(this);
+    authUserId = _i1.ColumnString(
+      'authUserId',
+      this,
+    );
     nom = _i1.ColumnString(
       'nom',
       this,
@@ -266,6 +287,8 @@ class UtilisateurTable extends _i1.Table<int?> {
 
   late final UtilisateurUpdateTable updateTable;
 
+  late final _i1.ColumnString authUserId;
+
   late final _i1.ColumnString nom;
 
   late final _i1.ColumnString email;
@@ -281,6 +304,7 @@ class UtilisateurTable extends _i1.Table<int?> {
   @override
   List<_i1.Column> get columns => [
     id,
+    authUserId,
     nom,
     email,
     telephone,

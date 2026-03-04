@@ -16,9 +16,11 @@ import 'package:serverpod_client/serverpod_client.dart' as _i2;
 import 'dart:async' as _i3;
 import 'package:serverpod_auth_core_client/serverpod_auth_core_client.dart'
     as _i4;
+import 'package:cinema_reservation_client/src/protocol/utilisateur.dart' as _i5;
+import 'package:cinema_reservation_client/src/protocol/favori.dart' as _i6;
 import 'package:cinema_reservation_client/src/protocol/greetings/greeting.dart'
-    as _i5;
-import 'protocol.dart' as _i6;
+    as _i7;
+import 'protocol.dart' as _i8;
 
 /// By extending [EmailIdpBaseEndpoint], the email identity provider endpoints
 /// are made available on the server and enable the corresponding sign-in widget
@@ -265,6 +267,64 @@ class EndpointAuth extends _i2.EndpointRef {
   );
 }
 
+/// Endpoint profil : récupération, mise à jour, favoris, historique.
+/// {@category Endpoint}
+class EndpointProfil extends _i2.EndpointRef {
+  EndpointProfil(_i2.EndpointCaller caller) : super(caller);
+
+  @override
+  String get name => 'profil';
+
+  _i3.Future<_i5.Utilisateur?> getProfil() =>
+      caller.callServerEndpoint<_i5.Utilisateur?>(
+        'profil',
+        'getProfil',
+        {},
+      );
+
+  _i3.Future<_i5.Utilisateur?> updateProfil({
+    required String nom,
+    required String telephone,
+    List<String>? preferences,
+  }) => caller.callServerEndpoint<_i5.Utilisateur?>(
+    'profil',
+    'updateProfil',
+    {
+      'nom': nom,
+      'telephone': telephone,
+      'preferences': preferences,
+    },
+  );
+
+  _i3.Future<List<_i6.Favori>> getFavoris() =>
+      caller.callServerEndpoint<List<_i6.Favori>>(
+        'profil',
+        'getFavoris',
+        {},
+      );
+
+  _i3.Future<void> ajouterFavori({required int cinemaId}) =>
+      caller.callServerEndpoint<void>(
+        'profil',
+        'ajouterFavori',
+        {'cinemaId': cinemaId},
+      );
+
+  _i3.Future<void> supprimerFavori({required int cinemaId}) =>
+      caller.callServerEndpoint<void>(
+        'profil',
+        'supprimerFavori',
+        {'cinemaId': cinemaId},
+      );
+
+  _i3.Future<List<dynamic>> getHistoriqueReservations() =>
+      caller.callServerEndpoint<List<dynamic>>(
+        'profil',
+        'getHistoriqueReservations',
+        {},
+      );
+}
+
 /// This is an example endpoint that returns a greeting message through
 /// its [hello] method.
 /// {@category Endpoint}
@@ -275,8 +335,8 @@ class EndpointGreeting extends _i2.EndpointRef {
   String get name => 'greeting';
 
   /// Returns a personalized greeting message: "Hello {name}".
-  _i3.Future<_i5.Greeting> hello(String name) =>
-      caller.callServerEndpoint<_i5.Greeting>(
+  _i3.Future<_i7.Greeting> hello(String name) =>
+      caller.callServerEndpoint<_i7.Greeting>(
         'greeting',
         'hello',
         {'name': name},
@@ -314,7 +374,7 @@ class Client extends _i2.ServerpodClientShared {
     bool? disconnectStreamsOnLostInternetConnection,
   }) : super(
          host,
-         _i6.Protocol(),
+         _i8.Protocol(),
          securityContext: securityContext,
          streamingConnectionTimeout: streamingConnectionTimeout,
          connectionTimeout: connectionTimeout,
@@ -326,6 +386,7 @@ class Client extends _i2.ServerpodClientShared {
     emailIdp = EndpointEmailIdp(this);
     jwtRefresh = EndpointJwtRefresh(this);
     auth = EndpointAuth(this);
+    profil = EndpointProfil(this);
     greeting = EndpointGreeting(this);
     modules = Modules(this);
   }
@@ -336,6 +397,8 @@ class Client extends _i2.ServerpodClientShared {
 
   late final EndpointAuth auth;
 
+  late final EndpointProfil profil;
+
   late final EndpointGreeting greeting;
 
   late final Modules modules;
@@ -345,6 +408,7 @@ class Client extends _i2.ServerpodClientShared {
     'emailIdp': emailIdp,
     'jwtRefresh': jwtRefresh,
     'auth': auth,
+    'profil': profil,
     'greeting': greeting,
   };
 

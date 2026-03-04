@@ -8,6 +8,7 @@ import 'package:reservation_billet_cinema/features/auth/presentation/pages/forgo
 import 'package:reservation_billet_cinema/features/programmation/presentation/pages/films_list_page.dart';
 import 'package:reservation_billet_cinema/features/reservation/presentation/pages/seat_selection_page.dart';
 import 'package:reservation_billet_cinema/features/profil/presentation/pages/profil_page.dart';
+import 'package:reservation_billet_cinema/features/profil/presentation/pages/edit_profil_page.dart';
 import 'package:reservation_billet_cinema/features/billets/presentation/pages/billets_page.dart';
 import 'package:reservation_billet_cinema/features/support/presentation/pages/faq_page.dart';
 import 'package:reservation_billet_cinema/features/events/presentation/pages/events_page.dart';
@@ -55,6 +56,11 @@ final goRouter = GoRouter(
       path: '/profil',
       name: 'profil',
       builder: (context, state) => const ProfilPage(),
+    ),
+    GoRoute(
+      path: '/profil/edit',
+      name: 'edit-profil',
+      builder: (context, state) => const EditProfilPage(),
     ),
     GoRoute(
       path: '/billets',

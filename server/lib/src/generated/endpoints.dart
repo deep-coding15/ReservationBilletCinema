@@ -14,11 +14,12 @@ import 'package:serverpod/serverpod.dart' as _i1;
 import '../auth/email_idp_endpoint.dart' as _i2;
 import '../auth/jwt_refresh_endpoint.dart' as _i3;
 import '../endpoints/auth_endpoint.dart' as _i4;
-import '../greetings/greeting_endpoint.dart' as _i5;
+import '../endpoints/profil_endpoint.dart' as _i5;
+import '../greetings/greeting_endpoint.dart' as _i6;
 import 'package:serverpod_auth_idp_server/serverpod_auth_idp_server.dart'
-    as _i6;
-import 'package:serverpod_auth_core_server/serverpod_auth_core_server.dart'
     as _i7;
+import 'package:serverpod_auth_core_server/serverpod_auth_core_server.dart'
+    as _i8;
 
 class Endpoints extends _i1.EndpointDispatch {
   @override
@@ -42,7 +43,13 @@ class Endpoints extends _i1.EndpointDispatch {
           'auth',
           null,
         ),
-      'greeting': _i5.GreetingEndpoint()
+      'profil': _i5.ProfilEndpoint()
+        ..initialize(
+          server,
+          'profil',
+          null,
+        ),
+      'greeting': _i6.GreetingEndpoint()
         ..initialize(
           server,
           'greeting',
@@ -295,6 +302,113 @@ class Endpoints extends _i1.EndpointDispatch {
         ),
       },
     );
+    connectors['profil'] = _i1.EndpointConnector(
+      name: 'profil',
+      endpoint: endpoints['profil']!,
+      methodConnectors: {
+        'getProfil': _i1.MethodConnector(
+          name: 'getProfil',
+          params: {},
+          call:
+              (
+                _i1.Session session,
+                Map<String, dynamic> params,
+              ) async => (endpoints['profil'] as _i5.ProfilEndpoint).getProfil(
+                session,
+              ),
+        ),
+        'updateProfil': _i1.MethodConnector(
+          name: 'updateProfil',
+          params: {
+            'nom': _i1.ParameterDescription(
+              name: 'nom',
+              type: _i1.getType<String>(),
+              nullable: false,
+            ),
+            'telephone': _i1.ParameterDescription(
+              name: 'telephone',
+              type: _i1.getType<String>(),
+              nullable: false,
+            ),
+            'preferences': _i1.ParameterDescription(
+              name: 'preferences',
+              type: _i1.getType<List<String>?>(),
+              nullable: true,
+            ),
+          },
+          call:
+              (
+                _i1.Session session,
+                Map<String, dynamic> params,
+              ) async =>
+                  (endpoints['profil'] as _i5.ProfilEndpoint).updateProfil(
+                    session,
+                    nom: params['nom'],
+                    telephone: params['telephone'],
+                    preferences: params['preferences'],
+                  ),
+        ),
+        'getFavoris': _i1.MethodConnector(
+          name: 'getFavoris',
+          params: {},
+          call:
+              (
+                _i1.Session session,
+                Map<String, dynamic> params,
+              ) async => (endpoints['profil'] as _i5.ProfilEndpoint).getFavoris(
+                session,
+              ),
+        ),
+        'ajouterFavori': _i1.MethodConnector(
+          name: 'ajouterFavori',
+          params: {
+            'cinemaId': _i1.ParameterDescription(
+              name: 'cinemaId',
+              type: _i1.getType<int>(),
+              nullable: false,
+            ),
+          },
+          call:
+              (
+                _i1.Session session,
+                Map<String, dynamic> params,
+              ) async =>
+                  (endpoints['profil'] as _i5.ProfilEndpoint).ajouterFavori(
+                    session,
+                    cinemaId: params['cinemaId'],
+                  ),
+        ),
+        'supprimerFavori': _i1.MethodConnector(
+          name: 'supprimerFavori',
+          params: {
+            'cinemaId': _i1.ParameterDescription(
+              name: 'cinemaId',
+              type: _i1.getType<int>(),
+              nullable: false,
+            ),
+          },
+          call:
+              (
+                _i1.Session session,
+                Map<String, dynamic> params,
+              ) async =>
+                  (endpoints['profil'] as _i5.ProfilEndpoint).supprimerFavori(
+                    session,
+                    cinemaId: params['cinemaId'],
+                  ),
+        ),
+        'getHistoriqueReservations': _i1.MethodConnector(
+          name: 'getHistoriqueReservations',
+          params: {},
+          call:
+              (
+                _i1.Session session,
+                Map<String, dynamic> params,
+              ) async => (endpoints['profil'] as _i5.ProfilEndpoint)
+                  .getHistoriqueReservations(session),
+        ),
+      },
+    );
     connectors['greeting'] = _i1.EndpointConnector(
       name: 'greeting',
       endpoint: endpoints['greeting']!,
@@ -312,16 +426,16 @@ class Endpoints extends _i1.EndpointDispatch {
               (
                 _i1.Session session,
                 Map<String, dynamic> params,
-              ) async => (endpoints['greeting'] as _i5.GreetingEndpoint).hello(
+              ) async => (endpoints['greeting'] as _i6.GreetingEndpoint).hello(
                 session,
                 params['name'],
               ),
         ),
       },
     );
-    modules['serverpod_auth_idp'] = _i6.Endpoints()
+    modules['serverpod_auth_idp'] = _i7.Endpoints()
       ..initializeEndpoints(server);
-    modules['serverpod_auth_core'] = _i7.Endpoints()
+    modules['serverpod_auth_core'] = _i8.Endpoints()
       ..initializeEndpoints(server);
   }
 }

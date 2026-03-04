@@ -111,6 +111,8 @@ class AuthNotifier extends StateNotifier<AuthState> {
     state = state.copyWith(isLoading: true, error: null);
     try {
       await _repo.finishRegistration(state.registrationToken!, password);
+      // Attendre que le token soit bien enregistré
+      await Future.delayed(const Duration(milliseconds: 300));
       await _repo.saveProfile(
         nom: nom,
         email: email,

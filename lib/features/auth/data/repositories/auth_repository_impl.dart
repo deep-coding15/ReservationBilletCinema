@@ -1,5 +1,6 @@
 import 'package:cinema_reservation_client/cinema_reservation_client.dart';
 import 'package:serverpod_auth_core_client/serverpod_auth_core_client.dart';
+import 'package:reservation_billet_cinema/core/network/serverpod_provider.dart';
 import 'package:reservation_billet_cinema/features/auth/domain/repositories/auth_repository.dart';
 
 class AuthRepositoryImpl implements AuthRepository {
@@ -12,7 +13,7 @@ class AuthRepositoryImpl implements AuthRepository {
       email: email,
       password: password,
     );
-    await _client.authenticationKeyManager?.put(result.token);
+    await globalAuthKeyManager.put(result.token);
     return result;
   }
 
@@ -37,7 +38,7 @@ class AuthRepositoryImpl implements AuthRepository {
       registrationToken: registrationToken,
       password: password,
     );
-    await _client.authenticationKeyManager?.put(result.token);
+    await globalAuthKeyManager.put(result.token);
     return result;
   }
 
@@ -81,6 +82,6 @@ class AuthRepositoryImpl implements AuthRepository {
 
   @override
   Future<void> logout() async {
-    await _client.authenticationKeyManager?.remove();
+    await globalAuthKeyManager.remove();
   }
 }

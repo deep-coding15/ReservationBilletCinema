@@ -11,5 +11,12 @@ jwtRefresh:
   - refreshAccessToken:
 auth:
   - saveProfile:
+profil:
+  - getProfil:
+  - updateProfil:
+  - getFavoris:
+  - ajouterFavori:
+  - supprimerFavori:
+  - getHistoriqueReservations:
 greeting:
   - hello:

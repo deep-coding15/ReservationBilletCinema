@@ -16,6 +16,7 @@ import 'package:cinema_reservation_client/src/protocol/protocol.dart' as _i2;
 abstract class Utilisateur implements _i1.SerializableModel {
   Utilisateur._({
     this.id,
+    required this.authUserId,
     required this.nom,
     required this.email,
     this.telephone,
@@ -26,6 +27,7 @@ abstract class Utilisateur implements _i1.SerializableModel {
 
   factory Utilisateur({
     int? id,
+    required String authUserId,
     required String nom,
     required String email,
     String? telephone,
@@ -37,6 +39,7 @@ abstract class Utilisateur implements _i1.SerializableModel {
   factory Utilisateur.fromJson(Map<String, dynamic> jsonSerialization) {
     return Utilisateur(
       id: jsonSerialization['id'] as int?,
+      authUserId: jsonSerialization['authUserId'] as String,
       nom: jsonSerialization['nom'] as String,
       email: jsonSerialization['email'] as String,
       telephone: jsonSerialization['telephone'] as String?,
@@ -59,6 +62,8 @@ abstract class Utilisateur implements _i1.SerializableModel {
   /// the id will be null.
   int? id;
 
+  String authUserId;
+
   String nom;
 
   String email;
@@ -76,6 +81,7 @@ abstract class Utilisateur implements _i1.SerializableModel {
   @_i1.useResult
   Utilisateur copyWith({
     int? id,
+    String? authUserId,
     String? nom,
     String? email,
     String? telephone,
@@ -88,6 +94,7 @@ abstract class Utilisateur implements _i1.SerializableModel {
     return {
       '__className__': 'Utilisateur',
       if (id != null) 'id': id,
+      'authUserId': authUserId,
       'nom': nom,
       'email': email,
       if (telephone != null) 'telephone': telephone,
@@ -108,6 +115,7 @@ class _Undefined {}
 class _UtilisateurImpl extends Utilisateur {
   _UtilisateurImpl({
     int? id,
+    required String authUserId,
     required String nom,
     required String email,
     String? telephone,
@@ -116,6 +124,7 @@ class _UtilisateurImpl extends Utilisateur {
     String? statut,
   }) : super._(
          id: id,
+         authUserId: authUserId,
          nom: nom,
          email: email,
          telephone: telephone,
@@ -130,6 +139,7 @@ class _UtilisateurImpl extends Utilisateur {
   @override
   Utilisateur copyWith({
     Object? id = _Undefined,
+    String? authUserId,
     String? nom,
     String? email,
     Object? telephone = _Undefined,
@@ -139,6 +149,7 @@ class _UtilisateurImpl extends Utilisateur {
   }) {
     return Utilisateur(
       id: id is int? ? id : this.id,
+      authUserId: authUserId ?? this.authUserId,
       nom: nom ?? this.nom,
       email: email ?? this.email,
       telephone: telephone is String? ? telephone : this.telephone,
