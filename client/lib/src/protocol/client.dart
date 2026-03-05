@@ -257,6 +257,12 @@ class EndpointAuth extends _i2.EndpointRef {
   @override
   String get name => 'auth';
 
+  _i3.Future<bool> isAdmin() => caller.callServerEndpoint<bool>(
+    'auth',
+    'isAdmin',
+    {},
+  );
+
   _i3.Future<void> saveProfile({
     required String nom,
     required String email,

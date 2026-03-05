@@ -1,5 +1,11 @@
 import 'package:cinema_reservation_client/cinema_reservation_client.dart';
 
+/// Modèle simple pour un favori (pas encore branché à l'API).
+class Favori {
+  final int cinemaId;
+  const Favori({required this.cinemaId});
+}
+
 abstract class ProfilRepository {
   Future<Utilisateur?> getProfil();
   Future<Utilisateur?> updateProfil({

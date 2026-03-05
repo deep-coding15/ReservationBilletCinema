@@ -123,9 +123,7 @@ class _HomePageState extends ConsumerState<HomePage> with TickerProviderStateMix
     return Stack(
             children: [
               NestedScrollView(
-                headerSliverBuilder: (context, innerBoxIsScrolled) => [
-                  _buildAppBar(context),
-                ],
+                headerSliverBuilder: (context, innerBoxIsScrolled) => [],
                 body: AnimatedBuilder(
                   animation: _entranceAnimation,
                   builder: (context, child) {
@@ -168,23 +166,6 @@ class _HomePageState extends ConsumerState<HomePage> with TickerProviderStateMix
                 onTap: () => Scaffold.of(context).openDrawer(),
               ),
             ],
-    );
-  }
-
-  Widget _buildAppBar(BuildContext context) {
-    return SliverAppBar(
-      expandedHeight: 0,
-      floating: true,
-      pinned: true,
-      elevation: 0,
-      backgroundColor: const Color(0xFF0d0d0d),
-      foregroundColor: Colors.white,
-      leading: IconButton(
-        icon: const Icon(Icons.menu_rounded, size: 26),
-        onPressed: () => Scaffold.of(context).openDrawer(),
-      ),
-      title: _NeonAppTitle(text: kAppName),
-      centerTitle: true,
     );
   }
 

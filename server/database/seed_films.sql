@@ -2,15 +2,14 @@
 -- Exécuter après schema.sql et les migrations Serverpod.
 -- Une seule fois : psql -U postgres -d cinema_reservation -f seed_films.sql
 
--- Utilisateur par défaut (optionnel : si la table a la colonne mot_de_passe_hash)
--- Ignoré si la table utilisateurs a été créée par Serverpod (structure différente).
+-- Utilisateur démo optionnel (table users avec role)
 DO $$
 BEGIN
-  INSERT INTO utilisateurs (id, nom, email, mot_de_passe_hash)
-  VALUES (1, 'Invité', 'invite@demo.local', 'demo_hash_non_securise')
-  ON CONFLICT (id) DO NOTHING;
-EXCEPTION WHEN undefined_column THEN
-  NULL; -- table gérée par Serverpod, on skip
+  INSERT INTO users ("authUserId", nom, email, statut, role)
+  VALUES ('', 'Invité', 'invite@demo.local', 'actif', 'client')
+  ON CONFLICT (email) DO NOTHING;
+EXCEPTION WHEN undefined_table OR undefined_column THEN
+  NULL; -- table users absente ou structure différente, on skip
 END $$;
 
 -- Cinémas

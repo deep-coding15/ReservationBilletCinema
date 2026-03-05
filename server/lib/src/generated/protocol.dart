@@ -48,7 +48,7 @@ class Protocol extends _i1.SerializationManagerServer {
 
   static final List<_i2.TableDefinition> targetTableDefinitions = [
     _i2.TableDefinition(
-      name: 'utilisateurs',
+      name: 'users',
       dartName: 'Utilisateur',
       schema: 'public',
       module: 'cinema_reservation',
@@ -58,7 +58,13 @@ class Protocol extends _i1.SerializationManagerServer {
           columnType: _i2.ColumnType.bigint,
           isNullable: false,
           dartType: 'int?',
-          columnDefault: 'nextval(\'utilisateurs_id_seq\'::regclass)',
+          columnDefault: 'nextval(\'users_id_seq\'::regclass)',
+        ),
+        _i2.ColumnDefinition(
+          name: 'authUserId',
+          columnType: _i2.ColumnType.text,
+          isNullable: false,
+          dartType: 'String',
         ),
         _i2.ColumnDefinition(
           name: 'nom',
@@ -97,11 +103,18 @@ class Protocol extends _i1.SerializationManagerServer {
           dartType: 'String',
           columnDefault: '\'actif\'::text',
         ),
+        _i2.ColumnDefinition(
+          name: 'role',
+          columnType: _i2.ColumnType.text,
+          isNullable: false,
+          dartType: 'String',
+          columnDefault: '\'client\'::text',
+        ),
       ],
       foreignKeys: [],
       indexes: [
         _i2.IndexDefinition(
-          indexName: 'utilisateurs_pkey',
+          indexName: 'users_pkey',
           tableSpace: null,
           elements: [
             _i2.IndexElementDefinition(
@@ -120,6 +133,19 @@ class Protocol extends _i1.SerializationManagerServer {
             _i2.IndexElementDefinition(
               type: _i2.IndexElementDefinitionType.column,
               definition: 'email',
+            ),
+          ],
+          type: 'btree',
+          isUnique: true,
+          isPrimary: false,
+        ),
+        _i2.IndexDefinition(
+          indexName: 'utilisateur_auth_idx',
+          tableSpace: null,
+          elements: [
+            _i2.IndexElementDefinition(
+              type: _i2.IndexElementDefinitionType.column,
+              definition: 'authUserId',
             ),
           ],
           type: 'btree',

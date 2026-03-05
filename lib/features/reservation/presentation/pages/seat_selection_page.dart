@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:cinema_reservation_client/cinema_reservation_client.dart';
 import 'package:reservation_billet_cinema/core/theme/app_theme.dart';
+import 'package:reservation_billet_cinema/features/auth/presentation/providers/auth_provider.dart';
 import 'package:reservation_billet_cinema/features/reservation/data/models/recap_data.dart';
 import 'package:reservation_billet_cinema/features/reservation/data/repositories/reservation_repository.dart';
 
@@ -75,9 +76,22 @@ class _SeatSelectionPageState extends ConsumerState<SeatSelectionPage> {
 
   @override
   Widget build(BuildContext context) {
+    if (!ref.read(authProvider).isAuthenticated) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          context.go('/auth/login');
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Connectez-vous pour réserver des places.')),
+          );
+        }
+      });
+      return Scaffold(
+        appBar: AppBar(title: const Text('Réservation'), backgroundColor: AppColors.primary, foregroundColor: Colors.white),
+        body: const Center(child: CircularProgressIndicator(color: AppColors.primary)),
+      );
+    }
     if (widget.seance == null) {
       return Scaffold(
-        backgroundColor: const Color(0xFF0d0d0d),
         appBar: AppBar(
           leading: IconButton(
             icon: const Icon(Icons.arrow_back_rounded),
@@ -87,17 +101,58 @@ class _SeatSelectionPageState extends ConsumerState<SeatSelectionPage> {
           backgroundColor: AppColors.primary,
           foregroundColor: Colors.white,
         ),
-        body: Center(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Text('Séance requise pour réserver.'),
-              const SizedBox(height: 16),
-              FilledButton(
-                onPressed: () => context.pop(),
-                child: const Text('Retour'),
-              ),
-            ],
+        body: Container(
+          width: double.infinity,
+          height: double.infinity,
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [
+                Color(0xFF0d0d0d),
+                Color(0xFF1a0a0e),
+                Color(0xFF2d0d12),
+                AppColors.primaryDark,
+              ],
+            ),
+          ),
+          child: Center(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(Icons.event_seat_rounded, size: 56, color: Colors.white.withValues(alpha: 0.6)),
+                const SizedBox(height: 20),
+                Text(
+                  'Séance requise pour réserver.',
+                  style: TextStyle(
+                    color: Colors.white.withValues(alpha: 0.95),
+                    fontSize: 18,
+                    fontWeight: FontWeight.w500,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  'Choisissez une séance depuis la fiche d\'un film.',
+                  style: TextStyle(
+                    color: Colors.white.withValues(alpha: 0.7),
+                    fontSize: 14,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 24),
+                FilledButton.icon(
+                  onPressed: () => context.pop(),
+                  icon: const Icon(Icons.arrow_back_rounded, size: 20),
+                  label: const Text('Retour'),
+                  style: FilledButton.styleFrom(
+                    backgroundColor: AppColors.primary,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       );

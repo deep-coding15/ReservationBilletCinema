@@ -23,7 +23,9 @@ abstract class Utilisateur implements _i1.SerializableModel {
     this.dateNaissance,
     this.preferences,
     String? statut,
-  }) : statut = statut ?? 'actif';
+    String? role,
+  })  : statut = statut ?? 'actif',
+        role = role ?? 'client';
 
   factory Utilisateur({
     int? id,
@@ -34,6 +36,7 @@ abstract class Utilisateur implements _i1.SerializableModel {
     DateTime? dateNaissance,
     List<String>? preferences,
     String? statut,
+    String? role,
   }) = _UtilisateurImpl;
 
   factory Utilisateur.fromJson(Map<String, dynamic> jsonSerialization) {
@@ -54,6 +57,7 @@ abstract class Utilisateur implements _i1.SerializableModel {
               jsonSerialization['preferences'],
             ),
       statut: jsonSerialization['statut'] as String?,
+      role: jsonSerialization['role'] as String?,
     );
   }
 
@@ -76,6 +80,8 @@ abstract class Utilisateur implements _i1.SerializableModel {
 
   String statut;
 
+  String role;
+
   /// Returns a shallow copy of this [Utilisateur]
   /// with some or all fields replaced by the given arguments.
   @_i1.useResult
@@ -88,6 +94,7 @@ abstract class Utilisateur implements _i1.SerializableModel {
     DateTime? dateNaissance,
     List<String>? preferences,
     String? statut,
+    String? role,
   });
   @override
   Map<String, dynamic> toJson() {
@@ -101,6 +108,7 @@ abstract class Utilisateur implements _i1.SerializableModel {
       if (dateNaissance != null) 'dateNaissance': dateNaissance?.toJson(),
       if (preferences != null) 'preferences': preferences?.toJson(),
       'statut': statut,
+      'role': role,
     };
   }
 
@@ -122,6 +130,7 @@ class _UtilisateurImpl extends Utilisateur {
     DateTime? dateNaissance,
     List<String>? preferences,
     String? statut,
+    String? role,
   }) : super._(
          id: id,
          authUserId: authUserId,
@@ -131,6 +140,7 @@ class _UtilisateurImpl extends Utilisateur {
          dateNaissance: dateNaissance,
          preferences: preferences,
          statut: statut,
+         role: role,
        );
 
   /// Returns a shallow copy of this [Utilisateur]
@@ -146,6 +156,7 @@ class _UtilisateurImpl extends Utilisateur {
     Object? dateNaissance = _Undefined,
     Object? preferences = _Undefined,
     String? statut,
+    String? role,
   }) {
     return Utilisateur(
       id: id is int? ? id : this.id,
@@ -160,6 +171,7 @@ class _UtilisateurImpl extends Utilisateur {
           ? preferences
           : this.preferences?.map((e0) => e0).toList(),
       statut: statut ?? this.statut,
+      role: role ?? this.role,
     );
   }
 }

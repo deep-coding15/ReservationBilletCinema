@@ -16,6 +16,7 @@ class AuthState {
   final bool isLoading;
   final String? error;
   final bool isAuthenticated;
+  final bool? isAdmin;
   final UuidValue? accountRequestId;
   final String? registrationToken;
   final UuidValue? passwordResetRequestId;
@@ -25,6 +26,7 @@ class AuthState {
     this.isLoading = false,
     this.error,
     this.isAuthenticated = false,
+    this.isAdmin,
     this.accountRequestId,
     this.registrationToken,
     this.passwordResetRequestId,
@@ -35,6 +37,7 @@ class AuthState {
     bool? isLoading,
     String? error,
     bool? isAuthenticated,
+    bool? isAdmin,
     UuidValue? accountRequestId,
     String? registrationToken,
     UuidValue? passwordResetRequestId,
@@ -44,6 +47,7 @@ class AuthState {
       isLoading: isLoading ?? this.isLoading,
       error: error,
       isAuthenticated: isAuthenticated ?? this.isAuthenticated,
+      isAdmin: isAdmin ?? this.isAdmin,
       accountRequestId: accountRequestId ?? this.accountRequestId,
       registrationToken: registrationToken ?? this.registrationToken,
       passwordResetRequestId:
@@ -58,12 +62,21 @@ class AuthNotifier extends StateNotifier<AuthState> {
   final AuthRepository _repo;
   AuthNotifier(this._repo) : super(const AuthState());
 
-  // LOGIN
+  // LOGIN — détecte l'admin dès la connexion et stocke isAdmin dans l'état
   Future<bool> login(String email, String password) async {
     state = state.copyWith(isLoading: true, error: null);
     try {
       await _repo.login(email, password);
-      state = state.copyWith(isLoading: false, isAuthenticated: true);
+      await Future.delayed(const Duration(milliseconds: 400));
+      bool isAdmin = false;
+      try {
+        isAdmin = await _repo.isAdmin();
+      } catch (_) {}
+      state = state.copyWith(
+        isLoading: false,
+        isAuthenticated: true,
+        isAdmin: isAdmin,
+      );
       return true;
     } catch (e) {
       state = state.copyWith(isLoading: false, error: _msg(e));
@@ -172,7 +185,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
   // LOGOUT
   Future<void> logout() async {
     await _repo.logout();
-    state = const AuthState();
+    state = const AuthState(isAdmin: null);
   }
 
   String _msg(dynamic e) {
@@ -191,4 +204,20 @@ class AuthNotifier extends StateNotifier<AuthState> {
 final authProvider =
 StateNotifierProvider<AuthNotifier, AuthState>((ref) {
   return AuthNotifier(ref.watch(authRepositoryProvider));
+});
+
+/// True si l'utilisateur connecté est admin (réévalué quand [authProvider] change).
+final isAdminProvider = FutureProvider<bool>((ref) async {
+  final auth = ref.watch(authProvider);
+  if (!auth.isAuthenticated) return false;
+  final client = ref.read(serverpodClientProvider);
+  await Future.delayed(const Duration(milliseconds: 400));
+  try {
+    final ok = await client.auth.isAdmin();
+    if (ok) return true;
+    await Future.delayed(const Duration(milliseconds: 300));
+    return await client.auth.isAdmin();
+  } catch (_) {
+    return false;
+  }
 });

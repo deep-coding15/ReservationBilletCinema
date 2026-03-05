@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:reservation_billet_cinema/core/theme/app_theme.dart';
+import 'package:reservation_billet_cinema/features/auth/presentation/providers/auth_provider.dart';
 import 'package:reservation_billet_cinema/features/splash/presentation/pages/splash_page.dart' show kAppName;
 
-/// Shell commun à toutes les pages : drawer + barre de navigation du bas persistante (jamais bloquer l'user).
-class AppShell extends StatelessWidget {
+/// Shell commun à toutes les pages : barre du haut (avec Espace admin si admin) + drawer + barre du bas.
+class AppShell extends ConsumerWidget {
   const AppShell({super.key, required this.currentPath, required this.child});
 
   final String currentPath;
@@ -42,10 +44,62 @@ class AppShell extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final idx = _selectedIndex();
+    final auth = ref.watch(authProvider);
     return Scaffold(
       backgroundColor: const Color(0xFF0d0d0d),
+      appBar: AppBar(
+        backgroundColor: const Color(0xFF141414),
+        elevation: 0,
+        title: Text(
+          kAppName,
+          style: GoogleFonts.orbitron(
+            color: Colors.white,
+            fontSize: 18,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        iconTheme: const IconThemeData(color: Colors.white),
+        actions: [
+          if (!auth.isAuthenticated) ...[
+            TextButton(
+              onPressed: () => GoRouter.of(context).go('/auth/login'),
+              child: const Text('Connexion', style: TextStyle(color: AppColors.primary, fontWeight: FontWeight.w600)),
+            ),
+            TextButton(
+              onPressed: () => GoRouter.of(context).go('/auth/register'),
+              child: const Text('Inscription', style: TextStyle(color: AppColors.accent, fontWeight: FontWeight.w600)),
+            ),
+          ],
+          if (auth.isAuthenticated)
+            Padding(
+              padding: const EdgeInsets.only(right: 8),
+              child: Tooltip(
+                message: 'Ouvrir l\'espace administrateur',
+                child: Material(
+                  color: AppColors.primary.withValues(alpha: 0.3),
+                  borderRadius: BorderRadius.circular(8),
+                  child: InkWell(
+                    onTap: () => GoRouter.of(context).go('/admin'),
+                    borderRadius: BorderRadius.circular(8),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(Icons.admin_panel_settings_rounded, color: AppColors.primary, size: 22),
+                          const SizedBox(width: 8),
+                          Text('Admin space', style: TextStyle(color: AppColors.primary, fontWeight: FontWeight.w700, fontSize: 14)),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+        ],
+      ),
       drawer: _AppDrawer(shellContext: context),
       body: child,
       bottomNavigationBar: Container(
@@ -79,13 +133,14 @@ class AppShell extends StatelessWidget {
   }
 }
 
-class _AppDrawer extends StatelessWidget {
+class _AppDrawer extends ConsumerWidget {
   const _AppDrawer({required this.shellContext});
 
   final BuildContext shellContext;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final auth = ref.watch(authProvider);
     return Drawer(
       backgroundColor: const Color(0xFF121212),
       child: SafeArea(
@@ -182,6 +237,15 @@ class _AppDrawer extends StatelessWidget {
                 GoRouter.of(shellContext).go('/profil');
               },
             ),
+            if (auth.isAuthenticated)
+              _DrawerTile(
+                icon: Icons.admin_panel_settings_rounded,
+                label: 'Admin space',
+                onTap: () {
+                  Navigator.pop(context);
+                  GoRouter.of(shellContext).go('/admin');
+                },
+              ),
             const Divider(color: Colors.white24, height: 1),
             _DrawerTile(
               icon: Icons.help_outline_rounded,

@@ -1,5 +1,6 @@
 class: Utilisateur
-table: utilisateurs
+table: users
+managedMigration: false
 fields:
   authUserId: String
   nom: String
@@ -8,6 +9,7 @@ fields:
   dateNaissance: DateTime?
   preferences: List<String>?
   statut: String, default='actif'
+  role: String, default='client'
 indexes:
   utilisateur_email_idx:
     fields: email

@@ -62,7 +62,11 @@ class _EventsPageState extends ConsumerState<EventsPage> {
       }
     } catch (e) {
       if (mounted) {
-        setState(() { _loading = false; _error = e.toString(); _events = []; });
+        final msg = e.toString();
+        final friendly = msg.contains('Failed to fetch') || msg.contains('8090') || msg.contains('Connection')
+            ? 'Serveur indisponible. Démarrez le backend (port 8090) puis réessayez.'
+            : msg;
+        setState(() { _loading = false; _error = friendly; _events = []; });
       }
     }
   }
@@ -181,11 +185,16 @@ class _EventsPageState extends ConsumerState<EventsPage> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(Icons.error_outline_rounded, size: 48, color: Colors.red.shade300),
+              Icon(Icons.cloud_off_rounded, size: 48, color: Colors.orange.shade300),
               const SizedBox(height: 16),
-              Text(_error!, style: const TextStyle(color: Colors.white70), textAlign: TextAlign.center),
-              const SizedBox(height: 16),
-              FilledButton(onPressed: _load, child: const Text('Réessayer')),
+              Text(_error!, style: const TextStyle(color: Colors.white70, fontSize: 15), textAlign: TextAlign.center),
+              const SizedBox(height: 20),
+              FilledButton.icon(
+                onPressed: () => _load(),
+                icon: const Icon(Icons.refresh_rounded, size: 20),
+                label: const Text('Réessayer'),
+                style: FilledButton.styleFrom(backgroundColor: AppColors.primary),
+              ),
             ],
           ),
         ),

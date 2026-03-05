@@ -2,26 +2,28 @@
 -- Schéma de la base de données - Reservation Billet Cinema
 -- PostgreSQL (local ou serveur à vous)
 -- ============================================================
+-- Les mots de passe ne sont PAS dans cette table : ils sont gérés par
+-- Serverpod Auth (table serverpod_auth_idp_email_account, colonne passwordHash).
+-- La table users contient uniquement le profil métier (nom, email, role, etc.)
+-- et le lien authUserId vers l'auth. Les tables d'auth sont créées par
+-- les migrations Serverpod (dart run bin/main.dart --apply-migrations).
+-- ============================================================
 
--- Table utilisateurs (spectateurs)
-CREATE TABLE IF NOT EXISTS utilisateurs (
+-- Table users (spectateurs et admins : rôle dans la colonne role)
+CREATE TABLE IF NOT EXISTS users (
     id SERIAL PRIMARY KEY,
+    "authUserId" TEXT DEFAULT '',
     nom VARCHAR(255) NOT NULL,
     email VARCHAR(255) NOT NULL UNIQUE,
     telephone VARCHAR(50),
-    mot_de_passe_hash VARCHAR(255) NOT NULL,
-    preferences TEXT[],
+    "dateNaissance" TIMESTAMP,
+    preferences JSONB,
     statut VARCHAR(50) DEFAULT 'actif',
+    role VARCHAR(50) DEFAULT 'client' CHECK (role IN ('admin', 'client')),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
-
--- Table administrateurs
-CREATE TABLE IF NOT EXISTS administrateurs (
-    id SERIAL PRIMARY KEY,
-    utilisateur_id INTEGER NOT NULL REFERENCES utilisateurs(id) ON DELETE CASCADE,
-    role VARCHAR(100) DEFAULT 'admin',
-    UNIQUE(utilisateur_id)
-);
+CREATE UNIQUE INDEX IF NOT EXISTS utilisateur_email_idx ON users(email);
+CREATE UNIQUE INDEX IF NOT EXISTS utilisateur_auth_idx ON users("authUserId");
 
 -- Table cinémas
 CREATE TABLE IF NOT EXISTS cinemas (
@@ -97,7 +99,7 @@ CREATE TABLE IF NOT EXISTS sieges (
 -- Table réservations
 CREATE TABLE IF NOT EXISTS reservations (
     id SERIAL PRIMARY KEY,
-    utilisateur_id INTEGER NOT NULL REFERENCES utilisateurs(id) ON DELETE CASCADE,
+    utilisateur_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     seance_id INTEGER NOT NULL REFERENCES seances(id) ON DELETE CASCADE,
     date_reservation TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     montant_total DOUBLE PRECISION NOT NULL,
@@ -138,7 +140,7 @@ CREATE TABLE IF NOT EXISTS billets (
 -- Table favoris
 CREATE TABLE IF NOT EXISTS favoris (
     id SERIAL PRIMARY KEY,
-    utilisateur_id INTEGER NOT NULL REFERENCES utilisateurs(id) ON DELETE CASCADE,
+    utilisateur_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     cinema_id INTEGER NOT NULL REFERENCES cinemas(id) ON DELETE CASCADE,
     UNIQUE(utilisateur_id, cinema_id)
 );
@@ -183,7 +185,7 @@ CREATE TABLE IF NOT EXISTS faq (
 -- Table demandes de support
 CREATE TABLE IF NOT EXISTS demandes_support (
     id SERIAL PRIMARY KEY,
-    utilisateur_id INTEGER NOT NULL REFERENCES utilisateurs(id) ON DELETE CASCADE,
+    utilisateur_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     sujet VARCHAR(255),
     message TEXT NOT NULL,
     statut VARCHAR(50) DEFAULT 'ouvert',
@@ -215,7 +217,7 @@ CREATE INDEX IF NOT EXISTS idx_evenements_date ON evenements(date_heure);
 -- Réservations événements (même logique que cinéma : type + options par billet côté app)
 CREATE TABLE IF NOT EXISTS reservations_evenements (
     id SERIAL PRIMARY KEY,
-    utilisateur_id INTEGER NOT NULL REFERENCES utilisateurs(id) ON DELETE CASCADE,
+    utilisateur_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     evenement_id INTEGER NOT NULL REFERENCES evenements(id) ON DELETE CASCADE,
     nb_billets INTEGER NOT NULL,
     montant_total DOUBLE PRECISION NOT NULL,

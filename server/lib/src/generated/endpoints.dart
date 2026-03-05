@@ -278,6 +278,15 @@ class Endpoints extends _i1.EndpointDispatch {
       name: 'auth',
       endpoint: endpoints['auth']!,
       methodConnectors: {
+        'isAdmin': _i1.MethodConnector(
+          name: 'isAdmin',
+          params: {},
+          call:
+              (
+                _i1.Session session,
+                Map<String, dynamic> params,
+              ) async => (endpoints['auth'] as _i4.AuthEndpoint).isAdmin(session),
+        ),
         'saveProfile': _i1.MethodConnector(
           name: 'saveProfile',
           params: {

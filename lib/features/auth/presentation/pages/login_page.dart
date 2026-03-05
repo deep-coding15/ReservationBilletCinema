@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:reservation_billet_cinema/core/network/serverpod_provider.dart';
 import 'package:reservation_billet_cinema/features/auth/presentation/providers/auth_provider.dart';
 
 class LoginPage extends ConsumerStatefulWidget {
@@ -60,7 +61,8 @@ class _LoginPageState extends ConsumerState<LoginPage>
     if (!mounted) return;
 
     if (success) {
-      context.go('/');
+      if (mounted) context.go('/');
+        // Laisser le temps au client d’attacher le token avant d’appeler isAdmin()
     } else {
       final error = ref.read(authProvider).error;
       ScaffoldMessenger.of(context).showSnackBar(

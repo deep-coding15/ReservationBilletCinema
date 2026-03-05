@@ -30,4 +30,7 @@ abstract class AuthRepository {
 
   // Logout
   Future<void> logout();
+
+  /// Retourne true si l'utilisateur connecté a le rôle admin (appelé après login).
+  Future<bool> isAdmin();
 }

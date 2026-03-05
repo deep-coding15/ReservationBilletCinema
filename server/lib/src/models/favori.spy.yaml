@@ -1,5 +1,6 @@
 class: Favori
 table: favoris
+managedMigration: false
 fields:
   utilisateurId: int
   cinemaId: int

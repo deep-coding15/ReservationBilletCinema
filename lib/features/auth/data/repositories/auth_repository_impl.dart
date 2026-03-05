@@ -84,4 +84,9 @@ class AuthRepositoryImpl implements AuthRepository {
   Future<void> logout() async {
     await globalAuthKeyManager.remove();
   }
+
+  @override
+  Future<bool> isAdmin() async {
+    return await _client.auth.isAdmin();
+  }
 }

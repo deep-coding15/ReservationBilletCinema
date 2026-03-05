@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:reservation_billet_cinema/core/theme/app_theme.dart';
+import 'package:reservation_billet_cinema/features/auth/presentation/providers/auth_provider.dart';
 import 'package:reservation_billet_cinema/features/reservation/data/models/recap_data.dart';
 
 /// Choisir le nombre de billets pour un événement, puis aller au récap (type + options par billet).
-class EventReservationQuantityPage extends StatefulWidget {
+class EventReservationQuantityPage extends ConsumerStatefulWidget {
   const EventReservationQuantityPage({
     super.key,
     required this.eventId,
@@ -19,10 +21,10 @@ class EventReservationQuantityPage extends StatefulWidget {
   final int placesDisponibles;
 
   @override
-  State<EventReservationQuantityPage> createState() => _EventReservationQuantityPageState();
+  ConsumerState<EventReservationQuantityPage> createState() => _EventReservationQuantityPageState();
 }
 
-class _EventReservationQuantityPageState extends State<EventReservationQuantityPage> {
+class _EventReservationQuantityPageState extends ConsumerState<EventReservationQuantityPage> {
   late int _nbBillets;
 
   @override
@@ -33,6 +35,20 @@ class _EventReservationQuantityPageState extends State<EventReservationQuantityP
 
   @override
   Widget build(BuildContext context) {
+    if (!ref.read(authProvider).isAuthenticated) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          context.go('/auth/login');
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Connectez-vous pour réserver des billets.')),
+          );
+        }
+      });
+      return Scaffold(
+        appBar: AppBar(title: const Text('Réservation'), backgroundColor: AppColors.primary, foregroundColor: Colors.white),
+        body: const Center(child: CircularProgressIndicator(color: AppColors.primary)),
+      );
+    }
     final max = widget.placesDisponibles.clamp(1, 20);
 
     return Scaffold(

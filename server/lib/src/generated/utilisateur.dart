@@ -24,7 +24,9 @@ abstract class Utilisateur
     this.dateNaissance,
     this.preferences,
     String? statut,
-  }) : statut = statut ?? 'actif';
+    String? role,
+  })  : statut = statut ?? 'actif',
+        role = role ?? 'client';
 
   factory Utilisateur({
     int? id,
@@ -35,6 +37,7 @@ abstract class Utilisateur
     DateTime? dateNaissance,
     List<String>? preferences,
     String? statut,
+    String? role,
   }) = _UtilisateurImpl;
 
   factory Utilisateur.fromJson(Map<String, dynamic> jsonSerialization) {
@@ -55,6 +58,7 @@ abstract class Utilisateur
               jsonSerialization['preferences'],
             ),
       statut: jsonSerialization['statut'] as String?,
+      role: jsonSerialization['role'] as String?,
     );
   }
 
@@ -79,6 +83,8 @@ abstract class Utilisateur
 
   String statut;
 
+  String role;
+
   @override
   _i1.Table<int?> get table => t;
 
@@ -94,6 +100,7 @@ abstract class Utilisateur
     DateTime? dateNaissance,
     List<String>? preferences,
     String? statut,
+    String? role,
   });
   @override
   Map<String, dynamic> toJson() {
@@ -107,6 +114,7 @@ abstract class Utilisateur
       if (dateNaissance != null) 'dateNaissance': dateNaissance?.toJson(),
       if (preferences != null) 'preferences': preferences?.toJson(),
       'statut': statut,
+      'role': role,
     };
   }
 
@@ -122,6 +130,7 @@ abstract class Utilisateur
       if (dateNaissance != null) 'dateNaissance': dateNaissance?.toJson(),
       if (preferences != null) 'preferences': preferences?.toJson(),
       'statut': statut,
+      'role': role,
     };
   }
 
@@ -167,6 +176,7 @@ class _UtilisateurImpl extends Utilisateur {
     DateTime? dateNaissance,
     List<String>? preferences,
     String? statut,
+    String? role,
   }) : super._(
          id: id,
          authUserId: authUserId,
@@ -176,6 +186,7 @@ class _UtilisateurImpl extends Utilisateur {
          dateNaissance: dateNaissance,
          preferences: preferences,
          statut: statut,
+         role: role,
        );
 
   /// Returns a shallow copy of this [Utilisateur]
@@ -191,6 +202,7 @@ class _UtilisateurImpl extends Utilisateur {
     Object? dateNaissance = _Undefined,
     Object? preferences = _Undefined,
     String? statut,
+    String? role,
   }) {
     return Utilisateur(
       id: id is int? ? id : this.id,
@@ -205,6 +217,7 @@ class _UtilisateurImpl extends Utilisateur {
           ? preferences
           : this.preferences?.map((e0) => e0).toList(),
       statut: statut ?? this.statut,
+      role: role ?? this.role,
     );
   }
 }
@@ -249,10 +262,15 @@ class UtilisateurUpdateTable extends _i1.UpdateTable<UtilisateurTable> {
     table.statut,
     value,
   );
+
+  _i1.ColumnValue<String, String> role(String value) => _i1.ColumnValue(
+    table.role,
+    value,
+  );
 }
 
 class UtilisateurTable extends _i1.Table<int?> {
-  UtilisateurTable({super.tableRelation}) : super(tableName: 'utilisateurs') {
+  UtilisateurTable({super.tableRelation}) : super(tableName: 'users') {
     updateTable = UtilisateurUpdateTable(this);
     authUserId = _i1.ColumnString(
       'authUserId',
@@ -283,6 +301,11 @@ class UtilisateurTable extends _i1.Table<int?> {
       this,
       hasDefault: true,
     );
+    role = _i1.ColumnString(
+      'role',
+      this,
+      hasDefault: true,
+    );
   }
 
   late final UtilisateurUpdateTable updateTable;
@@ -301,6 +324,8 @@ class UtilisateurTable extends _i1.Table<int?> {
 
   late final _i1.ColumnString statut;
 
+  late final _i1.ColumnString role;
+
   @override
   List<_i1.Column> get columns => [
     id,
@@ -311,6 +336,7 @@ class UtilisateurTable extends _i1.Table<int?> {
     dateNaissance,
     preferences,
     statut,
+    role,
   ];
 }
 
