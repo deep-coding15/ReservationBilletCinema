@@ -6,7 +6,6 @@ import 'package:reservation_billet_cinema/features/auth/presentation/pages/forgo
 import 'package:reservation_billet_cinema/features/auth/presentation/pages/login_page.dart';
 import 'package:reservation_billet_cinema/features/auth/presentation/pages/register_page.dart';
 import 'package:reservation_billet_cinema/features/billets/presentation/pages/billets_page.dart';
-import 'package:reservation_billet_cinema/features/events/data/models/evenement.dart';
 import 'package:reservation_billet_cinema/features/events/presentation/pages/event_detail_page.dart';
 import 'package:reservation_billet_cinema/features/events/presentation/pages/event_recap_page.dart';
 import 'package:reservation_billet_cinema/features/events/presentation/pages/event_reservation_quantity_page.dart';

@@ -1,10 +1,11 @@
 import 'dart:async';
 
+import 'package:cinema_reservation_client/cinema_reservation_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:reservation_billet_cinema/core/theme/app_theme.dart';
-import 'package:reservation_billet_cinema/features/events/data/models/evenement.dart';
+import 'package:reservation_billet_cinema/features/events/data/extensions/evenement_extension.dart';
 import 'package:reservation_billet_cinema/features/events/data/repositories/events_repository.dart';
 
 /// Page liste des événements : filtres par ville et date (application dynamique sans bouton).

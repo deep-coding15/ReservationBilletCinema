@@ -1,10 +1,10 @@
 import 'package:serverpod/serverpod.dart';
-import 'evenement.dart';
+import '../generated/events/evenement.dart';
 
-/// Endpoint événements : liste et détail. Retourne des Map pour le client.
+/// Endpoint événements : liste et détail. Retourne des [Evenement] typés.
 class EventsEndpoint extends Endpoint {
   /// Liste des événements à venir (filtres optionnels ville, date).
-  Future<List<Map<String, dynamic>>> getEvents(Session session, {String? ville, DateTime? date}) async {
+  Future<List<Evenement>> getEvents(Session session, {String? ville, DateTime? date}) async {
     var sql = r'''
       SELECT id, titre, description, categorie, lieu_type, cinema_id,
              lieu_nom, adresse, ville, date_heure, prix, places_disponibles, affiche
@@ -26,11 +26,11 @@ class EventsEndpoint extends Endpoint {
       sql,
       parameters: params.isEmpty ? null : QueryParameters.named(params),
     );
-    return result.map((row) => _rowToEvenement(row).toJson()).toList();
+    return result.map((row) => _rowToEvenement(row)).toList();
   }
 
   /// Détail d'un événement par id.
-  Future<Map<String, dynamic>?> getEventById(Session session, int id) async {
+  Future<Evenement?> getEventById(Session session, int id) async {
     final result = await session.db.unsafeQuery(
       r'''
       SELECT id, titre, description, categorie, lieu_type, cinema_id,
@@ -40,7 +40,7 @@ class EventsEndpoint extends Endpoint {
       parameters: QueryParameters.named({'id': id}),
     );
     if (result.isEmpty) return null;
-    return _rowToEvenement(result.first).toJson();
+    return _rowToEvenement(result.first);
   }
 
   Evenement _rowToEvenement(DatabaseResultRow row) {

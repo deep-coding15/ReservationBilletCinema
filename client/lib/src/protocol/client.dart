@@ -16,18 +16,20 @@ import 'package:serverpod_client/serverpod_client.dart' as _i2;
 import 'dart:async' as _i3;
 import 'package:serverpod_auth_core_client/serverpod_auth_core_client.dart'
     as _i4;
-import 'package:cinema_reservation_client/src/protocol/films/film.dart' as _i5;
+import 'package:cinema_reservation_client/src/protocol/utilisateur.dart' as _i5;
+import 'package:cinema_reservation_client/src/protocol/favori.dart' as _i6;
+import 'package:cinema_reservation_client/src/protocol/films/film.dart' as _i7;
 import 'package:cinema_reservation_client/src/protocol/films/seance.dart'
-    as _i6;
-import 'package:cinema_reservation_client/src/protocol/films/cinema.dart'
-    as _i7;
-import 'package:cinema_reservation_client/src/protocol/greetings/greeting.dart'
     as _i8;
-import 'package:cinema_reservation_client/src/protocol/reservations/siege.dart'
-    as _i10;
+import 'package:cinema_reservation_client/src/protocol/films/cinema.dart'
+    as _i9;
 import 'package:cinema_reservation_client/src/protocol/reservations/reservation_result.dart'
-    as _i11;
-import 'protocol.dart' as _i9;
+    as _i12;
+import 'package:cinema_reservation_client/src/protocol/reservations/siege.dart'
+    as _i13;
+import 'package:cinema_reservation_client/src/protocol/events/evenement.dart'
+    as _i14;
+import 'protocol.dart' as _i11;
 
 /// By extending [EmailIdpBaseEndpoint], the email identity provider endpoints
 /// are made available on the server and enable the corresponding sign-in widget
@@ -257,6 +259,8 @@ class EndpointAuth extends _i2.EndpointRef {
   @override
   String get name => 'auth';
 
+  /// Retourne true si l'utilisateur connecté a le rôle admin (table users, colonne role).
+  /// Synchronise authUserId sur l'entrée users si trouvée par email (premier login).
   _i3.Future<bool> isAdmin() => caller.callServerEndpoint<bool>(
     'auth',
     'isAdmin',
@@ -280,7 +284,65 @@ class EndpointAuth extends _i2.EndpointRef {
   );
 }
 
-/// Endpoint événements : liste et détail. Retourne des Map pour le client.
+/// Endpoint profil : récupération, mise à jour, favoris, historique.
+/// {@category Endpoint}
+class EndpointProfil extends _i2.EndpointRef {
+  EndpointProfil(_i2.EndpointCaller caller) : super(caller);
+
+  @override
+  String get name => 'profil';
+
+  _i3.Future<_i5.Utilisateur?> getProfil() =>
+      caller.callServerEndpoint<_i5.Utilisateur?>(
+        'profil',
+        'getProfil',
+        {},
+      );
+
+  _i3.Future<_i5.Utilisateur?> updateProfil({
+    required String nom,
+    required String telephone,
+    List<String>? preferences,
+  }) => caller.callServerEndpoint<_i5.Utilisateur?>(
+    'profil',
+    'updateProfil',
+    {
+      'nom': nom,
+      'telephone': telephone,
+      'preferences': preferences,
+    },
+  );
+
+  _i3.Future<List<_i6.Favori>> getFavoris() =>
+      caller.callServerEndpoint<List<_i6.Favori>>(
+        'profil',
+        'getFavoris',
+        {},
+      );
+
+  _i3.Future<void> ajouterFavori({required int cinemaId}) =>
+      caller.callServerEndpoint<void>(
+        'profil',
+        'ajouterFavori',
+        {'cinemaId': cinemaId},
+      );
+
+  _i3.Future<void> supprimerFavori({required int cinemaId}) =>
+      caller.callServerEndpoint<void>(
+        'profil',
+        'supprimerFavori',
+        {'cinemaId': cinemaId},
+      );
+
+  _i3.Future<List<dynamic>> getHistoriqueReservations() =>
+      caller.callServerEndpoint<List<dynamic>>(
+        'profil',
+        'getHistoriqueReservations',
+        {},
+      );
+}
+
+/// Endpoint événements : liste et détail.
 /// {@category Endpoint}
 class EndpointEvents extends _i2.EndpointRef {
   EndpointEvents(_i2.EndpointCaller caller) : super(caller);
@@ -289,10 +351,10 @@ class EndpointEvents extends _i2.EndpointRef {
   String get name => 'events';
 
   /// Liste des événements à venir (filtres optionnels ville, date).
-  _i3.Future<List<Map<String, dynamic>>> getEvents({
+  _i3.Future<List<_i14.Evenement>> getEvents({
     String? ville,
     DateTime? date,
-  }) => caller.callServerEndpoint<List<Map<String, dynamic>>>(
+  }) => caller.callServerEndpoint<List<_i14.Evenement>>(
     'events',
     'getEvents',
     {
@@ -302,8 +364,8 @@ class EndpointEvents extends _i2.EndpointRef {
   );
 
   /// Détail d'un événement par id.
-  _i3.Future<Map<String, dynamic>?> getEventById(int id) =>
-      caller.callServerEndpoint<Map<String, dynamic>?>(
+  _i3.Future<_i14.Evenement?> getEventById(int id) =>
+      caller.callServerEndpoint<_i14.Evenement?>(
         'events',
         'getEventById',
         {'id': id},
@@ -336,10 +398,10 @@ class EndpointFilms extends _i2.EndpointRef {
   String get name => 'films';
 
   /// Liste des films à l'affiche (date du jour entre date_debut et date_fin).
-  _i3.Future<List<_i5.Film>> getFilms({
+  _i3.Future<List<_i7.Film>> getFilms({
     String? search,
     String? genre,
-  }) => caller.callServerEndpoint<List<_i5.Film>>(
+  }) => caller.callServerEndpoint<List<_i7.Film>>(
     'films',
     'getFilms',
     {
@@ -349,26 +411,26 @@ class EndpointFilms extends _i2.EndpointRef {
   );
 
   /// Détail d'un film par id.
-  _i3.Future<_i5.Film?> getFilmById(int id) =>
-      caller.callServerEndpoint<_i5.Film?>(
+  _i3.Future<_i7.Film?> getFilmById(int id) =>
+      caller.callServerEndpoint<_i7.Film?>(
         'films',
         'getFilmById',
         {'id': id},
       );
 
   /// Séances à venir pour un film (avec nom cinéma et code salle).
-  _i3.Future<List<_i6.Seance>> getSeancesByFilm(int filmId) =>
-      caller.callServerEndpoint<List<_i6.Seance>>(
+  _i3.Future<List<_i8.Seance>> getSeancesByFilm(int filmId) =>
+      caller.callServerEndpoint<List<_i8.Seance>>(
         'films',
         'getSeancesByFilm',
         {'filmId': filmId},
       );
 
   /// Séances à venir pour un cinéma (optionnel: filtrer par date).
-  _i3.Future<List<_i6.Seance>> getSeancesByCinema(
+  _i3.Future<List<_i8.Seance>> getSeancesByCinema(
     int cinemaId, {
     DateTime? date,
-  }) => caller.callServerEndpoint<List<_i6.Seance>>(
+  }) => caller.callServerEndpoint<List<_i8.Seance>>(
     'films',
     'getSeancesByCinema',
     {
@@ -378,8 +440,8 @@ class EndpointFilms extends _i2.EndpointRef {
   );
 
   /// Liste des cinémas.
-  _i3.Future<List<_i7.Cinema>> getCinemas({String? ville}) =>
-      caller.callServerEndpoint<List<_i7.Cinema>>(
+  _i3.Future<List<_i9.Cinema>> getCinemas({String? ville}) =>
+      caller.callServerEndpoint<List<_i9.Cinema>>(
         'films',
         'getCinemas',
         {'ville': ville},
@@ -394,8 +456,8 @@ class EndpointReservations extends _i2.EndpointRef {
   @override
   String get name => 'reservations';
 
-  _i3.Future<List<_i10.Siege>> getSiegesBySalle(int salleId) =>
-      caller.callServerEndpoint<List<_i10.Siege>>(
+  _i3.Future<List<_i13.Siege>> getSiegesBySalle(int salleId) =>
+      caller.callServerEndpoint<List<_i13.Siege>>(
         'reservations',
         'getSiegesBySalle',
         {'salleId': salleId},
@@ -408,12 +470,12 @@ class EndpointReservations extends _i2.EndpointRef {
         {'seanceId': seanceId},
       );
 
-  _i3.Future<_i11.ReservationResult> createReservation({
+  _i3.Future<_i12.ReservationResult> createReservation({
     required int seanceId,
     required List<int> siegeIds,
     int utilisateurId = 1,
   }) =>
-      caller.callServerEndpoint<_i11.ReservationResult>(
+      caller.callServerEndpoint<_i12.ReservationResult>(
         'reservations',
         'createReservation',
         {
@@ -424,21 +486,26 @@ class EndpointReservations extends _i2.EndpointRef {
       );
 }
 
-/// This is an example endpoint that returns a greeting message through
-/// its [hello] method.
+/// Endpoint admin : stats dashboard et liste utilisateurs.
 /// {@category Endpoint}
-class EndpointGreeting extends _i2.EndpointRef {
-  EndpointGreeting(_i2.EndpointCaller caller) : super(caller);
+class EndpointAdmin extends _i2.EndpointRef {
+  EndpointAdmin(_i2.EndpointCaller caller) : super(caller);
 
   @override
-  String get name => 'greeting';
+  String get name => 'admin';
 
-  /// Returns a personalized greeting message: "Hello {name}".
-  _i3.Future<_i8.Greeting> hello(String name) =>
-      caller.callServerEndpoint<_i8.Greeting>(
-        'greeting',
-        'hello',
-        {'name': name},
+  _i3.Future<Map<String, dynamic>> getDashboardStats() =>
+      caller.callServerEndpoint<Map<String, dynamic>>(
+        'admin',
+        'getDashboardStats',
+        {},
+      );
+
+  _i3.Future<List<_i5.Utilisateur>> getUsers() =>
+      caller.callServerEndpoint<List<_i5.Utilisateur>>(
+        'admin',
+        'getUsers',
+        {},
       );
 }
 
@@ -473,7 +540,7 @@ class Client extends _i2.ServerpodClientShared {
     bool? disconnectStreamsOnLostInternetConnection,
   }) : super(
          host,
-         _i9.Protocol(),
+         _i11.Protocol(),
          securityContext: securityContext,
          streamingConnectionTimeout: streamingConnectionTimeout,
          connectionTimeout: connectionTimeout,
@@ -485,10 +552,11 @@ class Client extends _i2.ServerpodClientShared {
     emailIdp = EndpointEmailIdp(this);
     jwtRefresh = EndpointJwtRefresh(this);
     auth = EndpointAuth(this);
+    profil = EndpointProfil(this);
     events = EndpointEvents(this);
     films = EndpointFilms(this);
-    greeting = EndpointGreeting(this);
     reservations = EndpointReservations(this);
+    admin = EndpointAdmin(this);
     modules = Modules(this);
   }
 
@@ -498,13 +566,15 @@ class Client extends _i2.ServerpodClientShared {
 
   late final EndpointAuth auth;
 
+  late final EndpointProfil profil;
+
   late final EndpointEvents events;
 
   late final EndpointFilms films;
 
-  late final EndpointGreeting greeting;
-
   late final EndpointReservations reservations;
+
+  late final EndpointAdmin admin;
 
   late final Modules modules;
 
@@ -513,10 +583,11 @@ class Client extends _i2.ServerpodClientShared {
     'emailIdp': emailIdp,
     'jwtRefresh': jwtRefresh,
     'auth': auth,
+    'profil': profil,
     'events': events,
     'films': films,
-    'greeting': greeting,
     'reservations': reservations,
+    'admin': admin,
   };
 
   @override

@@ -82,6 +82,10 @@ class ReservationsEndpoint extends Endpoint {
       parameters: QueryParameters.named({'n': siegeIds.length, 'seanceId': seanceId}),
     );
 
-    return ReservationResult(reservationId: reservationId, montantTotal: montantTotal);
+    return ReservationResult(
+      reservationId: reservationId,
+      numeroReservation: 'BOOK-$reservationId',
+      montantTotal: montantTotal,
+    );
   }
 }

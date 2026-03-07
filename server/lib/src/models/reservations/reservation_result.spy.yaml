@@ -1,0 +1,8 @@
+# Résultat de création d'une réservation (retour endpoint).
+# numeroReservation : type BOOK-xxx pour affichage (maquette confirmation).
+class: ReservationResult
+
+fields:
+  reservationId: int
+  numeroReservation: String?
+  montantTotal: double

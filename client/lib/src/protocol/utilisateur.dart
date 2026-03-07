@@ -24,8 +24,8 @@ abstract class Utilisateur implements _i1.SerializableModel {
     this.preferences,
     String? statut,
     String? role,
-  })  : statut = statut ?? 'actif',
-        role = role ?? 'client';
+  }) : statut = statut ?? 'actif',
+       role = role ?? 'client';
 
   factory Utilisateur({
     int? id,
@@ -48,7 +48,7 @@ abstract class Utilisateur implements _i1.SerializableModel {
       telephone: jsonSerialization['telephone'] as String?,
       dateNaissance: jsonSerialization['dateNaissance'] == null
           ? null
-          : _i1.DateTimeJsonExtension.fromJson(
+          : _i2.Protocol().deserialize<DateTime>(
               jsonSerialization['dateNaissance'],
             ),
       preferences: jsonSerialization['preferences'] == null

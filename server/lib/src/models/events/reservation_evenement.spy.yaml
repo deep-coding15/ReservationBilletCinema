@@ -1,0 +1,12 @@
+# Réservation événement (table reservations_evenements)
+class: ReservationEvenement
+table: reservations_evenements
+managedMigration: false
+
+fields:
+  id: int
+  utilisateurId: int
+  evenementId: int
+  nbBillets: int
+  montantTotal: double
+  statut: String?, default='en_attente'

@@ -11,6 +11,7 @@ import 'src/web/routes/root.dart';
 
 /// The starting point of the Serverpod server.
 void run(List<String> args) async {
+  print('>>> Chargement de la configuration et des endpoints...');
   // Initialize Serverpod and connect it with your generated code.
   final pod = Serverpod(args, Protocol(), Endpoints());
 
@@ -74,7 +75,14 @@ void run(List<String> args) async {
   }
 
   // Start the server.
-  await pod.start();
+  try {
+    await pod.start();
+    print('>>> CinePass BACKEND : serveur demarre (API port 8090).');
+  } catch (e, st) {
+    print('>>> ERREUR BACKEND : $e');
+    print(st);
+    rethrow;
+  }
 }
 
 void _sendRegistrationCode(

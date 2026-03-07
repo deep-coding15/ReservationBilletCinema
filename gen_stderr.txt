@@ -1,0 +1,1 @@
+Could not find package `serverpod_cli` or file `serverpod_cli:generate`

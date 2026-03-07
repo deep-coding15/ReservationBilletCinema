@@ -1,0 +1,12 @@
+# Réservation cinéma (table reservations)
+class: Reservation
+table: reservations
+managedMigration: false
+
+fields:
+  id: int
+  utilisateurId: int
+  seanceId: int
+  dateReservation: DateTime?
+  montantTotal: double
+  statut: String?, default='en_attente'

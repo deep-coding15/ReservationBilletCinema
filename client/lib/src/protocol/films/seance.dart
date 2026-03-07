@@ -11,6 +11,7 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:serverpod_client/serverpod_client.dart' as _i1;
+import 'package:cinema_reservation_client/src/protocol/protocol.dart' as _i2;
 
 abstract class Seance implements _i1.SerializableModel {
   Seance._({
@@ -46,7 +47,7 @@ abstract class Seance implements _i1.SerializableModel {
       id: jsonSerialization['id'] as int,
       filmId: jsonSerialization['filmId'] as int,
       salleId: jsonSerialization['salleId'] as int,
-      dateHeure: _i1.DateTimeJsonExtension.fromJson(
+      dateHeure: _i2.Protocol().deserialize<DateTime>(
         jsonSerialization['dateHeure'],
       ),
       langue: jsonSerialization['langue'] as String?,

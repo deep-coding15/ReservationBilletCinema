@@ -25,8 +25,8 @@ abstract class Utilisateur
     this.preferences,
     String? statut,
     String? role,
-  })  : statut = statut ?? 'actif',
-        role = role ?? 'client';
+  }) : statut = statut ?? 'actif',
+       role = role ?? 'client';
 
   factory Utilisateur({
     int? id,

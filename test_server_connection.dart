@@ -7,8 +7,8 @@ import 'package:cinema_reservation_client/cinema_reservation_client.dart';
 void main() async {
   final client = Client('http://localhost:8080');
   try {
-    final greeting = await client.greeting.hello('Douae');
-    print('OK: ${greeting.message}');
+    final films = await client.films.getFilms();
+    print('OK: ${films.length} film(s)');
   } catch (e, st) {
     print('ERREUR: $e');
     print(st);

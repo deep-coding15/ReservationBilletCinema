@@ -1,7 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:cinema_reservation_client/cinema_reservation_client.dart';
 import 'package:reservation_billet_cinema/core/network/serverpod_provider.dart';
-import 'package:reservation_billet_cinema/features/events/data/models/evenement.dart';
 
 class EventsRepository {
   EventsRepository(this._client);
@@ -9,14 +8,11 @@ class EventsRepository {
   final Client _client;
 
   Future<List<Evenement>> getEvents({String? ville, DateTime? date}) async {
-    final list = await _client.events.getEvents(ville: ville, date: date);
-    return (list as List).map((e) => Evenement.fromJson(e as Map<String, dynamic>)).toList();
+    return _client.events.getEvents(ville: ville, date: date);
   }
 
   Future<Evenement?> getEventById(int id) async {
-    final data = await _client.events.getEventById(id);
-    if (data == null) return null;
-    return Evenement.fromJson(data as Map<String, dynamic>);
+    return _client.events.getEventById(id);
   }
 
   /// Crée une réservation pour un événement (même logique que cinéma).

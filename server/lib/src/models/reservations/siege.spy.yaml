@@ -1,0 +1,8 @@
+# Siège (plan de salle) — sérialisable, pas de table dédiée (lecture depuis sieges).
+class: Siege
+
+fields:
+  id: int
+  salleId: int
+  numero: String
+  type: String?

@@ -37,21 +37,49 @@ abstract class Siege implements _i1.SerializableModel, _i1.ProtocolSerialization
   }
 
   int id;
+
   int salleId;
+
   String numero;
+
   String? type;
 
+  @_i1.useResult
+  Siege copyWith({
+    int? id,
+    int? salleId,
+    String? numero,
+    String? type,
+  });
   @override
-  Map<String, dynamic> toJson() => {
-        'id': id,
-        'salleId': salleId,
-        'numero': numero,
-        'type': type,
-      };
+  Map<String, dynamic> toJson() {
+    return {
+      '__className__': 'Siege',
+      'id': id,
+      'salleId': salleId,
+      'numero': numero,
+      if (type != null) 'type': type,
+    };
+  }
 
   @override
-  Map<String, dynamic> toJsonForProtocol() => toJson();
+  Map<String, dynamic> toJsonForProtocol() {
+    return {
+      '__className__': 'Siege',
+      'id': id,
+      'salleId': salleId,
+      'numero': numero,
+      if (type != null) 'type': type,
+    };
+  }
+
+  @override
+  String toString() {
+    return _i1.SerializationManager.encode(this);
+  }
 }
+
+class _Undefined {}
 
 class _SiegeImpl extends Siege {
   _SiegeImpl({
@@ -59,5 +87,26 @@ class _SiegeImpl extends Siege {
     required int salleId,
     required String numero,
     String? type,
-  }) : super._(id: id, salleId: salleId, numero: numero, type: type);
+  }) : super._(
+         id: id,
+         salleId: salleId,
+         numero: numero,
+         type: type,
+       );
+
+  @_i1.useResult
+  @override
+  Siege copyWith({
+    int? id,
+    int? salleId,
+    String? numero,
+    Object? type = _Undefined,
+  }) {
+    return Siege(
+      id: id ?? this.id,
+      salleId: salleId ?? this.salleId,
+      numero: numero ?? this.numero,
+      type: type is String? ? type : this.type,
+    );
+  }
 }

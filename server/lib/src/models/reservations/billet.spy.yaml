@@ -1,0 +1,12 @@
+# Billet électronique (table billets) — QR code, validité
+class: Billet
+table: billets
+managedMigration: false
+
+fields:
+  id: int
+  reservationId: int
+  dateEmission: DateTime?
+  estValide: bool?, default=true
+  typeBillet: String?, default='electronique'
+  qrCode: String?

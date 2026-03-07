@@ -1,5 +1,6 @@
 import 'package:serverpod/serverpod.dart';
 import '../generated/protocol.dart';
+import '../generated/favori.dart';
 
 /// Endpoint profil : récupération, mise à jour, favoris, historique.
 class ProfilEndpoint extends Endpoint {

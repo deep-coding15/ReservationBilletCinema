@@ -1,0 +1,19 @@
+# Modèle Événement (table evenements) — concerts, théâtre, etc.
+class: Evenement
+table: evenements
+managedMigration: false
+
+fields:
+  id: int
+  titre: String
+  description: String?
+  categorie: String?
+  lieuType: String?
+  cinemaId: int?
+  lieuNom: String?
+  adresse: String?
+  ville: String?
+  dateHeure: DateTime
+  prix: double
+  placesDisponibles: int
+  affiche: String?

@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:reservation_billet_cinema/core/theme/app_theme.dart';
-import 'package:reservation_billet_cinema/features/events/data/repositories/events_repository.dart';
-import 'package:reservation_billet_cinema/features/programmation/data/repositories/films_repository.dart';
+import 'package:reservation_billet_cinema/features/admin/data/repositories/admin_repository.dart';
 
 /// Tableau de bord administrateur : indicateurs et raccourcis.
 class AdminDashboardPage extends ConsumerStatefulWidget {
@@ -16,6 +15,8 @@ class AdminDashboardPage extends ConsumerStatefulWidget {
 class _AdminDashboardPageState extends ConsumerState<AdminDashboardPage> {
   int _filmsCount = 0;
   int _eventsCount = 0;
+  int _seancesCount = 0;
+  int _usersCount = 0;
   bool _loading = true;
   String? _error;
 
@@ -27,23 +28,37 @@ class _AdminDashboardPageState extends ConsumerState<AdminDashboardPage> {
 
   Future<void> _load() async {
     setState(() { _loading = true; _error = null; });
+    final adminRepo = ref.read(adminRepositoryProvider);
     try {
-      final filmsRepo = ref.read(filmsRepositoryProvider);
-      final eventsRepo = ref.read(eventsRepositoryProvider);
-      final films = await filmsRepo.getFilms();
-      final events = await eventsRepo.getEvents();
+      final stats = await adminRepo.getDashboardStats();
       if (mounted) {
         setState(() {
-          _filmsCount = films.length;
-          _eventsCount = events.length;
+          _filmsCount = stats['filmsCount'] ?? 0;
+          _eventsCount = stats['eventsCount'] ?? 0;
+          _seancesCount = stats['seancesCount'] ?? 0;
+          _usersCount = stats['usersCount'] ?? 0;
           _loading = false;
         });
       }
     } catch (e) {
       if (mounted) {
-        setState(() { _loading = false; _error = e.toString(); });
+        setState(() {
+          _loading = false;
+          _error = _userFriendlyError(e);
+        });
       }
     }
+  }
+
+  static String _userFriendlyError(Object e) {
+    final s = e.toString();
+    if (s.contains('deserialization') || s.contains('dynamic')) {
+      return 'Erreur de données reçues du serveur. Vérifiez que le backend est à jour et redémarrez-le.';
+    }
+    if (s.contains('SocketException') || s.contains('Connection') || s.contains('Failed host')) {
+      return 'Impossible de joindre le serveur. Démarrez le backend (demarrer_backend.bat) puis réessayez.';
+    }
+    return s;
   }
 
   @override
@@ -63,18 +78,7 @@ class _AdminDashboardPageState extends ConsumerState<AdminDashboardPage> {
       ),
       child: _loading
           ? const Center(child: CircularProgressIndicator(color: AppColors.primary))
-          : _error != null
-              ? Center(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(_error!, style: const TextStyle(color: Colors.white70), textAlign: TextAlign.center),
-                      const SizedBox(height: 16),
-                      FilledButton(onPressed: _load, child: const Text('Réessayer')),
-                    ],
-                  ),
-                )
-              : SingleChildScrollView(
+          : SingleChildScrollView(
                   padding: const EdgeInsets.all(24),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -103,17 +107,37 @@ class _AdminDashboardPageState extends ConsumerState<AdminDashboardPage> {
                           _StatCard(
                             icon: Icons.schedule_rounded,
                             label: 'Séances',
-                            value: '—',
+                            value: '$_seancesCount',
                             onTap: () => context.go('/admin/seances'),
                           ),
                           _StatCard(
                             icon: Icons.people_rounded,
                             label: 'Utilisateurs',
-                            value: '—',
+                            value: '$_usersCount',
                             onTap: () => context.go('/admin/utilisateurs'),
                           ),
                         ],
                       ),
+                      if (_error != null) ...[
+                        const SizedBox(height: 24),
+                        Container(
+                          padding: const EdgeInsets.all(16),
+                          decoration: BoxDecoration(
+                            color: Colors.red.withValues(alpha: 0.2),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Row(
+                            children: [
+                              const Icon(Icons.warning_amber_rounded, color: Colors.orange, size: 28),
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: Text(_error!, style: const TextStyle(color: Colors.white70), textAlign: TextAlign.start),
+                              ),
+                              TextButton(onPressed: _load, child: const Text('Réessayer')),
+                            ],
+                          ),
+                        ),
+                      ],
                     ],
                   ),
                 ),

@@ -9,7 +9,7 @@ import 'package:reservation_billet_cinema/core/theme/app_theme.dart';
 import 'package:reservation_billet_cinema/features/splash/presentation/pages/splash_page.dart';
 import 'package:reservation_billet_cinema/features/programmation/data/repositories/films_repository.dart';
 import 'package:reservation_billet_cinema/features/events/data/repositories/events_repository.dart';
-import 'package:reservation_billet_cinema/features/events/data/models/evenement.dart';
+import 'package:reservation_billet_cinema/features/events/data/extensions/evenement_extension.dart';
 
 /// Page d'accueil : hero, carrousels films/événements (clic → détail direct), ambiance cinéma.
 class HomePage extends ConsumerStatefulWidget {
@@ -91,7 +91,9 @@ class _HomePageState extends ConsumerState<HomePage> with TickerProviderStateMix
         setState(() {
           _loading = false;
           _loadError = 'Impossible de charger les données. '
-              'Démarrez le serveur (port 8090) et appliquez les seeds (server/database/apply_seed.ps1).';
+              'Démarrez le serveur (port 8090) : depuis server/ lancez "dart bin/main.dart". '
+              'Si les ports sont déjà utilisés, exécutez d\'abord server/stop_server_ports.ps1 puis relancez le serveur. '
+              'Pensez aux seeds : server/database/apply_seed.ps1';
         });
       }
       debugPrint('HomePage _loadData error: $e\n$st');

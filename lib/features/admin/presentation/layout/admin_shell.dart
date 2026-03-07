@@ -27,9 +27,11 @@ class AdminShell extends StatelessWidget {
     return Scaffold(
       backgroundColor: const Color(0xFF0d0d0d),
       appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(Icons.menu_rounded),
-          onPressed: () => Scaffold.of(context).openDrawer(),
+        leading: Builder(
+          builder: (ctx) => IconButton(
+            icon: const Icon(Icons.menu_rounded),
+            onPressed: () => Scaffold.of(ctx).openDrawer(),
+          ),
         ),
         title: Text(_titleForPath(currentPath)),
         backgroundColor: AppColors.primaryDark,

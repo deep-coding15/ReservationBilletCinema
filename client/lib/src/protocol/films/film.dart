@@ -63,10 +63,12 @@ abstract class Film implements _i1.SerializableModel {
       bandeAnnonce: jsonSerialization['bandeAnnonce'] as String?,
       classification: jsonSerialization['classification'] as String?,
       noteMoyenne: (jsonSerialization['noteMoyenne'] as num?)?.toDouble(),
-      dateDebut: _i1.DateTimeJsonExtension.fromJson(
+      dateDebut: _i2.Protocol().deserialize<DateTime>(
         jsonSerialization['dateDebut'],
       ),
-      dateFin: _i1.DateTimeJsonExtension.fromJson(jsonSerialization['dateFin']),
+      dateFin: _i2.Protocol().deserialize<DateTime>(
+        jsonSerialization['dateFin'],
+      ),
     );
   }
 

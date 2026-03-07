@@ -10,7 +10,15 @@ emailIdp:
 jwtRefresh:
   - refreshAccessToken:
 auth:
+  - isAdmin:
   - saveProfile:
+profil:
+  - getProfil:
+  - updateProfil:
+  - getFavoris:
+  - ajouterFavori:
+  - supprimerFavori:
+  - getHistoriqueReservations:
 events:
   - getEvents:
   - getEventById:
@@ -21,5 +29,5 @@ films:
   - getSeancesByFilm:
   - getSeancesByCinema:
   - getCinemas:
-greeting:
-  - hello:
+reservations:
+  - createReservation:
